@@ -135,22 +135,6 @@
 \tableofcontents{}
 \end{frame}
 
-\section{Logistics}
-\begin{frame}{Course Staff}
-\begin{itemize}
-\item Instructor:
-    \begin{itemize}
-        \item Mengye Ren
-    \end{itemize}
-
-\item Graders:
-    \begin{itemize}
-        \item Shreya Agarwal
-        \item Jash Rathod
-    \end{itemize}
-\end{itemize}
-\end{frame}
-
 \begin{frame}{Logistics}
 \begin{itemize}
 \item Class webpage: \url{https://nyu-cs2565.github.io/2023-fall} 
@@ -168,11 +152,29 @@
 \end{itemize}
 \end{frame}
 
+\section{Logistics}
+\begin{frame}{Course Staff}
+\begin{itemize}
+\item Instructor:
+    \begin{itemize}
+        \item Mengye Ren (\texttt{mr3182@nyu.edu})
+    \end{itemize}
+
+\item Graders:
+    \begin{itemize}
+        \item Shreya Agarwal (\texttt{sa6981@nyu.edu})
+        \item Jash Rathod ({\texttt{jsr10000@nyu.edu}})
+    \end{itemize}
+\item All course material, assignment, and exam related questions should be posted on CampusWire
+\item I will only respond to administration related emails
+\end{itemize}
+\end{frame}
+
 \begin{frame}{Assessment}
 \begin{itemize}
 \item 4 assignments ($40\%$)
 % \begin{itemize}
-\item Midterm Exam ($30\%$)
+\item Midterm Exam (Oct 24) ($30\%$)
 \item Final Project ($30\%$)
 \item Extra credits ($2\%$) answer other students' questions in a substantial and helpful way on Campuswire
 \end{itemize}
@@ -186,9 +188,9 @@
 \item You can discuss with other students on the homework assignments, but:
 \begin{itemize}
 \item Write up the solutions and code on your own;
-\item And list the names of the students you discussed each problem with.
+\item List the names of the students you discussed with.
 \end{itemize}
-\item If your solution or code is substantially similar to other students then it will be treated as plagiarism.
+\item If your solution or code is substantially similar to other students then the incident will be reported to the University.
 
 \end{itemize}
 \end{frame}
@@ -261,6 +263,8 @@ methods, and \textbf{neural networks})
 
 \begin{frame}{The level of the class}
 \begin{itemize}
+\item Many ML algorithms have been implemented in standard libraries (e.g. sklearn)
+\item Many people only know how to call these library functions.
 \item We will learn how to implement each ML algorithm \textbf{from scratch} using numpy alone, without any ML libraries.
 \item Once we have implemented an algorithm from scratch once, we will use the sklearn version.
 \end{itemize}
@@ -268,11 +272,7 @@ methods, and \textbf{neural networks})
 
 
 \section{Introduction to Machine Learning}
-\begin{frame}{Machine Learning Problems}
 
-We'll start with a few canonical examples.
-\end{frame}
-%
 \begin{frame}{What is learning?}
   \textit{ "The activity or process of gaining knowledge or skill by studying, practicing, being taught, or experiencing something."
     \begin{flushright}Merriam Webster dictionary\end{flushright}}
@@ -311,17 +311,17 @@ We'll start with a few canonical examples.
 
 \begin{frame}{Example: Spam Detection}
 
+Let's start with a few canonical examples.
 \begin{itemize}
 \item \textbf{Input x:} Incoming email
 \end{itemize}
 \begin{center}
-\includegraphics[width=0.6\textwidth]{figures/spam-email}
+\includegraphics[width=0.6\textwidth, trim={0 6cm 0 0}, clip]{figures/spam-email}
 \end{center}
 
 \begin{itemize}
 \item \textbf{Output y: }``SPAM'' or ``NOT SPAM''
-\item This is a \textbf{binary classification} problem: there are two 
-possible outputs.
+\item This is a \textbf{binary classification} problem: there are two possible outputs.
 \end{itemize}
 \end{frame}
 
