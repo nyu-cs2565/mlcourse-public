@@ -123,7 +123,7 @@
 \begin{document}
 \input ../rosenberg-macros
 
-\title[CSCI-GA 2565]{Gradient Descent, Stochastic Gradient Descent and Loss Functions}
+\title[CSCI-GA 2565]{Gradient Descent and Loss Functions}
 \author{Mengye Ren}
 
 \date{September 12, 2023}
@@ -431,7 +431,7 @@ of $w$.
 \pause
 
 \item We have to iterate over all $n$ training points to take a single step. {[}$O(n)${]}
-\item Will not scale to ``big data''!
+% \item Will not scale to ``big data''!
 \pause
 \item Can we make progress without looking at all the data before updating $w$?
 \end{itemize}
@@ -572,8 +572,8 @@ fast
     \begin{itemize}
         \item For SGD, fixed step size can work well in practice.
         \item Typical approach: Fixed step size reduced by constant factor
-whenever validation performance stops improving. 
-\item Other tricks: Bottou (2012), ``Stochastic gradient descent tricks''
+whenever validation performance stops improving.
+        \item Other schedules: inverse time decay, cosine decay, etc.
     \end{itemize}
 \end{frame}
 %
@@ -587,14 +587,6 @@ whenever validation performance stops improving.
 \item \textbf{Minibatch gradient descent}
 \begin{itemize}
     \item Use a \textbf{random} subset of size $N$ to determine step direction
-
-%\item Yoshua Bengio says\footnote{See Yoshua Bengio's ``Practical recommendations for gradient-based
-%training of deep architectures'' \url{http://arxiv.org/abs/1206.5533}.}:
-%\begin{itemize}
-%\item $N$ is typically between $1$ and few hundred
-%\item $N=32$ is a good default value
-%\item With $N\ge10$ we get computational speedup (per datum touched)
-%\end{itemize}
 \end{itemize}
 
 \item \textbf{Stochastic gradient descent}
