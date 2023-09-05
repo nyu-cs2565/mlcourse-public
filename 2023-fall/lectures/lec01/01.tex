@@ -1,6 +1,6 @@
 %% LyX 2.3.4.2 created this file.  For more info, see http://www.lyx.org/.
 %% Do not edit unless you really know what you are doing.
-\documentclass[english,dvipsnames,aspectratio=169,handout]{beamer}
+\documentclass[english,dvipsnames,aspectratio=169]{beamer}
 \usepackage{mathptmx}
 \usepackage{eulervm}
 \usepackage[T1]{fontenc}
@@ -520,19 +520,21 @@ does adjust the ML training process by analyzing errors?}
       \begin{itemize}
         \item Very data efficient
         \item An entire multitasking system (vision, language, motor control, etc.)
+        \item Flexible to adapt new skills
         \item Takes at least a few years :)
       \end{itemize}
     \item For serving specific purposes, machine learning doesn't have to look like human learning in the end.
     \pause
-    \item It may borrow ideas from biological systems (e.g. neural networks).
-    \pause
-    \item There may also be biological constraints.
+    \item Machines may borrow ideas from biological systems (e.g. neural networks).
+    % \pause
+    % \item There may also be biological constraints.
   \end{itemize}
 \end{frame}
 
 \begin{frame}{History of machine learning}
   \begin{itemize}
     \item 1957 --- Perceptron algorithm (implemented as a circuit!)
+    % The New York Times reported the perceptron to be "the embryo of an electronic computer that [the Navy] expects will be able to walk, talk, see, write, reproduce itself and be conscious of its existence."
     \item 1959 --- Arthur Samuel wrote a learning-based checkers program that could defeat him
     \item 1969 --- Minsky and Papert's book \emph{Perceptrons} (limitations of linear models)
     \pause
@@ -550,7 +552,7 @@ does adjust the ML training process by analyzing errors?}
 
 \begin{frame}{History of machine learning}
   \begin{itemize}
-  \item A lot of practical ML algorithms were invented in the 90s.
+  \item A lot of practical ML algorithms were invented in the 90s: CNNs, SVMs, boosting, etc.
     % \begin{itemize}
     % \item Markov chain Monte Carlo, variational inference, kernels and support vector machines, boosting, convolutional networks
     % \end{itemize}
@@ -560,10 +562,15 @@ does adjust the ML training process by analyzing errors?}
   \item 2010s --- deep learning
     \begin{itemize}
     \item 2010--2012 --- neural nets smashed records in speech-to-text and object recognition
-    \item Increasing adoption by the tech industry, downstream problems
+    \pause
+    \item Increasing adoption by the tech industry, many downstream problems
+    \pause
     \item 2014 --- GANs and generative AI
+    \pause
     \item 2016 --- AlphaGo defeated the human Go champion
+    \pause
     \item 2018--2020 --- AlphaFold predicts protein structure
+    \pause
     \item 2022 --- ChatGPT, chatbot, general intelligence
     \end{itemize}
   \end{itemize}
@@ -580,8 +587,9 @@ does adjust the ML training process by analyzing errors?}
 
 \begin{frame}{ML problems}
 
-\begin{itemize}
-\item In ML problems, we generally need to:
+% \begin{itemize}
+% \item 
+In ML problems, we generally need to:
 \begin{itemize}
     \item<1-> Make a decision:
         \begin{itemize}
@@ -599,7 +607,7 @@ does adjust the ML training process by analyzing errors?}
         \end{itemize}
     \item<4-> Predicting where a storm will be in an hour (what forms of output are possible here?)
     % \item<5-> An \textbf{action} is the generic term for what is produced by our system.
-\end{itemize}
+% \end{itemize}
 \end{itemize}
 
 \end{frame}
@@ -645,34 +653,34 @@ Many problem domains can be formalized as follows:
 \item Evaluate output in relation to the label.
 \end{enumerate}
 
-\begin{itemize}
-\item Input space: $\cx$
-\item Label space: $\cy$
-\end{itemize}
+% \begin{itemize}
+% \item Input space: $\cx$
+% \item Label space: $\cy$
+% \end{itemize}
 
 \end{frame}
 
 \begin{frame}{Formalization}
 \begin{block}{Prediction Function}
 
-A \textbf{prediction function } gets input $x\in\cx$ and produces an output $y\in\cy$ :
+A \textbf{prediction function } gets input $x\in\cx$ and produces an output $y\in\cy$.
 
-\[
-\begin{matrix}f: & \cx & \rightarrow & \cy\\
-& x & \mapsto & f(x)
-\end{matrix}
-\]
+% \[
+% % \begin{matrix}f: & \cx & \rightarrow & \cy\\
+% & x & \mapsto & f(x)
+% \end{matrix}
+% \]
 \end{block}
 
+\vspace{2cm}
 \begin{block}<2->{Loss Function}
 
 A \textbf{loss function} evaluates the output in the context of the true outcome $y$.
-
-\[
-\begin{matrix}\loss: & \cy\times\cy & \rightarrow & \reals\\
-& (\hat{y},y) & \mapsto & \loss(\hat{y},y)
-\end{matrix}
-\]
+% \[
+% \begin{matrix}\loss: & \cy\times\cy & \rightarrow & \reals\\
+% & (\hat{y},y) & \mapsto & \loss(\hat{y},y)
+% \end{matrix}
+% \]
 \end{block}
 \end{frame}
 
@@ -681,6 +689,7 @@ A \textbf{loss function} evaluates the output in the context of the true outcome
 
     \head{Intuition}: If we can evaluate how good a prediction function is, we can turn this into an optimization problem.
 
+\pause
 \begin{itemize}
     \item The loss function $\ell$ evaluates a \emph{single} output
     \item How do we evaluate the prediction function \emph{as a whole}?
@@ -697,6 +706,7 @@ Define a space where the prediction function is applicable
 $P_{\cx\times\cy}.$ 
 \end{itemize}
 
+\pause
 One common desideratum is to have a prediction function $f(x)$ that ``does well on average'':
 \[
 \ell(f(x),y)\mbox{ is usually small, in some sense}
@@ -719,11 +729,16 @@ The \textbf{risk} of a prediction function $f:\cx\to\cy$ is
 In words, it's the \textbf{expected loss} of $f$ over $P_{\cx\times\cy}$.
 \end{definition}
 
-\begin{alertblock}{We can't actually compute the risk function:}
+% \begin{alertblock}
+% {We can't actually compute the risk function:}
 
-Since we don't know $P_{\cx\times\cy}$, we cannot compute the expectation.\\
-    But we can \textbf{estimate} it.
-\end{alertblock}
+\begin{itemize}
+\item Since we don't know $P_{\cx\times\cy}$, we cannot compute the expectation.\\
+
+\pause
+\item But we can \textbf{estimate} it.
+\end{itemize}
+% \end{alertblock}
 \end{frame}
 
 \begin{frame}{The Bayes Prediction Function }
@@ -809,7 +824,7 @@ with probability 1.
 Let $\cd_{n}=\left((x_{1},y_{1}),\ldots,(x_{n},y_{n})\right)$ be
 drawn i.i.d. from $\cp_{\cx\times\cy}$.
 \begin{definition}
-The \textbf{empirical risk}\emph{ }of $f:\cx\to\ca$ with respect
+The \textbf{empirical risk}\emph{ }of $f:\cx\to\cy$ with respect
 to $\cd_{n}$ is
 \[
 \hat{R}_{n}(f)=\frac{1}{n}\sum_{i=1}^{n}\loss(f(x_{i}),y_{i}).
@@ -836,7 +851,7 @@ A function $\hat{f}$ is an \textbf{empirical risk minimizer} if
 \[
 \hat{f}\in\argmin_{f}\hat{R}_{n}(f),
 \]
-where the minimum is taken over all functions $f:\cx\to\ca$.
+where the minimum is taken over all functions $f:\cx\to\cy$.
 \end{definition}
 
 \begin{itemize}
@@ -936,7 +951,7 @@ Most applied work is about designing good hypothesis spaces for specific tasks.
 \begin{frame}{Constrained Empirical Risk Minimization}
 \begin{itemize}
 \item Given a hypothesis space $\cf$, a set of prediction functions mapping
-$\cx\to\ca$,
+$\cx\to\cy$,
 \item An \textbf{empirical risk minimizer }(ERM) in $\cf$ is a function $\hat{f}_{n}$ such that
 \[
     \hat{f}_{n}\in\argmin_{\hl{f\in\cf}}\frac{1}{n}\sum_{i=1}^{n}\loss(f(x_{i}),y_{i}).
@@ -1106,24 +1121,24 @@ an optimization algorithm in practice:
 \end{align*}
 
 
-\item It would be nice to observe the error decomposition for a practical $\tilde{f}_{n}$!
+% \item It would be nice to observe the error decomposition for a practical $\tilde{f}_{n}$!
 \item How would we address each type of error?
-\item Why is this usually impossible?
+% \item Why is this usually impossible?
 
-\item But we could constuct an artificial example, where we know $P_{\cx\times\cy}$
-and $f^{*}$ and $f_{\cf}$...
+% \item But we could constuct an artificial example, where we know $P_{\cx\times\cy}$
+% and $f^{*}$ and $f_{\cf}$...
 \end{itemize}
 \end{frame}
 
 \begin{frame}{ERM Overview}
 \begin{itemize}
-\item<1-> Given a loss function $\loss:\ca\times\cy\to\reals$,
+\item<1-> Given a loss function $\loss$,
 \item<2-> Choose a hypothesis space $\cf$.
 \item<3-> Use an optimization method to find an empirical risk minimizer $\hat{f}_{n}\in\cf$:
 \[
 \hat{f}_{n}=\argmin_{f\in\cf}\frac{1}{n}\sum_{i=1}^{n}\loss(f(x_{i}),y_{i}).
 \]
-\item<4-> (Or find a $\tilde{f}_{n}$ that comes close to $\hat{f}_{n}$)
+\item<4-> Or find a $\tilde{f}_{n}$ that comes close to $\hat{f}_{n}$
 \item<5-> The machine learning scientist's job: 
 \begin{itemize}
 \item Choose $\cf$ that balances approximation and estimation error.
