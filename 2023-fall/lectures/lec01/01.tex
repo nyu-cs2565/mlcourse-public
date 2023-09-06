@@ -1,6 +1,6 @@
 %% LyX 2.3.4.2 created this file.  For more info, see http://www.lyx.org/.
 %% Do not edit unless you really know what you are doing.
-\documentclass[english,dvipsnames,aspectratio=169]{beamer}
+\documentclass[english,dvipsnames,aspectratio=169,handout]{beamer}
 \usepackage{mathptmx}
 \usepackage{eulervm}
 \usepackage[T1]{fontenc}
@@ -141,11 +141,10 @@
 \begin{itemize}
     \item Course materials (lecture slides, homeworks) will be made available on the website
 \end{itemize}
-\item Announcements via Brightspace
-\item Discussion / questions on CampusWire\\
+\item Discussion / questions on CampusWire: \url{https://campuswire.com/p/G74AFD6C8} \\
 \includegraphics[width=0.4\textwidth,trim={0 5cm 0 0},clip]{figures/campuswire.png}
 % \url{https://campuswire.com/p/G74AFD6C8}
-% \item Sign up to Gradescope to submit homework assignments (entry code \textbf{DJZ86D})
+\item Sign up to Gradescope to submit homework assignments (entry code \textbf{RZJR36})
 \end{itemize}
 \begin{itemize}
 \item Office Hour: Tuesday 1:00-2:00 pm, Room 508, 60 Fifth Ave.
@@ -197,16 +196,17 @@
 
 \begin{frame}{Final Project}
 \begin{itemize}
-\item Groups of maximum three.
-\item The goal is to apply the ML algorithms in real applications.
+\item Groups of maximum three students.
 \item Goals:
 \begin{itemize}
 \item Find or collect a dataset (can be related to your area of study/research)
 \item Survey existing approaches
-\item Implement a set of ML algorims and compare their performance
+\item Apply a set of ML algorithms in real applications
+\item Compare and analyze performance
 \end{itemize}
+\item Project rubric will be posted.
 \item Project proposal due Friday, Oct 27, 2023, 11:59PM
-\item Last lecture: 3min project presentation
+\item Last lecture: Project presentation
 \item Final report due Wednesday, Dec 15, 2023, 11:59PM
 \end{itemize}
 \end{frame}
@@ -231,20 +231,26 @@
 
 \item 2 weeks: introduction to \textbf{machine learning}, \textbf{optimization}
 
+\pause
 \item 2 weeks: \textbf{Linear }methods for binary classification
 and regression (also\textbf{ kernel methods)}
 
+\pause
 \item 2 weeks: \textbf{Probabilistic models}, \textbf{Bayesian}
 methods
 
+\pause
 \item 1 week: \textbf{Multiclass} classification and introduction to \textbf{structured
 prediction}
 
+\pause
 \item 3 weeks: \textbf{Nonlinear} methods (\textbf{trees}, \textbf{ensemble}
 methods, and \textbf{neural networks})
 
+\pause
 \item 1 week: \textbf{Unsupervised} learning: \textbf{clustering} and \textbf{latent variable} models
 
+\pause
 \item 1 week: \textbf{Reinforcement} learning
 
 \item More detailed schedule on the course website (still subject to change)
@@ -254,10 +260,14 @@ methods, and \textbf{neural networks})
 \begin{frame}{The high level goals of the class}
 \begin{itemize}
 \item Our focus will be on the fundamental building blocks of machine learning
-\item Prepare the fundamental toolkit -- fancy new methods are often combination of the techniques
 \item Understand what kind of problems can ML help solve
-\item Despite the large number of methods, understand the pros \& cons of each method, understand the motivation why we choose one method over the other
-\item Apply ML in practical problems
+\pause
+\item Accomodate different types of input, output, problem characteristics
+\pause
+\item Understand the pros \& cons of each method, understand the motivation why we choose one method over the other
+\pause
+\item Fancy new methods are often combination of basic techniques
+\item Apply and develop ML algorithms in practical problems
 \end{itemize}
 \end{frame}
 
@@ -270,7 +280,6 @@ methods, and \textbf{neural networks})
 \end{itemize}
 \end{frame}
 
-
 \section{Introduction to Machine Learning}
 
 \begin{frame}{What is learning?}
@@ -282,7 +291,7 @@ methods, and \textbf{neural networks})
   \begin{flushright}Tom Mitchell\end{flushright}}
 \end{frame}
 
-\begin{frame}{Applications of machine learning}
+\begin{frame}{Machine learning as meta-programming}
   \begin{itemize}
   \setlength\itemsep{1em}
   \item For many problems, it's difficult to program the correct behavior by hand
@@ -291,7 +300,7 @@ methods, and \textbf{neural networks})
     \item understanding human speech
     \end{itemize}
     \pause
-    \item Machine learning approach: program an algorithm to automatically learn from data, or from experience. Typically our goal is to solve a prediction problem of the format:
+    \item Machine learning approach: program an algorithm to automatically learn from data, or from experience, and output a program, typically to solve a prediction problem:
     \begin{itemize}
     \item Given an \textbf{input} $x$,
     \item \textbf{Predict} an \textbf{output $y$.} 
@@ -319,8 +328,11 @@ Let's start with a few canonical examples.
 \includegraphics[width=0.6\textwidth, trim={0 6cm 0 0}, clip]{figures/spam-email}
 \end{center}
 
+\pause
 \begin{itemize}
 \item \textbf{Output y: }``SPAM'' or ``NOT SPAM''
+
+\pause
 \item This is a \textbf{binary classification} problem: there are two possible outputs.
 \end{itemize}
 \end{frame}
@@ -328,13 +340,15 @@ Let's start with a few canonical examples.
 \begin{frame}{Example: Medical Diagnosis}
 \begin{itemize}
 \item \textbf{Input x:} Symptoms (fever, cough, fast breathing, shaking, nausea, ...)
+\pause
 
 \item \textbf{Output y:} Diagnosis (pneumonia, flu, common cold, bronchitis, ...)
 
+\pause
 \item A \textbf{multiclass classification} problem: choosing an output out of a \emph{discrete} set of possible outputs.
 \end{itemize}
 
-\medskip
+\pause
 How do we express uncertainty about the output?
 \begin{itemize}
 \item \textbf{Probabilistic classification} or \textbf{soft classification}:
@@ -349,9 +363,11 @@ How do we express uncertainty about the output?
 \begin{frame}{Example: Predicting a Stock Price}
 \begin{itemize}
 \item \textbf{Input x:} History of the stock's prices
+\pause
 \item \textbf{Output y:} The price of the stock at the close of the next day
 \end{itemize}
 
+\pause
 \begin{itemize}
     \item This is called a \textbf{regression} problem (for historical reasons): the output is \emph{continuous}.
 \end{itemize}
@@ -359,29 +375,32 @@ How do we express uncertainty about the output?
 \end{frame}
 
 \begin{frame}{Comparison to Rule-Based Approaches (Expert Systems)}
-\begin{itemize}
-\item Consider the problem of medical diagnosis.
+% \begin{itemize}
+Consider the problem of medical diagnosis.
 
 \begin{enumerate}
     \item Talk to experts (in this case, medical doctors).
     \item Understand how the experts come up with a diagnosis.
+    \pause
     \item Implement this process as an algorithm (a \textbf{rule-based system}): e.g., a set of symptoms $\rightarrow$ a particular diagnosis.
-    \item Potentially use logical deduction to infer new rules from the rules that are stored in the knowledge base.  
-\end{enumerate} 
-\end{itemize}
+    \pause
+    \item Use logical deduction to infer new rules from the rules that are stored in the knowledge base.  
+\end{enumerate}
+% \end{itemize}
 \end{frame}
 
 \begin{frame}{Rule-Based Approach}
 \begin{center}
 \includegraphics[height=0.7\textheight]{figures/geron-fig1-1}\let\thefootnote\relax\footnotetext{\tiny{Fig 1-1 from \emph{Hands-On Machine Learning with Scikit-Learn and TensorFlow} by Aurelien Geron (2017).}}
 \par\end{center}
-
 \end{frame}
 
 \begin{frame}{Advantages of Rule-Based Approaches}
 \begin{itemize}
     \item Leverage existing domain expertise.
+    \pause
     \item Generally \textbf{interpretable}: We can describe the rule to another human
+    \pause
     \item Produce reliable answers for the scenarios that are included in the knowledge bases.
 \end{itemize}
 \end{frame}
@@ -390,7 +409,9 @@ How do we express uncertainty about the output?
 
 \begin{itemize}
 \item Labor intensive to build: experts' time is expensive.
+\pause
 \item Rules work very well for areas they cover, but often do not \textbf{generalize} to unanticipated input combinations.
+\pause
 \item Don't naturally handle uncertainty.
 \end{itemize}
 \end{frame}
@@ -401,8 +422,9 @@ How do we express uncertainty about the output?
 
     \item We have the machine \textbf{learn} on its own from inputs and outputs (decisions).
 
-\item We provide \textbf{training data}:
-many examples of (input $x$ , output $y$) pairs, e.g.
+    \pause
+    \item We provide \textbf{training data}:
+    many examples of (input $x$ , output $y$) pairs, e.g.
 
 \begin{itemize}
 \item A set of videos, and whether or not each has a cat in it.
@@ -423,7 +445,8 @@ $y$ given input $x$.
 \end{itemize}
 
 \item The goal of machine learning is to find the ``best'' (to be defined) prediction function \textbf{automatically, based on the training data}
-%
+
+\pause
 
 \item The success of ML depends on
     \begin{itemize}
@@ -472,7 +495,9 @@ does adjust the ML training process by analyzing errors?}
     Given any task, the following questions need to be answered:
     \begin{itemize}
         \item \textbf{Modeling}: What class of prediction functions are we considering?
+        \pause
         \item \textbf{Learning}: How do we learn the ``best'' prediction function in this class from our training data?
+        \pause
         \item \textbf{Inference}: How do we compute the output of the prediction function for a new input?
     \end{itemize}
 \end{frame}
@@ -584,12 +609,13 @@ does adjust the ML training process by analyzing errors?}
   \end{center}
 \end{frame}
 
+\section{Supervised Learning Setup}
 
 \begin{frame}{ML problems}
 
 % \begin{itemize}
 % \item 
-In ML problems, we generally need to:
+In supervised learning problems, we generally need to:
 \begin{itemize}
     \item<1-> Make a decision:
         \begin{itemize}
@@ -675,7 +701,7 @@ A \textbf{prediction function } gets input $x\in\cx$ and produces an output $y\i
 \vspace{2cm}
 \begin{block}<2->{Loss Function}
 
-A \textbf{loss function} evaluates the output in the context of the true outcome $y$.
+A \textbf{loss function} evaluates the output $\hat{y}$ in the context of the true outcome $y$.
 % \[
 % \begin{matrix}\loss: & \cy\times\cy & \rightarrow & \reals\\
 % & (\hat{y},y) & \mapsto & \loss(\hat{y},y)
