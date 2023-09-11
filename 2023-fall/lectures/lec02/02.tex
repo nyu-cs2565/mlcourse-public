@@ -19,6 +19,7 @@
 %\pgfplotsset{compat=1.17}
 \usepackage{booktabs}
 \usepackage{xpatch}
+\definecolor{ao(english)}{rgb}{0.0, 0.5, 0.0}
 
 \xpatchcmd{\itemize}
   {\def\makelabel}
@@ -131,6 +132,14 @@
 
 \makebeamertitle
 \mode<article>{Just in article version}
+
+\begin{frame}{Homework 1}
+\begin{itemize}
+\item Homework 1 will be released on course website today (Sept 12). You have until Oct 3 noon (12pm) to finish.
+\item Submit PDF to Gradescope.
+\item Course website: \url{https://cs.nyu.edu/courses/fall23/CSCI-GA.2565-001/}
+\end{itemize}
+\end{frame}
 
 \section{Review: ERM}
 \begin{frame}{Our Machine Learning Setup}
@@ -274,6 +283,8 @@ We want to find the function in $\cf$, parametrized by $w\in\reals^{d}$, that mi
 \]
 
 \end{block}
+\pause
+
 \begin{itemize}
 \item How do we solve this optimization problem?
     $$
@@ -307,6 +318,7 @@ x^{*}=\arg\min_{x\in\reals^{d}}f(x)
     is the direction in which $f(x)$ \textbf{increases fastest},
 if we start from $x_{0}$.
 \end{itemize}
+\pause
 \begin{center}
 \includegraphics[height=0.4\textheight]{figures/two-dim-gradient}
 \par\end{center}
@@ -332,38 +344,95 @@ if we start from $x_{0}$.
 \end{block}
     \begin{itemize}
         \item The ``step size'' $\eta$ is not the amount by which we update $x$!
+        \pause
+        \item ``Step size'' is also referred to as ``learning rate'' in neural networks literature.
     \end{itemize}
 \end{frame}
 
 \begin{frame}{Gradient Descent Path}
 \begin{center}
-\includegraphics[height=0.8\textheight]{figures/vlad-GD-fixedAndBacktracking} 
+\includegraphics[height=0.8\textheight]{figures/gd_example} 
 \par\end{center}
 
 \end{frame}
 
 \begin{frame}{Gradient Descent: Step Size}
-\begin{itemize}
-\item A fixed step size will work, eventually, as long as it's small enough
-(roughly --- details to come)
+\begin{columns}
+\begin{column}{0.5\textwidth}
+A fixed step size will work, eventually, as long as it's small enough
+% (roughly --- details to come)
 \begin{itemize}
 \pause
 \item If $\eta$ is too large, the optimization process might diverge
 \pause
 \item In practice, it often makes sense to try several fixed step sizes
 \end{itemize}
-\end{itemize}
-
 \begin{itemize}
 \item Intuition on when to take big steps and when to take small steps?
     \vspace{4em}
 \end{itemize}
+\end{column}
+
+\begin{column}{0.48\textwidth}
+% \begin{center}
+\includegraphics[width=0.6\textwidth]{figures/gd_converge.png}
+\includegraphics[width=0.6\textwidth]{figures/gd_diverge.png}
+% \footnote{Image credit: \url{https://www.cs.cornell.edu/courses/cs4780/2015fa/}}
+% \end{center}
+\end{column}
+\end{columns}
 \end{frame}
-%
+
+\begin{frame}{2D Divergence example}
+\begin{center}
+\includegraphics[width=0.8\textwidth]{figures/gd_diverge_2d.png}
+\end{center}
+\end{frame}
+
+\begin{frame}{Notes on Convergence}
+\begin{itemize}
+    \item Gradient descent with an appropriate step size converges to stationary point (derivative = 0) for differentiable functions.
+    \item Stationary points can be (local) minima, (local) maxima, saddle points, etc.
+    \item Gradient descent can converge to global minimum for \textbf{convex functions}.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Convex Sets}
+\begin{definition}
+A set $C$ is \textbf{convex} if for any $x_{1},x_{2}\in C$ and any
+$\theta$ with $0\le\theta\le1$ we have
+\[
+\theta x_{1}+(1-\theta)x_{2}\in C.
+\]
+\end{definition}
+
+\begin{center}
+\includegraphics[height=0.45\textheight]{figures/fig7.4a.pdf}\includegraphics[height=0.45\textheight]{figures/fig7.4b.pdf}\let\thefootnote\relax\footnotetext{\tiny{KPM Fig. 7.4}}
+\par\end{center}
+
+\end{frame}
+
+\begin{frame}{Convex Functions}
+\begin{definition}
+A function $f:\reals^{n}\to\reals$ is \textbf{convex} if $\dom f$
+is a convex set and if for all $x,y\in\dom f$, and $0\le\theta\le1$,
+we have
+\[
+f(\theta x+(1-\theta)y)\le\theta f(x)+(1-\theta)f(y).
+\]
+\end{definition}
+
+\begin{center}
+\includegraphics[height=0.45\textheight]{figures/fig7.5a.pdf}
+\includegraphics[height=0.45\textheight]{figures/fig7.5b.pdf}\let\thefootnote\relax\footnotetext{\tiny{KPM Fig. 7.5}}
+\end{center}
+
+\end{frame}
+
 \begin{frame}{Convergence Theorem for Fixed Step Size}
 \begin{theorem}
 Suppose $f:\reals^{d}\to\reals$ is convex and differentiable, and
-$\del f$ is \textbf{Lipschitz continuous} with constant $L>0$, i.e.
+$\del f$ is \textbf{Lipschitz continuous} with constant $L>0$ (\textbf{$L$-smooth}), i.e.
 \[
 \|\del f(x)-\del f(x')\|\le L\|x-x'\|
 \]
@@ -379,6 +448,26 @@ $f(x)$ is below quadratic. Jump to minimizer of quadratic.}
 \end{theorem}
 
 This says that gradient descent is guaranteed to converge and that it converges with rate $O(1/k)$.
+\end{frame}
+
+\begin{frame}{Strongly Convex Functions}
+\begin{definition}
+A function f is $\mu$-strongly convex if
+$$f(x') \ge f(x) + \nabla f(x) \dot (x' - x) + \frac{\mu}{2} \lVert x - x' \rVert^2$$
+\end{definition}
+\begin{center}
+\includegraphics[width=0.6\textwidth]{figures/strongly_convex.png}
+\end{center}
+\end{frame}
+
+\begin{frame}{Convergence Theorem for Strongly Convex Functions}
+\begin{theorem}
+If $f$ is L-smooth and $\mu$-strongly convex, and step size $0 < \eta \le \frac{1}{L}$, then gradient descent converges with the following inequality:
+$$
+\lVert x^{(k)} - x^* \rVert^2 \le (1-\eta\mu)^k \lVert x^{(0)} - x^* \rVert^2
+$$
+\end{theorem}
+This means we can get linear convergence, but it depends on $\mu$. If the estimate of $\mu$ is bad then the rate is not great.
 \end{frame}
 %
 
@@ -411,10 +500,13 @@ choosing.
 \item Parameterized by $w\in\reals^{d}$.
 \end{itemize}
 
+\pause
 \item Finding an empirical risk minimizer entails finding a $w$ that minimizes
 \[
 \hat{R}_{n}(w)=\frac{1}{n}\sum_{i=1}^{n}\loss(f_{w}(x_{i}),y_{i})
 \]
+
+\pause
 \item Suppose $\loss(f_{w}(x_{i}),y_{i})$ is differentiable as a function
 of $w$.
 \item Then we can do gradient descent on $\hat{R}_{n}(w)$
@@ -526,15 +618,19 @@ batch gradient. What does that mean?
 \]
 \pause
 \item The bigger the minibatch, the better the estimate. 
-    $$
-        \frac{1}{N}\text{Var}\pb{\del\hat{R}_1(w)} = 
-        \text{Var}\pb{\del\hat{R}_N(w)}
-        $$
+    % $$
+    %     \frac{1}{N}\text{Var}\pb{\del\hat{R}_1(w)} = 
+    %     \text{Var}\pb{\del\hat{R}_N(w)}
+    %     $$
+    \begin{align*}
+    \text{Var}\pb{\del\hat{R}_N(w)} &= \text{Var}\pb{\frac{1}{N} \sum_i \del \hat{R}_i(w)} = \frac{1}{N^2} \text{Var} \pb{\sum_i \del \hat{R}_i(w)} = \frac{1}{N} \text{Var} \pb{\del \hat{R}_i(w)}
+    \end{align*}
 \pause
 \item Tradeoffs of minibatch size:
 \begin{itemize}
 \item Bigger $N$ $\implies$Better estimate of gradient, but slower (more
 data to process)
+\pause
 \item Smaller $N$ $\implies$Worse estimate of gradient, but can be quite
 fast 
 \end{itemize}
@@ -551,7 +647,9 @@ fast
         \item Theoretically, GD is much faster than SGD in terms of convergence rate:
             \begin{itemize}
                 \item much faster to add a digit of accuracy.
+                \pause
                 \item but most of that advantage comes into play once we're already pretty close to the minimum.
+                \pause
                 \item However, in many ML problems we don't care about optimizing to high accuracy
             \end{itemize}
     \end{itemize}
@@ -571,11 +669,44 @@ fast
 
     \begin{itemize}
         \item For SGD, fixed step size can work well in practice.
+        \pause
         \item Typical approach: Fixed step size reduced by constant factor
-whenever validation performance stops improving.
-        \item Other schedules: inverse time decay, cosine decay, etc.
+whenever validation performance stops improving (staircase decay).
+        \pause
+        \item Other schedules: inverse time decay (1/t) etc.
     \end{itemize}
 \end{frame}
+
+\begin{frame}{Convergence of SGD Theorem (Optional)}
+More on why we need a diminishing step size.
+\begin{theorem}
+If $f$ is $L$-smooth and convex, and SGD has bounded variance $Var(\nabla f(x^{(k)})) \le \sigma^2$ for all $k$, then SGD with step size $\eta \le \frac{1}{L}$ satisifies:
+% $$\mathbb{E}[f(x^{(k)}) - f(x^*)] \le  \frac{\lVert x_0 - x^* \rVert^2}{2\eta k} + \frac{\eta \sigma^2}{2}$$
+$$\min_k \mathbb{E}[||f(x^{(k)} ||^2] \le \frac{f(x^{(0)}- f(x^*))}{\sum_k \eta_k} + \frac{L\sigma^2}{2} \frac{\sum_k \eta_k^2}{\sum_k \eta_k}$$
+\end{theorem}
+
+The extra term of variance will dominate if the step size does not decrease. \footnote{\url{https://www.cs.ubc.ca/~schmidtm/Courses/540-W19/L11.pdf}}
+\begin{center}
+\includegraphics[width=0.35\textwidth]{figures/noisy_dominant.png}
+\end{center}
+\end{frame}
+
+\begin{frame}{Convergence of SGD Theorem (Optional)}
+\begin{theorem}
+If $f$ is $L$-smooth and convex, and SGD has bounded variance $Var(\nabla f(x^{(k)})) \le \sigma^2$ for all $k$, then SGD with step size $\eta \le \frac{1}{L}$ satisifies:
+% $$\mathbb{E}[f(x^{(k)}) - f(x^*)] \le  \frac{\lVert x_0 - x^* \rVert^2}{2\eta k} + \frac{\eta \sigma^2}{2}$$
+$$\min_k \mathbb{E}[||f(x^{(k)} ||^2] \le \frac{f(x^{(0)}- f(x^*))}{\sum_k \eta_k} + \frac{L\sigma^2}{2} \frac{\sum_k \eta_k^2}{\sum_k \eta_k}$$
+\end{theorem}
+
+\begin{itemize}
+\item If $\eta_k = \eta$, then $\sum_k \eta_k = k\eta \sum_k \eta_k^2 = k \eta^2$, error=$\textcolor{ao(english)}{O(1/k)} + \textcolor{red}{O(\eta)}$.
+\pause
+\item If $\eta_k = \eta / k$, then $\sum_k \eta_k = O(log(t)) \sum_k \eta_k^2 = O(1)$, error=$\textcolor{red}{O(1/\log(t))}$.
+\pause
+\item If $\eta_k = \eta / \sqrt{k}$, then $\sum_k \eta_k = O(\sqrt{k}) \sum_k \eta_k^2 = O(\log(k))$, error=$\textcolor{ao(english)}{O(log(k)/\sqrt{k})} = \textcolor{ao(english)}{\tilde{O}(1/\sqrt{k})}$.
+\end{itemize}
+\end{frame}
+
 %
 \begin{frame}{Summary}
 \begin{itemize}
@@ -584,22 +715,24 @@ whenever validation performance stops improving.
 \item Use full data set of size $n$ to determine step direction
 \end{itemize}
 
+\pause
 \item \textbf{Minibatch gradient descent}
 \begin{itemize}
     \item Use a \textbf{random} subset of size $N$ to determine step direction
 \end{itemize}
 
+\pause
 \item \textbf{Stochastic gradient descent}
 \begin{itemize}
 \item Minibatch with $N=1$.
 \item Use a single randomly chosen point to determine step direction.
 \end{itemize}
 \end{itemize}
+\pause
 
-    These days terminology isn't used so consistently, so always clarify
-    the {[}mini{]}batch size.
+These days terminology isn't used so consistently, so when referring to SGD, always clarify the {[}mini{]}batch size.
 
-    SGD is much more efficient in time and memory cost and has been quite successful in large-scale ML.
+SGD is much more efficient in time and memory cost and has been quite successful in large-scale ML.
 \end{frame}
 
 \begin{frame}
@@ -638,7 +771,9 @@ whenever validation performance stops improving.
     \item Examples:
         \begin{itemize}
             \item Predicting the stock price given history prices
+            \pause
             \item Predicting medical cost of given age, sex, region, BMI etc.
+            \pause
             \item Predicting the age of a person based on their photos
         \end{itemize}
 
@@ -696,12 +831,16 @@ whenever validation performance stops improving.
 \[
 \ell(\hat{y}+b,y+b)=\ell\left(\hat{y},y\right)\qquad\forall b\in\reals.
 \]
+\pause
 
 \item When might you not want to use a translation-invariant loss?
+% Output the weather location -> should be the same if the distance off by 2 km.
+% Predict the time of arrival -> should be the same if the time is 
 
 \pause{}
 \item Sometimes the relative error $\frac{\hat{y}-y}{y}$ is a more natural
 loss (but not translation-invariant)
+% Stock price, off by 50 cents may not sound so bad if the price is $100.
 
 \pause
 \item Often you can transform response $y$ so it's translation-invariant
@@ -738,8 +877,11 @@ $y$ & $\hat{y}$ & $\left|r\right|=\left|y-\hat{y}\right|$ & $r^{2}=\left(y-\hat{
 \end{description}
 
 \begin{itemize}
-    \item Outliers typically have large residuals. (What is an outlier?)
-\item Square loss much more affected by outliers than absolute loss.
+    \item Outlier is a data point that differs significantly from other observations.
+    \pause
+    \item Outliers typically have large residuals.
+    \pause
+    \item Square loss much more affected by outliers than absolute loss.
 \end{itemize}
 \end{frame}
 
@@ -786,19 +928,19 @@ linear for $\left|r\right|>\delta$ (\emph{robust and differentiable})
     \item Examples:
         \begin{itemize}
             \item Predict whether the image contains a cat
-            \item Predict whether the email is SPAM
+            \item Predict whether the email is spam
         \end{itemize}
 
     \pause
 
     \item Classification spaces:
-    % \begin{itemize}
-    %     \item Input space $\reals^d$
-    %     \item Outcome space $\cy=\left\{ -1,1\right\} $
-    %     % \item Action space $\ca=\reals$ (easier to work with than $\ca=\left\{ -1,1\right\} $)
-    % \end{itemize}
+    \begin{itemize}
+        \item Input space $\reals^d$
+        \item Outcome space $\cy=\left\{ -1,1\right\} $
+        % \item Action space $\ca=\reals$ (easier to work with than $\ca=\left\{ -1,1\right\} $)
+    \end{itemize}
 
-            \pause
+    \pause
     \item Inference:
         \vspace{-2ex}
         \begin{itemize}
@@ -809,6 +951,8 @@ linear for $\left|r\right|>\delta$ (\emph{robust and differentiable})
             \end{align*}
         \end{itemize}
     \end{itemize}
+    \pause
+    How can we optimize the model output?
 \end{frame}
 
 \begin{frame}{The Score Function}
@@ -821,6 +965,7 @@ linear for $\left|r\right|>\delta$ (\emph{robust and differentiable})
 The value $f(x)$ is called the \textbf{score} for the input $x$. 
 \end{definition}
 
+\pause
 \begin{itemize}
 \item In this context, $f$ may be called a \textbf{score function}.
 \item The magnitude of the score can be interpreted as our \textbf{confidence
@@ -838,6 +983,7 @@ score $\hat{y}$ and the true class $y\in\left\{ -1,1\right\} $ is $y\hat{y}$.
 \begin{itemize}
 \item The margin is often written as $yf(x)$, where $f(x)$ is our score function.
 
+\pause
 \item The margin is a measure of how \textbf{correct} we are:
 
 \begin{itemize}
@@ -846,8 +992,11 @@ and margin is \textbf{positive}.
 \item If $y$ and $\hat{y}$ have different sign, prediction is \textbf{incorrect}
 and margin is \textbf{negative}.
 \end{itemize}
-    \item We want to \textbf{maximize the margin}
-    \item Most classification losses depend only on the margin (they are \textbf{margin-based losses}).
+
+\pause
+\item We want to \textbf{maximize the margin}
+\pause
+\item Most classification losses depend only on the margin (they are \textbf{margin-based losses}).
 \end{itemize}
 \end{frame}
 
@@ -858,14 +1007,17 @@ and margin is \textbf{negative}.
     \[
         \loss\left(f(x),y\right)=\ind{\tilde{f}(x)\neq y}
     \]
+    \pause
 \item Empirical risk for $0-1$ loss:
 \[
 \hat{R}_{n}(f)=\frac{1}{n}\sum_{i=1}^{n}\ind{y_{i}f(x_{i})\leq0}
 \]
 \end{itemize}
 
+\pause
 \begin{alertblock}{Minimizing empirical $0-1$ risk not computationally feasible}
 
+\pause
 $\hat{R}_{n}(f)$ is non-convex, not differentiable, and even discontinuous.
 \end{alertblock}
 \end{frame}
@@ -891,17 +1043,17 @@ SVM/Hinge loss: $\loss_{\text{Hinge}}=\max\left(1-m,0\right)$
 Hinge is a \textbf{convex}, \textbf{upper bound} on $0-1$ loss. Not
 differentiable at $m=1$.
 
-We will cover SVM and Hinge loss in more details in week 4.
+We will cover SVM and Hinge loss in more details in future lectures.
 \end{frame}
 
 \begin{frame}{Logistic Regression}
 
 \begin{itemize}
-    \item Aka linear classification. Logistic regression is not actually ``regression.''
-    \item Two equivalent types of logistic regression losses.
+    \item Also known as linear classification. Logistic regression is not actually ``regression.''
+    \item Two equivalent types of logistic regression losses, depending on the labels.
     \pause
     \item If the label is 0 or 1:
-    \item $\hat y = \sigma(z)$, where $\sigma$ is the sigmoid function.
+    \item $\hat y = \sigma(z)$, where $\sigma$ is the sigmoid function, and $z=f(x)=w^\top x$.
     \[
     \sigma(z) = \frac{1}{1+ \exp(-z)}
     \]
@@ -943,11 +1095,8 @@ We will cover SVM and Hinge loss in more details in week 4.
     -\log(\sigma(-z)) & \text{if\ \ \ } y = -1
     \\
     \end{cases}\\
-    \pause
     &= -\log(\sigma(yz)) \\
-    \pause
     &= -\log(\frac{1}{1+e^{-yz}}) \\
-    \pause
     &= \log(1+ e^{-m}).
     \end{align*}
 \end{itemize}
@@ -968,7 +1117,7 @@ Logistic loss is differentiable. Logistic loss always rewards a larger margin
 \begin{itemize}
 % \item Action space $\ca=\reals\qquad$Output space $\cy=\left\{ -1,1\right\} $
 \item Loss $\ell(f(x),y)=\left(f(x)-y\right)^{2}$.
-
+\pause
 \item Turns out, can write this in terms of margin $m=f(x)y$:
 \item Using fact that $y^{2}=1$, since $y\in\left\{ -1,1\right\} $.
 \begin{eqnarray*}
