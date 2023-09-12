@@ -1,6 +1,6 @@
 %% LyX 2.3.4.2 created this file.  For more info, see http://www.lyx.org/.
 %% Do not edit unless you really know what you are doing.
-\documentclass[english,dvipsnames,aspectratio=169]{beamer}
+\documentclass[english,dvipsnames,aspectratio=169,handout]{beamer}
 \usepackage{mathptmx}
 \usepackage{eulervm}
 \usepackage[T1]{fontenc}
@@ -158,7 +158,7 @@
 
 \begin{block}{Prediction Function}
 
-A \textbf{prediction function} gets input $x$ and produces an output $y = f(x)$.
+A \textbf{prediction function} gets input $x$ and produces an output $\hat{y} = f(x)$.
 % \[
 % \begin{matrix}f: & \cx & \rightarrow & \cy\\
 %  & x & \mapsto & f(x)
@@ -317,6 +317,7 @@ x^{*}=\arg\min_{x\in\reals^{d}}f(x)
 \item The \textbf{gradient} of $f$  at the point $x_{0}$, denoted $\del_{x}f(x_{0})$,
     is the direction in which $f(x)$ \textbf{increases fastest},
 if we start from $x_{0}$.
+\item The \textbf{gradient} of $f$ is the partial derivatives of all dimensions: $\nabla f(x) = [\partial f/\partial x_1(x), ..., \partial f/\partial x_d(x)]. $
 \end{itemize}
 \pause
 \begin{center}
@@ -392,7 +393,9 @@ A fixed step size will work, eventually, as long as it's small enough
 \begin{frame}{Notes on Convergence}
 \begin{itemize}
     \item Gradient descent with an appropriate step size converges to stationary point (derivative = 0) for differentiable functions.
+    \pause
     \item Stationary points can be (local) minima, (local) maxima, saddle points, etc.
+    \pause
     \item Gradient descent can converge to global minimum for \textbf{convex functions}.
 \end{itemize}
 \end{frame}
@@ -453,7 +456,7 @@ This says that gradient descent is guaranteed to converge and that it converges 
 \begin{frame}{Strongly Convex Functions}
 \begin{definition}
 A function f is $\mu$-strongly convex if
-$$f(x') \ge f(x) + \nabla f(x) \dot (x' - x) + \frac{\mu}{2} \lVert x - x' \rVert^2$$
+$$f(x') \ge f(x) + \nabla f(x) \cdot (x' - x) + \frac{\mu}{2} \lVert x - x' \rVert^2$$
 \end{definition}
 \begin{center}
 \includegraphics[width=0.6\textwidth]{figures/strongly_convex.png}
@@ -482,9 +485,9 @@ choosing.
 \pause
 
 \begin{itemize}
-\item Early stopping:
+\item \textbf{Early stopping:}
 \begin{itemize}
-\item evalute loss on validation data after each iteration;
+\item evalute loss on validation data (unseen held out data) after each iteration;
 \item stop when the loss does not improve (or gets worse).
 \end{itemize}
 \end{itemize}
@@ -635,7 +638,7 @@ data to process)
 fast 
 \end{itemize}
 \pause
-\item Because of vectorization, we can often get minibatches of certain sizes for free
+\item Because of vectorization, the computation cost of minibatches is sublinear
 \end{itemize}
 \end{frame}
 %
@@ -644,13 +647,15 @@ fast
     \begin{itemize}
         \item For convergence guarantee, use \textbf{diminishing step sizes},
             e.g. $\eta_k = 1/k$
-        \item Theoretically, GD is much faster than SGD in terms of convergence rate:
+        \item Theoretically, GD is much faster than SGD in terms of convergence rate and number of steps:
             \begin{itemize}
-                \item much faster to add a digit of accuracy.
+                \item much faster to add a digit of accuracy (more details later)
                 \pause
-                \item but most of that advantage comes into play once we're already pretty close to the minimum.
+                \item costlier to compute a single step
                 \pause
-                \item However, in many ML problems we don't care about optimizing to high accuracy
+                \item but most of that advantage comes into play once we're already pretty close to the minimum
+                \pause
+                \item in many ML problems we don't care about optimizing to high accuracy (why?)
             \end{itemize}
     \end{itemize}
 \end{frame}
@@ -699,11 +704,11 @@ $$\min_k \mathbb{E}[||f(x^{(k)} ||^2] \le \frac{f(x^{(0)}- f(x^*))}{\sum_k \eta_
 \end{theorem}
 
 \begin{itemize}
-\item If $\eta_k = \eta$, then $\sum_k \eta_k = k\eta \sum_k \eta_k^2 = k \eta^2$, error=$\textcolor{ao(english)}{O(1/k)} + \textcolor{red}{O(\eta)}$.
+\item If $\eta_k = \eta$, then $\sum_k \eta_k = k\eta, \sum_k \eta_k^2 = k \eta^2$, error=$\textcolor{ao(english)}{O(1/k)} + \textcolor{red}{O(\eta)}$.
 \pause
-\item If $\eta_k = \eta / k$, then $\sum_k \eta_k = O(log(t)) \sum_k \eta_k^2 = O(1)$, error=$\textcolor{red}{O(1/\log(t))}$.
+\item If $\eta_k = \eta / k$, then $\sum_k \eta_k = O(log(k)), \sum_k \eta_k^2 = O(1)$, error=$\textcolor{red}{O(1/\log(k))}$.
 \pause
-\item If $\eta_k = \eta / \sqrt{k}$, then $\sum_k \eta_k = O(\sqrt{k}) \sum_k \eta_k^2 = O(\log(k))$, error=$\textcolor{ao(english)}{O(log(k)/\sqrt{k})} = \textcolor{ao(english)}{\tilde{O}(1/\sqrt{k})}$.
+\item If $\eta_k = \eta / \sqrt{k}$, then $\sum_k \eta_k = O(\sqrt{k}), \sum_k \eta_k^2 = O(\log(k))$, error=$\textcolor{ao(english)}{O(log(k)/\sqrt{k})} = \textcolor{ao(english)}{\tilde{O}(1/\sqrt{k})}$.
 \end{itemize}
 \end{frame}
 
@@ -877,7 +882,7 @@ $y$ & $\hat{y}$ & $\left|r\right|=\left|y-\hat{y}\right|$ & $r^{2}=\left(y-\hat{
 \end{description}
 
 \begin{itemize}
-    \item Outlier is a data point that differs significantly from other observations.
+    \item An outlier is a data point that differs significantly from other observations.
     \pause
     \item Outliers typically have large residuals.
     \pause
@@ -994,7 +999,7 @@ and margin is \textbf{negative}.
 \end{itemize}
 
 \pause
-\item We want to \textbf{maximize the margin}
+\item We want to \textbf{maximize the margin}.
 \pause
 \item Most classification losses depend only on the margin (they are \textbf{margin-based losses}).
 \end{itemize}
@@ -1015,7 +1020,7 @@ and margin is \textbf{negative}.
 \end{itemize}
 
 \pause
-\begin{alertblock}{Minimizing empirical $0-1$ risk not computationally feasible}
+\begin{alertblock}{Minimizing empirical $0-1$ risk not computationally feasible.}
 
 \pause
 $\hat{R}_{n}(f)$ is non-convex, not differentiable, and even discontinuous.
