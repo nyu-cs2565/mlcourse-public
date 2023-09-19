@@ -19,6 +19,7 @@
 %\pgfplotsset{compat=1.17}
 \usepackage{booktabs}
 \usepackage{xpatch}
+\usepackage{bbm}
 
 \xpatchcmd{\itemize}
   {\def\makelabel}
@@ -145,6 +146,7 @@
     \pause
     \begin{itemize}
         \item Bigger $\sF$: better approximation but can overfit (need more samples)
+        \pause
         \item Smaller $\sF$: less likely to overfit but can be farther from the true function
     \end{itemize}
     \pause
@@ -152,6 +154,7 @@
     To control the ``size'' of $\sF$, we need some measure of its \hl{complexity}:
     \begin{itemize}
         \item Number of variables / features
+        \pause
         \item Degree of polynomial
     \end{itemize}
 \end{frame}
@@ -197,6 +200,7 @@ $
                 $\pc{X_2}$,
                 $\pc{X_1, X_2}$, respectively
             \end{itemize}
+        \pause
         \item \al{Not an efficient search algorithm}; iterating over all subsets becomes very expensive with a large number of features 
     \end{itemize}
 \end{frame}
@@ -236,6 +240,7 @@ $
             \end{itemize}
         \item Forward \& backward selection do not guarantee to find the best solution.
         \item Forward \& backward selection do not in general result in the same subset.
+        \item Could there be a more consistent way of formulating feature selection as an optimization problem?
     \end{itemize}
 \end{frame}
 
@@ -249,9 +254,9 @@ $
     \begin{align}
         \text{score}(S) = \text{training\_loss}(S) + \lambda |S|
     \end{align}
-    \pause
 
-    $\lambda$ balances the training loss and the number of features used:
+    $\lambda$ balances the training loss and the number of features used.
+    \pause
     \begin{itemize}
         \item Adding an extra feature must be justified by at least $\lambda$ improvement in training loss
         \item Larger $\lambda$ $\rightarrow$ complex models are penalized more heavily
@@ -279,7 +284,18 @@ As usual, we find $\lambda$ using the validation data.
 
 \pause
 
-Number of features as complexity measure is hard to optimize---other measures?
+Number of features as complexity measure is not differentiable and hard to optimize---other measures?
+\end{frame}
+
+\begin{frame}{Soft Selection}
+    \begin{itemize}
+        \item We can imagine having a weight for each feature dimension.
+        \pause
+        \item In linear regression, the model weights multiply each feature dimension:
+        $$f(x) = w^\top x$$
+        \pause
+        \item If $w_i$ is zero or close to zero, then it means that we are not using the $i$-th feature.
+    \end{itemize}
 \end{frame}
 
 \begin{frame}
@@ -291,7 +307,7 @@ Number of features as complexity measure is hard to optimize---other measures?
     \begin{itemize}[<+->]
         % \item (Draw on board)
         \item Why would we prefer a regression line with \hl{smaller slope} (unless the data strongly supports a larger slope)?
-        \item More conservative: small change in the input does not cause large change in the output
+        \item More stable: small change in the input does not cause large change in the output
         \item If we push the estimated weights to be small, re-estimating them on a new dataset wouldn't cause the prediction function to change dramatically (\hl{less sensitive to noise in data})
         % \item Bayesian intuition: our ``prior'' intuition is that weights are small and centered at 0. Pull the regression weights towards a prior centered at 0
     \end{itemize}
@@ -300,11 +316,14 @@ Number of features as complexity measure is hard to optimize---other measures?
 \begin{frame}
     {Weight Shrinkage: Polynomial Regression}
     \begin{figure}
-        \includegraphics[height=4.5cm]{figures/poly-regression}
+        \includegraphics[height=4cm]{figures/poly-regression}
     \end{figure}
     \begin{itemize}
     \vspace{-0.5cm}
+    \item n-th feature dimension is the n-th power of x: $1, x, x^2, ...$ 
+    \pause
     \item Large weights are needed to make the curve wiggle sufficiently to overfit the data
+    \pause
     \item $\hat{y} = 0.001x^7 + 0.003x^3 + 1$ less likely to overfit than $\hat{y} = 1000x^7 + 500x^3 + 1$
     \end{itemize}
     \small{(Adapated from Mark Schmidt's slide)}
@@ -377,6 +396,7 @@ of $\hat{f}$.
     \begin{itemize}
         \setlength\itemsep{1ex}
         \item Linear: $L(w) = \frac{1}{2}\|Xw - y\|_2^2$
+        \pause
         \item Ridge: $L(w) = \frac{1}{2}\|Xw - y\|_2^2 + {\color{blue}\frac{\lambda}{2}{\|w\|_2^2}}$
     \end{itemize}
     \pause
@@ -385,6 +405,7 @@ of $\hat{f}$.
     \begin{itemize}
         \setlength\itemsep{1ex}
         \item Linear: $\nabla L(w) = X^T(Xw - y)$
+        \pause
         \item Ridge: $\nabla L(w) = X^T(Xw - y) + {\color{blue}\lambda w}$
             \begin{itemize}
                 \item Also known as \textbf{weight decay} in neural networks
@@ -395,13 +416,79 @@ of $\hat{f}$.
     \head{Closed-form solution}:\\
     \begin{itemize}
         \setlength\itemsep{1ex}
-        \item Linear: $X^TXw = X^Ty$
-        \item Ridge: $(X^TX + {\color{blue}\lambda I})w = X^Ty$
+        \item Linear: $X^TXw = X^Ty$ -> $w = (X^T X)^{-1} X^T y$
+        \pause
+        \item Ridge: $(X^TX + {\color{blue}\lambda I})w = X^Ty$ -> $w = (X^T X + {\color{blue}\lambda I})^{-1} X^T y$
             \begin{itemize}
                 \item $(X^TX + {\color{blue}\lambda I})$ is always invertible
             \end{itemize}
     \end{itemize}
 \end{frame}
+
+\begin{frame}{Constrained Optimization}
+\begin{itemize}
+    \item L2 regularizer is a term in our optimization objective.
+    $$w^* = \argmin_{w} \frac{1}{2}\|Xw - y\|_2^2 + {\color{blue}\frac{\lambda}{2}{\|w\|_2^2}}$$
+    \item This is also called the \textbf{Tikhonov} form.
+    \pause
+    \item The Lagrangian theory allows us to interpret the second term as a constraint.
+    $$w^* = \argmin_{w: ||w||^2_2 \le r} \frac{1}{2}\|Xw - y\|_2^2$$
+    \item At optimum, the gradients of the main objective and the constraint cancel out.
+    % \item The L2 norm needs to be less than $r$, for some $\lambda$.
+    \item This is also called the \textbf{Ivanov} form.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Ivanov vs. Tikhonov Regularization}
+\begin{itemize}
+\item Let $L:\cf\to\reals$ be any performance measure of $f$
+\begin{itemize}
+\item e.g. $L(f)$ could be the empirical risk of $f$
+\end{itemize}
+\pause
+
+\item For many $L$ and $\Omega$, Ivanov and Tikhonov are equivalent:
+\begin{itemize}
+\item Any solution $f^{*}$ we can get from Ivanov, we can also get from
+Tikhonov.
+\item Any solution $f^{*}$ we can get from Tikhonov, we can also get from
+Ivanov.
+\end{itemize}
+\pause
+\item The conditions for this equivalence can be derived from the Lagrangian theory.
+\pause
+\item In practice, both approaches are effective: we will use whichever one is more convenient for training or analysis. 
+\end{itemize}
+\end{frame}
+
+
+% \begin{frame}{Ivanov vs Tikhonov Regularization (Details) }
+% Ivanov and Tikhonov regularization are equivalent if:
+% \begin{enumerate}
+% \item For any choice of $r>0$, any Ivanov solution
+% \[
+% \minimizer{f_{r}}\in\argmin_{\substack{f\in\cf}
+% }L(f)\mbox{ s.t. }\Omega(f)\le r
+% \]
+% is also a Tikhonov solution for some $\lambda>0$. That is, $\exists\lambda>0$
+% such that
+% \[
+% \minimizer{f_{r}}\in\argmin_{f\in\cf}L(f)+\lambda\Omega(f).
+% \]
+
+
+% \item Conversely, for any choice of $\lambda>0$, any Tikhonov solution:
+% \[
+% \minimizer{f_{\lambda}}\in\argmin_{f\in\cf}L(f)+\lambda\Omega(f)
+% \]
+% is also an Ivanov solution for some $r>0$. That is, $\exists r>0$
+% such that
+% \[
+% \minimizer{f_{\lambda}}\in\argmin_{\substack{f\in\cf}
+% }L(f)\mbox{ s.t. }\Omega(f)\le r
+% \]
+% \end{enumerate}
+% \end{frame}
 
 \begin{frame}{Ridge Regression: Regularization Path}
     %\textbf{Regulariztion path} shows how the weights vary as we change the regularization strength
@@ -431,17 +518,18 @@ of $\hat{f}$.
 where $\|w\|_{1}=\left|w_{1}\right|+\cdots+\left|w_{d}\right|$ is
 the $\ell_{1}$-norm.
 \end{block}
-
-        (``Least Absolute Shrinkage and Selection Operator'')
+        % (``Least Absolute Shrinkage and Selection Operator'')
 \end{frame}
 
 \begin{frame}{Ridge vs. Lasso: Regularization Paths}
-Lasso yields sparse weights:
 
 \let\thefootnote\relax\footnotetext{\tiny{Modified from Hastie, Tibshirani, and Wainwright's \emph{Statistical Learning with Sparsity}, Fig 2.1. About predicting crime in 50 US cities.}}
 \begin{center}
-\includegraphics[height=0.7\textheight]{figures/lasso-ridge-paths-side-by-side}
+\includegraphics[height=0.6\textheight]{figures/lasso-ridge-paths-side-by-side}
 \par\end{center}
+
+\pause
+Lasso yields sparse weights.
 \end{frame}
 
 \begin{frame}{The Benefits of Sparsity}
@@ -463,7 +551,20 @@ The coefficient for a feature is $0$ $\implies$ the feature is not needed for pr
 \end{frame}
 
 \section{Why does $\ell_1$ Regularization Lead to Sparsity?}
-\begin{frame}{Regularization as Constrained Empirical Risk Minimization}
+
+
+\begin{frame}{Lasso Regression}
+    Penalize the $\ell_1$ norm of the weights:
+\begin{block}{Lasso Regression (Tikhonov Form, soft penalty)}
+\[
+\hat{w}=\argmin_{w\in\reals^{d}}\frac{1}{n}\sum_{i=1}^{n}\left\{ w^{T}x_{i}-y_{i}\right\} ^{2}+\lambda\|w\|_{1},
+\]
+where $\|w\|_{1}=\left|w_{1}\right|+\cdots+\left|w_{d}\right|$ is
+the $\ell_{1}$-norm.
+\end{block}
+\end{frame}
+
+\begin{frame}{Regularization as Constrained ERM}
 \begin{block}{Constrained ERM (Ivanov regularization)}
 For complexity measure $\Omega:\cf\to[0,\infty)$ and fixed $r\ge0$,
 \begin{align*}
@@ -481,55 +582,7 @@ The lasso regression solution for complexity parameter $r\ge0$ is
     $r$ has the same role as $\lambda$ in penalized ERM (Tikhonov).
 \end{frame}
 
-\begin{frame}{Ivanov vs. Tikhonov Regularization}
-\begin{itemize}
-\item Let $L:\cf\to\reals$ be any performance measure of $f$
-\begin{itemize}
-\item e.g. $L(f)$ could be the empirical risk of $f$
-\end{itemize}
-\pause
 
-\item For many $L$ and $\Omega$, Ivanov and Tikhonov are equivalent:
-\begin{itemize}
-\item Any solution $f^{*}$ we can get from Ivanov, we can also get from
-Tikhonov.
-\item Any solution $f^{*}$ we can get from Tikhonov, we can also get from
-Ivanov.
-\end{itemize}
-\pause
-\item The conditions for this equivalence can be derived from Lagrangian duality theory.
-\pause
-\item In practice, both approaches are effective: we will use whichever one is more convenient for training or analysis. 
-\end{itemize}
-\end{frame}
-
-%\begin{frame}{Ivanov vs Tikhonov Regularization (Details) }
-%Ivanov and Tikhonov regularization are equivalent if:
-%\begin{enumerate}
-%\item For any choice of $r>0$, any Ivanov solution
-%\[
-%\minimizer{f_{r}}\in\argmin_{\substack{f\in\cf}
-%}L(f)\mbox{ s.t. }\Omega(f)\le r
-%\]
-%is also a Tikhonov solution for some $\lambda>0$. That is, $\exists\lambda>0$
-%such that
-%\[
-%\minimizer{f_{r}}\in\argmin_{f\in\cf}L(f)+\lambda\Omega(f).
-%\]
-
-
-%\item Conversely, for any choice of $\lambda>0$, any Tikhonov solution:
-%\[
-%\minimizer{f_{\lambda}}\in\argmin_{f\in\cf}L(f)+\lambda\Omega(f)
-%\]
-%is also an Ivanov solution for some $r>0$. That is, $\exists r>0$
-%such that
-%\[
-%\minimizer{f_{\lambda}}\in\argmin_{\substack{f\in\cf}
-%}L(f)\mbox{ s.t. }\Omega(f)\le r
-%\]
-%\end{enumerate}
-%\end{frame}
 
 \begin{frame}{The $\ell_{1}$ and $\ell_{2}$ Norm Constraints}
 \begin{itemize}
@@ -680,13 +733,13 @@ space)
 \item Consider any number $a\in\reals$.
 \item Let the \textbf{positive part} of $a$ be
 \[
-a^{+}=a\ind{a\ge0}.
+a^{+}=a \ind{a\ge0}.
 \]
 
 
 \item Let the \textbf{negative part} of $a$ be
 \[
-a^{-}=-a\ind{a\le0}.
+a^{-}=-a \ind{a\le0}.
 \]
 
 \pause
@@ -713,9 +766,12 @@ results in an \hl{equivalent} problem:
 \begin{itemize}
 \item This objective is \textbf{differentiable} (in fact, \textbf{convex and
 quadratic})
+\pause
 \item How many variables does the new objective have?
+\pause
 \item This is a \textbf{quadratic program}: a convex quadratic objective with
 linear constraints.
+\pause
 \item Quadratic programming is a very well understood problem; we can plug this into a generic QP solver.
 \end{itemize}
 \end{frame}
