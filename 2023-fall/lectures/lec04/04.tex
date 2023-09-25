@@ -19,6 +19,7 @@
 %\pgfplotsset{compat=1.17}
 \usepackage{booktabs}
 \usepackage{xpatch}
+\usepackage{bbm}
 
 \xpatchcmd{\itemize}
   {\def\makelabel}
@@ -133,15 +134,327 @@
 \makebeamertitle
 \mode<article>{Just in article version}
 
+
+\section{Maximum Margin Classifier}
+
+\begin{frame}
+    {Linearly Separable Data}
+    Consider a linearly separable dataset $\sD$:
+    \begin{figure}
+        \includegraphics[height=0.5\textheight]{figures/lin-sep-data}
+    \end{figure}
+    Find a separating hyperplane such that
+    \begin{itemize}
+        \item $w^Tx_i > 0$ for all $x_i$ where $y_i=+1$
+        \item $w^Tx_i < 0$ for all $x_i$ where $y_i=-1$
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+    {The Perceptron Algorithm}
+    \begin{itemize}
+        \setlength\itemsep{1ex}
+        \item Initialize $w \leftarrow 0$
+        \item While not converged (exists misclassified examples)
+            \begin{itemize}
+                \item For $(x_i, y_i)\in\sD$
+                    \begin{itemize}
+                        \item If $y_i w^Tx_i < 0$ (wrong prediction)
+                        \item Update $w \leftarrow w + y_ix_i$
+                    \end{itemize}
+            \end{itemize}
+    \end{itemize}
+    \pause
+    \begin{itemize}
+        \item Intuition: move towards misclassified positive examples and away from negative examples
+        \pause
+        \item Guarantees to find a zero-error classifier (if one exists) in finite steps
+        \pause
+        \item What is the loss function if we consider this as a SGD algorithm?
+    \end{itemize}
+\end{frame}
+
+\section{Minimize the Hinge Loss}
+\begin{frame}
+    {Perceptron Loss}
+    $$
+    \ell(x,y,w) = \max(0, -yw^Tx)
+    $$
+    \begin{figure}
+        \includegraphics[height=0.5\textheight]{figures/perceptron-loss}
+    \end{figure}
+\end{frame}
+
+\begin{frame}
+    {Maximum-Margin Separating Hyperplane}
+    For separable data, there are infinitely many zero-error classifiers.
+
+    Which one do we pick?
+    \begin{figure}
+        \includegraphics[height=0.5\textheight]{figures/perceptron-hyperplane}
+    \end{figure}
+
+    (Perceptron does not return a unique solution.)
+\end{frame}
+
+\begin{frame}
+    {Maximum-Margin Separating Hyperplane}
+    We prefer the classifier that is farthest from both classes of points
+    \begin{figure}
+        \includegraphics[height=0.5\textheight]{figures/margin}
+    \end{figure}
+    \begin{itemize}
+        \item Geometric margin: smallest distance between the hyperplane and the points 
+        \item Maximum margin: \emph{largest} distance to the closest points
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+    {Geometric Margin}
+    We want to maximize the distance between the \hl{separating hyperplane} and the \hl{closest} points.
+
+    Let's formalize the problem.
+    \begin{definition}[separating hyperplane]
+    We say $(x_i,y_i)$ for $i=1,\ldots,n$ are \textbf{linearly separable} if there
+    is a $w\in\BR^d$ and $b\in\BR$ such that $y_i(w^Tx_i+b)>0$ for all
+    $i$. The set $\{v\in\BR^d\mid w^Tv+b=0\}$ is called a \textbf{separating hyperplane}.    
+  \end{definition}
+  \pause
+
+    \begin{definition}[geometric margin]
+        Let $H$ be a hyperplane that separates the data $(x_i,y_i)$ for $i = 1,\ldots,n$. The \textbf{geometric margin} of this hyperplane is
+        $$
+        \min_i d(x_i, H),
+        $$
+    the distance from the hyperplane to the closest data point.
+    \end{definition}
+\end{frame}
+
+\begin{frame}
+    {Distance between a Point and a Hyperplane}
+    \begin{columns}
+        \begin{column}{0.5\linewidth}
+          \begin{center}
+            \includegraphics[width=\linewidth]{"figures/Distance_to_Line"} 
+          \end{center}
+        \end{column}
+        \begin{column}{0.5\linewidth}
+            \begin{itemize}
+                % \item Projection of $v\in\BR^d$ onto $w\in\BR^d$:
+                %     $\frac{v\cdot w}{\|w\|_2}$
+                \item Any point on the plane $p$, and normal vector $w/\|w\|_2$
+                \pause
+                \item Projection of x onto the normal: $\frac{(x'-p)^T w}{\|w\|_2}$
+                \pause
+                \item $(x'-p)^Tw = x'^Tw - p^Tw = x'^Tw + b \ \ (\text{since } p^Tw+b = 0)$
+                \pause
+                % \item Distance between $x'$ and $H$:
+                %     $$
+                %     d(x', H) = \left |\frac{w^Tx' + b}{\|w\|_2}\right |
+                %     $$
+                \item Signed distance between $x'$ and Hyperplane $H$:
+                $\frac{w^Tx' + b}{\|w\|_2}$
+                \pause
+                \item Taking into account of the label $y$:
+                    $d(x', H) = \frac{y(w^Tx' + b)}{\|w\|_2}$
+            \end{itemize}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}
+    {Maximize the Margin}
+    We want to maximize the geometric margin:
+    $$
+    \text{maximize} \; \min_{i} d(x_i, H) .
+    $$
+    \pause
+    Given separating hyperplane $H=\pc{v\mid w^Tv + b = 0}$, we have
+    $$
+    \text{maximize} \; \min_{i} \frac{y_i(w^Tx_i + b)}{\|w\|_2} .
+    $$
+    \pause
+    Let's remove the inner minimization problem by
+      $$\begin{array}{ll}
+      \text{maximize} & M\\
+          \text{subject to} & \frac{y_i(w^Tx_i+b)}{\|w\|_2} \geq M \quad\text{for all
+        $i$}
+    \end{array}$$
+    \pause
+    Note that the solution is not unique (why?).
+\end{frame}
+
+\begin{frame}
+    {Maximize the Margin}
+    Let's fix the norm $\|w\|_2$ to $1/M$ to obtain:
+      $$\begin{array}{ll}
+          \text{maximize} & \frac{1}{\|w\|_2}\\
+      \text{subject to} & y_i(w^Tx_i+b) \geq 1 \quad\text{for all
+        $i$}
+    \end{array}$$
+    \pause
+    It's equivalent to solving the minimization problem
+      $$\begin{array}{ll}
+          \text{minimize} & {\frac{1}{2}\|w\|_2^2}\\
+      \text{subject to} & y_i(w^Tx_i+b) \geq 1 \quad\text{for all
+        $i$}
+    \end{array}$$
+
+    Note that $y_i(w^Tx_i+b)$ is the (functional) margin.
+    The optimization finds the minimum norm solution which has a margin of at least 1 on all examples.
+\end{frame}
+
+\begin{frame}{Not linearly separable}
+    What if the data is \textit{not} linearly separable?
+
+    For any $w$, there will be points with a negative margin.
+    \begin{center}
+    \includegraphics[width=0.7\linewidth]{figures/non_separable.pdf}
+    \end{center}
+\end{frame}
+
+\begin{frame}{Soft Margin SVM}
+    % What if the data is \textit{not} linearly separable?
+    % \pause
+    % For any $w$, there will be points with a negative margin.
+    % \pause
+    Introduce \textbf{slack variables} $\xi$'s to penalize small margin:
+      $$\begin{array}{ll}
+          \text{minimize} & {\frac{1}{2}\|w\|_2^2}
+           + \frac{C}{n}\sum_{i=1}^n \xi_i \\
+      \text{subject to} & y_i(w^Tx_i+b) \geq 1 - \xi_i \quad\text{for all
+        $i$}\\
+          & \xi_i \geq 0 \quad\text{for all $i$}
+    \end{array}$$
+    \begin{itemize}
+        \setlength\itemsep{1ex}
+        \item If $\xi_i = 0 \;\forall i$, it's reduced to hard SVM.
+        \item What does $\xi_i > 0$ mean?
+        \item What does $C$ control?
+    \end{itemize}
+\end{frame}
+
+
+\begin{frame}
+    {Slack Variables}
+    $d(x_i, H) = \frac{y_i(w^Tx_i+b)}{\|w\|_2} \ge \frac{1-\xi_i}{\|w\|_2}$,
+    thus $\xi_i$ measures the violation by multiples of the geometric margin:
+    \begin{itemize}
+        \setlength\itemsep{1ex}
+        \item $\xi_i=1$: $x_i$ lies on the hyperplane
+        \item $\xi_i=3$: $x_i$ is past 2 margin width beyond the decision hyperplane 
+    \end{itemize}
+    \begin{figure}
+        \includegraphics[height=0.6\textheight]{figures/SoftMargin}
+    \end{figure}
+\end{frame}
+
+\section{Minimize the Hinge Loss}
+\begin{frame}
+    {Perceptron Loss}
+    $$
+    \ell(x,y,w) = \max(0, -yw^Tx)
+    $$
+    \begin{figure}
+        \includegraphics[height=0.5\textheight]{figures/perceptron-loss}
+    \end{figure}
+    If we do ERM with this loss function, what happens?
+    %\pdfnote{
+    %    Perceptron algorithm. Degenerate solution with w=0.
+    %}
+\end{frame}
+
+\begin{frame}{Hinge Loss}
+\begin{itemize}
+\item SVM/Hinge loss: $\loss_{\text{Hinge}}=\max\left\{ 1-m,0\right\} =\left(1-m\right)_{+}$
+\item Margin $m=yf(x)$; ``Positive part'' $(x)_{+}=x\ind{x\ge0}$.
+\end{itemize}
+\begin{center}
+\includegraphics[height=0.5\textheight]{figures/loss_Zero_One_Hinge}
+\par\end{center}
+
+Hinge is a \textbf{convex}, \textbf{upper bound} on $0-1$ loss. Not
+differentiable at $m=1$. \\
+We have a \textbf{``margin error''} when $m<1$.
+\end{frame}
+
 \begin{frame}{SVM as an Optimization Problem}
+\begin{itemize}
+\item The SVM optimization problem is equivalent to
+
+\begin{eqnarray*}
+    \textrm{minimize} &  & \frac{1}{2}||w||^{2}+\frac{c}{n}\sum_{i=1}^{n}\xi_{i}\\
+\textrm{subject to} &  & \xi_{i}\ge\left(1-y_{i}\left[w^{T}x_{i}+b\right]\right)\;\mbox{for }i=1,\ldots,n\\
+ &  & \xi_{i}\ge0\;\mbox{for }i=1,\ldots,n
+\end{eqnarray*}
+
+\pause
+which is equivalent to
+\begin{eqnarray*}
+    \textrm{minimize} &  & \frac{1}{2}||w||^{2}+\frac{c}{n}\sum_{i=1}^{n}\xi_{i}\\
+\textrm{subject to} &  & \xi_{i}\ge\max\left(0,1-y_{i}\left[w^{T}x_{i}+b\right]\right) \;\mbox{for }i=1,\ldots,n.
+\end{eqnarray*}
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}{SVM as an Optimization Problem}
+\begin{eqnarray*}
+    \textrm{minimize} &  & \frac{1}{2}||w||^{2}+\frac{c}{n}\sum_{i=1}^{n}\xi_{i}\\
+\textrm{subject to} &  & \xi_{i}\ge\max\left(0,1-y_{i}\left[w^{T}x_{i}+b\right]\right) \;\mbox{for }i=1,\ldots,n.
+\end{eqnarray*}
+
+\pause
+Move the constraint into the objective:
 \[
 \min_{w\in\reals^{d},b\in\reals}\frac{1}{2}||w||^{2}+\frac{c}{n}\sum_{i=1}^{n}\max\left(0,1-y_{i}\left[w^{T}x_{i}+b\right]\right).
 \]
+
+\pause
 \begin{itemize}
     \item The first term is the L2 regularizer.
-    \item The second term is the Hinge loss (slack variables).
+    \item The second term is the Hinge loss.
 \end{itemize}
 \end{frame}
+
+\begin{frame}{Support Vector Machine}
+    Using ERM:
+\begin{itemize}
+\item Hypothesis space $\cf=\left\{ f(x)=w^{T}x+b\mid w\in\reals^{d},b\in\reals\right\} $.
+\item $\ell_{2}$ regularization (Tikhonov style)
+\item Hinge loss $\ell(m)=\max\left\{ 1-m,0\right\} =\left(1-m\right)_{+}$
+\item The SVM prediction function is the solution to
+\[
+\min_{w\in\reals^{d},b\in\reals}\frac{1}{2}||w||^{2}+\frac{c}{n}\sum_{i=1}^{n}\max\left(0,1-y_{i}\left[w^{T}x_{i}+b\right]\right).
+\]
+\item \al{Not differentiable} because of the $\max$
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+    {Summary}
+    Two ways to derive the SVM optimization problem:
+    \begin{itemize}
+    \item Maximize the margin
+    \item Minimize the hinge loss with $\ell_2$ regularization
+    \end{itemize}
+    Both leads to the minimum norm solution satisfying certain margin constraints.
+
+    \begin{itemize}
+        \item \textbf{Hard-margin SVM}: all points must be correctly classified with the margin constraints
+        \item \textbf{Soft-margin SVM}: allow for margin constraint violation with some penalty
+    \end{itemize}
+\end{frame}
+
+% \begin{frame}{SVM as an Optimization Problem}
+% \[
+% \min_{w\in\reals^{d},b\in\reals}\frac{1}{2}||w||^{2}+\frac{c}{n}\sum_{i=1}^{n}\max\left(0,1-y_{i}\left[w^{T}x_{i}+b\right]\right).
+% \]
+% \begin{itemize}
+%     \item The first term is the L2 regularizer.
+%     \item The second term is the Hinge loss (slack variables).
+% \end{itemize}
+% \end{frame}
 
 \begin{frame}{Subgradient Descent}
     Now that we have the objective, can we do SGD on it?
@@ -156,7 +469,9 @@
     J(w)=\frac{1}{n}\sum_{i=1}^{n}\max\left(0,1-{y_{i}w^{T}x_{i}}\right)+\lambda||w||^{2}.
 \]
 
+\pause
 \item Not differentiable... but let's think about gradient descent anyway.
+\pause
 \item Hinge loss: $\ell(m)=\max(0,1-m)$
 %\item Derivative of hinge loss $\ell(m)=\max(0,1-m)$:
 %\[
@@ -187,6 +502,7 @@ $$
 \text{undefined} & m=1
 \end{cases}
 $$
+\pause
 
 \item By chain rule, we have 
 \begin{eqnarray*}
@@ -327,37 +643,37 @@ For convex functions:\\
 \end{frame}
 
 
-\begin{frame}{Subgradients of $f(x_{1},x_{2})=\left|x_{1}\right|+2\left|x_{2}\right|$}
-    \begin{columns}
+% \begin{frame}{Subgradients of $f(x_{1},x_{2})=\left|x_{1}\right|+2\left|x_{2}\right|$}
+%     \begin{columns}
 
-        \begin{column}{0.6\textwidth}
-\begin{itemize}
-\item Let's find the subdifferential of $f(x_{1},x_{2})=\left|x_{1}\right|+2\left|x_{2}\right|$
-at $\left(3,0\right)$.
-\end{itemize}
+%         \begin{column}{0.6\textwidth}
+% \begin{itemize}
+% \item Let's find the subdifferential of $f(x_{1},x_{2})=\left|x_{1}\right|+2\left|x_{2}\right|$
+% at $\left(3,0\right)$.
+% \end{itemize}
 
-\begin{itemize}
-\item First coordinate of subgradient must be $1$, from $\left|x_{1}\right|$
-part (at $x_{1}=3$).
-\end{itemize}
+% \begin{itemize}
+% \item First coordinate of subgradient must be $1$, from $\left|x_{1}\right|$
+% part (at $x_{1}=3$).
+% \end{itemize}
 
-\begin{itemize}
-\item Second coordinate of subgradient can be anything in $\left[-2,2\right]$.
-\end{itemize}
+% \begin{itemize}
+% \item Second coordinate of subgradient can be anything in $\left[-2,2\right]$.
+% \end{itemize}
 
-\begin{itemize}
-\item So graph of $h(x_{1},x_{2})=f(3,0)+g^{T}\left(x_{1}-3,x_{2}-0\right)$
-is a global underestimate of $f(x_{1},x_{2})$, for any $g=\left(g_{1},g_{2}\right),$
-where $g_{1}=1$ and $g_{2}\in[-2,2]$. 
-\end{itemize}
-    \end{column}
-        \begin{column}{0.3\textwidth}
-\begin{center}
-\includegraphics[height=0.75\textheight]{figures/underestimating-3d-plot-abs-x1-plus-2absx2}\let\thefootnote\relax\footnotetext{\tiny{Plot courtesy of Brett Bernstein.}} 
-\par\end{center}
-        \end{column}
-    \end{columns}
-\end{frame}
+% \begin{itemize}
+% \item So graph of $h(x_{1},x_{2})=f(3,0)+g^{T}\left(x_{1}-3,x_{2}-0\right)$
+% is a global underestimate of $f(x_{1},x_{2})$, for any $g=\left(g_{1},g_{2}\right),$
+% where $g_{1}=1$ and $g_{2}\in[-2,2]$. 
+% \end{itemize}
+%     \end{column}
+%         \begin{column}{0.3\textwidth}
+% \begin{center}
+% \includegraphics[height=0.75\textheight]{figures/underestimating-3d-plot-abs-x1-plus-2absx2}\let\thefootnote\relax\footnotetext{\tiny{Plot courtesy of Brett Bernstein.}} 
+% \par\end{center}
+%         \end{column}
+%     \end{columns}
+% \end{frame}
 
 \begin{frame}{Subdifferential on Contour Plot}
 \begin{center}
@@ -374,8 +690,11 @@ with set of subgradients at $(3,0)$. .\let\thefootnote\relax\footnotetext{\tiny{
     {Basic Rules for Calculating Subdifferential}
     \begin{itemize}
         \item \head{Non-negative scaling}: $\partial \alpha f(x) = \alpha\partial f(x)$ for $(\alpha > 0)$
+        \pause
         \item \head{Summation}: $\partial(f_1(x) + f_2(x)) = d_1 + d_2$ for any $d_1\in\partial f_1$ and $d_2 \in\partial f_2$
+        \pause
         \item \head{Composing with affine functions}: $\partial f(Ax+b) = A^T\partial f(z)$ where $z=Ax+b$
+        \pause
         \item \head{max}: convex combinations of argmax gradients
             $$
             \partial \max(f_1(x), f_2(x)) =
@@ -389,20 +708,26 @@ with set of subgradients at $(3,0)$. .\let\thefootnote\relax\footnotetext{\tiny{
     \end{itemize}
 \end{frame}
 
-\section{Subgradient Descent}
-\begin{frame}{Gradient orthogonal to level sets}
-    We know that gradient points to the fastest ascent direction.
-    What about subgradients?
+% \section{Subgradient Descent}
+% \begin{frame}{Gradient orthogonal to level sets}
+%     We know that gradient points to the fastest ascent direction.
+%     What about subgradients?
+% \begin{center}
+% \includegraphics[height=0.6\textheight]{figures/grad-orthog-to-sublevel-sets}\let\thefootnote\relax\footnotetext{\tiny{Plot courtesy of Brett Bernstein.}}
+% \par\end{center}
+% \end{frame}
+
+\begin{frame}{Contour Lines and Subgradients}
+\head{Definition}: A hyperplane $H$ \textbf{supports} a set $S$ if $H$ intersects
+$S$ and all of $S$ lies on one side of $H$.
+
 \begin{center}
-\includegraphics[height=0.6\textheight]{figures/grad-orthog-to-sublevel-sets}\let\thefootnote\relax\footnotetext{\tiny{Plot courtesy of Brett Bernstein.}}
-\par\end{center}
+\includegraphics[width=0.4\textwidth]{figures/Supporting_hyperplane1.png}
+\end{center}
 \end{frame}
 
-\begin{frame}{Contour Lines and Subgradients }
-A hyperplane $H$ \textbf{supports} a set $S$ if $H$ intersects
-$S$ and all of $S$ lies one one side of $H$.
-
-    \head{Claim}: If $f:\reals^{d}\to\reals$ has subgradient $g$ at $x_{0}$, then
+\begin{frame}{Contour Lines and Subgradients}
+\head{Claim}: If $f:\reals^{d}\to\reals$ has subgradient $g$ at $x_{0}$, then
 the hyperplane $H$ orthogonal to $g$ at $x_{0}$ must \textbf{support}
 the level set $S=\left\{ x\in\reals^{d}\mid f(x)=f(x_{0})\right\} $. 
 
@@ -411,10 +736,13 @@ Proof:\\
     \setlength\itemsep{1ex}
 \item For any $y$, we have $f(y)\ge f(x_{0})+g^{T}(y-x_{0})$. (def
 of subgradient)
+\pause
 \item If $y$ is strictly on side of $H$ that $g$ points in,
     \begin{itemize}
 \item then $g^{T}\left(y-x_{0}\right)>0$.
+\pause
 \item So $f(y)>f(x_{0})$.
+\pause
 \item So $y$ is not in the level set $S$.
 \end{itemize}
 \item $\therefore$ All elements of $S$ must be on $H$ or on the $-g$
@@ -484,27 +812,27 @@ SVM objective function:
 \end{frame}
 
 \begin{frame}{The Dual Problem}
-    In addition to subgradient descent, we can directly solve the optimization problem using a QP solver.
-
-    Let's study its dual problem to gain addition insights (which will be useful for next week!)
-\end{frame}
-
-\begin{frame}{SVM as a Quadratic Program}
 \begin{itemize}
-\item The SVM optimization problem is equivalent to
-\begin{eqnarray*}
-    \textrm{minimize} &  & \frac{1}{2}||w||^{2}+\frac{c}{n}\sum_{i=1}^{n}\xi_{i}\\
-\textrm{subject to} &  & -\xi_{i}\le0\quad\mbox{for }i=1,\ldots,n\\
- &  & \left(1-y_{i}\left[w^{T}x_{i}+b\right]\right)-\xi_{i}\le0\quad\mbox{for }i=1,\ldots,n
-\end{eqnarray*}
-
-\item Differentiable objective function
-\item $n+d+1$ unknowns and $2n$ affine constraints.
-\item A \textbf{quadratic program} that can be solved by any off-the-shelf QP solver. 
-\item Let's learn more by examining the dual.
+\item In addition to subgradient descent, we can directly solve the optimization problem using a QP solver.
+\item For convex optimization problem, we can also look into its \textbf{dual problem}.
 \end{itemize}
 \end{frame}
-% \section{Why Do We Care About the Dual?}
+
+% \begin{frame}{SVM as a Quadratic Program}
+% \begin{itemize}
+% \item The SVM optimization problem is equivalent to
+% \begin{eqnarray*}
+%     \textrm{minimize} &  & \frac{1}{2}||w||^{2}+\frac{c}{n}\sum_{i=1}^{n}\xi_{i}\\
+% \textrm{subject to} &  & -\xi_{i}\le0\quad\mbox{for }i=1,\ldots,n\\
+%  &  & \left(1-y_{i}\left[w^{T}x_{i}+b\right]\right)-\xi_{i}\le0\quad\mbox{for }i=1,\ldots,n
+% \end{eqnarray*}
+
+% \item Differentiable objective function
+% \item $n+d+1$ unknowns and $2n$ affine constraints.
+% \item A \textbf{quadratic program} that can be solved by any off-the-shelf QP solver. 
+% \item Let's learn more by examining the dual.
+% \end{itemize}
+% \end{frame}
 
 \begin{frame}{The Lagrangian}
 
@@ -514,17 +842,21 @@ The general {[}inequality-constrained{]} optimization problem is:
 \textrm{subject to} &  & f_{i}(x)\le0,\;\;i=1,\ldots,m
 \end{eqnarray*}
 
+\pause
 \begin{definition}
 The \textbf{Lagrangian} for this optimization problem is
 \[
 L(x,\lambda)=f_{0}(x)+\sum_{i=1}^{m}\lambda_{i}f_{i}(x).
 \]
 \end{definition}
+\pause
 \begin{itemize}
     \setlength\itemsep{1ex}
-    \item $\lambda_{i}$'s are called \textbf{Lagrange multipliers} (also called the \textbf{dual variables}). 
+    \item $\lambda_{i}$'s are called \textbf{Lagrange multipliers} (also called the \textbf{dual variables}).
+    \pause
     \item Weighted sum of the objective and constraint functions
-    \item Hard constraints $\rightarrow$ soft constraints (objective function)
+    \pause
+    \item Hard constraints $\rightarrow$ soft penalty (objective function)
 \end{itemize}
 \end{frame}
 
@@ -537,11 +869,14 @@ L(x,\lambda)=f_{0}(x)+\sum_{i=1}^{m}\lambda_{i}f_{i}(x).
         = \inf_x \p{f_{0}(x)+\sum_{i=1}^{m}\lambda_{i}f_{i}(x)}
         $$
     \end{definition}
+    \pause
     \begin{itemize}
         \item $g(\lambda)$ is \hl{concave}
             \note[item]{$g$ is concave because it is the infimum of affine functions. Note that we are not assuming convexity of $f_0$.}
+        \pause
         \item \textbf{Lower bound property}: if $\lambda \succeq 0$, $g(\lambda) \le p^*$ where $p^*$ is the optimal value of the optimization problem.
             \note[item]{Note that the proof is straightforward: $\sum_i\lambda_i f_i(x)$ is always negative.}
+        \pause
         \item $g(\lambda)$ can be $-\infty$ (uninformative lower bound)
             \note[item]{For example when $L(x,\lambda)$ is affine is $x$.}
     \end{itemize}
@@ -563,9 +898,10 @@ dual problem:}
 \textrm{subject to} &  & \lambda_{i}\ge0,\;\;i=1,\ldots,m,
 \end{eqnarray*}
 
+% \pause
 \item The dual problem is always a convex optimization problem.
-\item The dual variables often have interesting and relevant interpretations.
-\item The dual variables provide certificates for optimality.
+% \item The dual variables often have interesting and relevant interpretations.
+% \item The dual variables provide certificates for optimality.
 \end{itemize}
 \end{frame}
 
@@ -900,7 +1236,7 @@ in input examples}.
 %\end{itemize}
 %\end{frame}
 
-\section{Teaser for Kernelization}
+\section{Kernelization}
 
 \begin{frame}{Dual Problem: Dependence on $x$ through inner products}
 \begin{itemize}
@@ -1131,27 +1467,27 @@ where $N(x)=\text{number of people who bought }x$.
 \end{frame}
 
 \begin{frame}{Saturation: Solve with nonlinear transform}
-% \begin{itemize}
-% \item Smooth nonlinear transformation:
-% \[
-% \phi(x)=\left[1,\log\left\{ 1+N(x)\right\} \right]
-% \]
+\begin{itemize}
+\item Smooth nonlinear transformation:
+\[
+\phi(x)=\left[1,\log\left\{ 1+N(x)\right\} \right]
+\]
 
-%         \begin{itemize}
-%     \item $\log\left(\cdot\right)$ good for values with large dynamic ranges
-%     \end{itemize}
-% \item Discretization (a discontinuous transformation):
-% \[
-% \phi(x)=\left(\ind{0\le N(x)<10},\ind{10\le N(x)<100},\ldots\right)
-% \]
+        \begin{itemize}
+    \item $\log\left(\cdot\right)$ good for values with large dynamic ranges
+    \end{itemize}
+\item Discretization (a discontinuous transformation):
+\[
+\phi(x)=\left(\ind{0\le N(x)<10},\ind{10\le N(x)<100},\ldots\right)
+\]
 
-%         \begin{itemize}
-% \item Small buckets allow quite flexible relationship
-%         \end{itemize}
+        \begin{itemize}
+\item Small buckets allow quite flexible relationship
+        \end{itemize}
 
-% \end{itemize}
+\end{itemize}
 
-% \let\thefootnote\relax\footnotetext{\tiny{From Percy Liang's "Lecture 3" slides from Stanford's CS221, Autumn 2014. }}
+\let\thefootnote\relax\footnotetext{\tiny{From Percy Liang's "Lecture 3" slides from Stanford's CS221, Autumn 2014. }}
 \end{frame}
 
 \begin{frame}{Interactions: The Issue}
