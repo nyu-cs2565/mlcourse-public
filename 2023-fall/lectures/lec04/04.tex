@@ -1131,26 +1131,27 @@ where $N(x)=\text{number of people who bought }x$.
 \end{frame}
 
 \begin{frame}{Saturation: Solve with nonlinear transform}
-\begin{itemize}
-\item Smooth nonlinear transformation:
-\[
-\phi(x)=\left[1,\log\left\{ 1+N(x)\right\} \right]
-\]
+% \begin{itemize}
+% \item Smooth nonlinear transformation:
+% \[
+% \phi(x)=\left[1,\log\left\{ 1+N(x)\right\} \right]
+% \]
 
-        \begin{itemize}
-    \item $\log\left(\cdot\right)$ good for values with large dynamic ranges
-    \end{itemize}
-\item Discretization (a discontinuous transformation):
-\[
-\phi(x)=\left(\ind{0\le N(x)<10},\ind{10\le N(x)<100},\ldots\right)
-\]
+%         \begin{itemize}
+%     \item $\log\left(\cdot\right)$ good for values with large dynamic ranges
+%     \end{itemize}
+% \item Discretization (a discontinuous transformation):
+% \[
+% \phi(x)=\left(\ind{0\le N(x)<10},\ind{10\le N(x)<100},\ldots\right)
+% \]
 
-        \begin{itemize}
-\item Small buckets allow quite flexible relationship
-        \end{itemize}
+%         \begin{itemize}
+% \item Small buckets allow quite flexible relationship
+%         \end{itemize}
 
-\end{itemize}
-\let\thefootnote\relax\footnotetext{\tiny{From Percy Liang's "Lecture 3" slides from Stanford's CS221, Autumn 2014. }}
+% \end{itemize}
+
+% \let\thefootnote\relax\footnotetext{\tiny{From Percy Liang's "Lecture 3" slides from Stanford's CS221, Autumn 2014. }}
 \end{frame}
 
 \begin{frame}{Interactions: The Issue}
