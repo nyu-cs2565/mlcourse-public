@@ -1,6 +1,6 @@
 %% LyX 2.3.4.2 created this file.  For more info, see http://www.lyx.org/.
 %% Do not edit unless you really know what you are doing.
-\documentclass[english,dvipsnames,aspectratio=169,handout]{beamer}
+\documentclass[english,dvipsnames,aspectratio=169]{beamer}
 \usepackage{mathptmx}
 \usepackage{eulervm}
 \usepackage[T1]{fontenc}
@@ -127,6 +127,28 @@
 \end{itemize}
 \end{frame}
 
+
+\begin{frame}
+    {Last Lecture}
+    Two ways to derive the SVM optimization problem:
+    \begin{itemize}
+    \item Maximize the margin
+    \item Minimize the hinge loss with $\ell_2$ regularization
+    \end{itemize}
+    Both leads to the minimum norm solution satisfying certain margin constraints.
+
+    \begin{itemize}
+        \item \textbf{Hard-margin SVM}: all points must be correctly classified with the margin constraints
+        \item \textbf{Soft-margin SVM}: allow for margin constraint violation with some penalty
+    \end{itemize}
+
+    Subgradient: generalize gradient for non-differentiable convex functions
+
+    Dual problem: Lagrange multiplier $\alpha_i$ for each example.
+
+    Strong duality: For some convex problems, the primal and dual have the same solution.
+\end{frame}
+
 % \section{Kernelization}
 
 \begin{frame}{Dual Problem: Dependence on $x$ through inner products}
@@ -161,10 +183,12 @@ their inner product: $\left\langle x_{j},x_{i}\right\rangle =x_{j}^{T}x_{i}$.
 \item Lasso regression
 \item Support Vector Machines 
 \end{itemize}
+\pause
 \item Our hypothesis space for these was all affine functions on $\reals^{d}$:
 \[
 \cf=\left\{ x\mapsto w^{T}x+b\mid w\in\reals^{d},b\in\reals\right\} .
 \]
+\pause
 \item What if we want to do prediction on inputs not natively in $\reals^{d}$?
 \end{itemize}
 \end{frame}
