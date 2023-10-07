@@ -1,6 +1,6 @@
 %% LyX 2.3.6.2 created this file.  For more info, see http://www.lyx.org/.
 %% Do not edit unless you really know what you are doing.
-\documentclass[english,aspectratio=169,handout]{beamer}
+\documentclass[english,aspectratio=169]{beamer}
 \usepackage{mathptmx}
 \usepackage{eulervm}
 \usepackage[T1]{fontenc}
@@ -1292,17 +1292,33 @@ where $|\Sigma_k|$ denotes the determinant of the matrix, and $d$ is dimension o
 \end{frame}
 
 
-
 \begin{frame}{Gaussian Bayes Binary Classifier Cases}
+
+Different cases on the covariance matrix:
 \begin{itemize}
   \item Full covariance: Quadratic decision boundary
   \item Shared covariance: Linear decision boundary
   \item Naive Bayes: Diagonal covariance matrix, quadratic decision boundary
 \end{itemize}
+\pause
 
+\vspace{0.2in}
+
+GBC vs. Logistic Regression:
 \begin{itemize}
     \item If data is truly Gaussian distributed, then shared covariance = logistic regression.
     \item But logistic regression can learn other distributions.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Summary}
+\begin{itemize}
+    \item Probabilistic framework of using maximum likelihood as a more principled way to derive loss functions.
+    \item Conditional vs. generative
+    \item Generative models the joint distribution, and may lead to more assumption on the data.
+    \pause
+    \item When there is very few data point, it may be hard to model the distribution.
+    \item Is there an equivalent ``regularization'' in a probabilistic framework?
 \end{itemize}
 \end{frame}
 
