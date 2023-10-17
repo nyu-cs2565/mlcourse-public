@@ -1,6 +1,6 @@
 %% LyX 2.3.6.2 created this file.  For more info, see http://www.lyx.org/.
 %% Do not edit unless you really know what you are doing.
-\documentclass[english,aspectratio=169]{beamer}
+\documentclass[english,aspectratio=169,handout]{beamer}
 \usepackage{mathptmx}
 \usepackage{eulervm}
 \usepackage[T1]{fontenc}
@@ -128,6 +128,14 @@
 % \tableofcontents{}
 % \end{frame}
 
+
+\begin{frame}{Logistics}
+\begin{itemize}
+    \item Midterm next week Oct 24 4:55 - 6:55 PM (same as lecture).
+    \item Send me your course project group by Oct 20 (NetID + NYU ID, Email title contains \textbf{CSCI-GA 2565}).
+    \item Course project 2 page proposal due Oct 27.
+\end{itemize}
+\end{frame}
 
 \section{Overview}
 \begin{frame}
@@ -1616,6 +1624,9 @@ p(\theta\mid\cd)\pause=\frac{p(\cd\mid\theta)p(\theta)}{p(\cd)}.
 
 \pause{}
 \item Where $\propto$ means we've dropped factors that are independent of $\theta$. 
+
+\pause
+\item Maximum a posteriori: Find $\hat{\theta}_{MAP}$ Maximize the posterior distribution.
 \end{itemize}
 \end{frame}
 %
@@ -1985,51 +1996,51 @@ gives
 \item The \textbf{Bayes action }for \textbf{square loss} is the posterior mean.
 \end{itemize}
 \end{frame}
-%
-% \begin{frame}{Bayesian Point Estimation: Absolute Loss}
-% \begin{itemize}
-% \item \textbf{Loss:}\emph{ $\ell(\theta,\hat{\theta})=\left|\theta-\hat{\theta}\right|$}
 
-% \pause{}
-% \item \textbf{Bayes action} for \textbf{absolute loss} is the \textbf{posterior
-% median.}
-% \begin{itemize}
-% \item That is, the median of the distribution $p(\theta\mid\cd)$.
+\begin{frame}{Bayesian Point Estimation: Absolute Loss}
+\begin{itemize}
+\item \textbf{Loss:}\emph{ $\ell(\theta,\hat{\theta})=\left|\theta-\hat{\theta}\right|$}
 
-% \pause{}
+\pause{}
+\item \textbf{Bayes action} for \textbf{absolute loss} is the \textbf{posterior
+median.}
+\begin{itemize}
+\item That is, the median of the distribution $p(\theta\mid\cd)$.
+
+\pause{}
+\item Exercise: Show this.
 % \item Show with approach similar to what was used in Homework \#1.
-% \end{itemize}
-% \end{itemize}
-% \end{frame}
-%
-%\begin{frame}{Bayesian Point Estimation: Zero-One Loss}
-%\begin{itemize}
-%\item Suppose $\Theta$ is discrete (e.g. $\Theta=\left\{ \mbox{english},\mbox{french}\right\} $)
-%\item \textbf{Zero-one loss:}\emph{ $\ell(\theta,\hat{\theta})=\ind{\theta\neq\hat{\theta}}$}
+\end{itemize}
+\end{itemize}
+\end{frame}
 
-%\pause{}
-%\item \textbf{Posterior risk}:
-%\begin{eqnarray*}
-%r(\hat{\theta}) & = & \ex\left[\ind{\theta\neq\hat{\theta}}\mid\cd\right]\\
-%\pause & = & \pr\left(\theta\neq\hat{\theta}\mid\cd\right)\\
-%\pause & = & 1-\pr\left(\theta=\hat{\theta}\mid\cd\right)\\
-%\pause & = & 1-p(\hat{\theta}\mid\cd)
-%\end{eqnarray*}
+\begin{frame}{Bayesian Point Estimation: Zero-One Loss}
+\begin{itemize}
+\item Suppose $\Theta$ is discrete (e.g. $\Theta=\left\{ \mbox{english},\mbox{french}\right\} $)
+\item \textbf{Zero-one loss:}\emph{ $\ell(\theta,\hat{\theta})=\ind{\theta\neq\hat{\theta}}$}
+
+\pause{}
+\item \textbf{Posterior risk}:
+\begin{eqnarray*}
+r(\hat{\theta}) & = & \ex\left[\ind{\theta\neq\hat{\theta}}\mid\cd\right]\\
+\pause & = & \pr\left(\theta\neq\hat{\theta}\mid\cd\right)\\
+\pause & = & 1-\pr\left(\theta=\hat{\theta}\mid\cd\right)\\
+\pause & = & 1-p(\hat{\theta}\mid\cd)
+\end{eqnarray*}
+
+\pause{}
+\item \textbf{Bayes action} is
+\begin{eqnarray*}
+\hat{\theta} & = & \argmax_{\theta\in\Theta}p(\theta\mid\cd)
+\end{eqnarray*}
 
 
-%\pause{}
-%\item \textbf{Bayes action} is
-%\begin{eqnarray*}
-%\hat{\theta} & = & \argmax_{\theta\in\Theta}p(\theta\mid\cd)
-%\end{eqnarray*}
-
-
-%\pause{}
-%\item This $\hat{\theta}$ is called the\textbf{ maximum a posteriori (MAP)
-%}estimate.
-%\item The MAP estimate is the \textbf{mode} of the posterior distribution.
-%\end{itemize}
-%\end{frame}
+\pause{}
+\item This $\hat{\theta}$ is called the\textbf{ maximum a posteriori (MAP)
+}estimate.
+\item The MAP estimate is the \textbf{mode} of the posterior distribution.
+\end{itemize}
+\end{frame}
 
 \section{Interim summary}
 \begin{frame}{Recap and Interpretation}
