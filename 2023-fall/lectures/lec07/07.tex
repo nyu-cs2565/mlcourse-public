@@ -85,27 +85,29 @@
 \setbeamercolor{sectionname}{fg=NYUPurple}
 \setbeamercolor{section page}{fg=NYUPurple}
 
-% \AtBeginSection[]{
-%   \begin{frame}
-%     \frametitle{Table of Contents}
-%     \tableofcontents[currentsection]
-%   \end{frame}
+\AtBeginSection[]{
+  % \begin{frame}
+  %   \frametitle{Table of Contents}
+  %   \tableofcontents[currentsection]
+  % \end{frame}
 
-%   % \begin{frame}
-%   % \vfill
-%   % \centering
-%   % \begin{beamercolorbox}[sep=8pt,center,shadow=true,rounded=true]{title}
-%   %   \usebeamerfont{title}\insertsectionhead\par%
-%   % \end{beamercolorbox}
-%   % \vfill
-%   % \end{frame}
-% }
+  \begin{frame}
+  \vfill
+  \centering
+  \begin{beamercolorbox}[sep=8pt,center,shadow=true,rounded=true]{title}
+    \usebeamerfont{title}\insertsectionhead\par%
+  \end{beamercolorbox}
+  \vfill
+  \end{frame}
+}
 
 \makeatother
 
+\input ../macros
+
 \begin{document}
 \input{../rosenberg-macros.tex}
-\title[DS-GA 1003 ]{Probabilistic models - Bayesian Methods}
+\title[CSCI-GA 2565]{Bayesian Methods \& Multiclass}
 \author{Mengye Ren}
 % \author{Tal Linzen \\
 % Slides based on Lecture
@@ -124,502 +126,526 @@
 \mode<article>{Just in article version}
 
 
-\section{Bayesian ML: Classical Statistics}
-\begin{frame}{Parametric Family of Densities}
-\begin{itemize}
-\item A \textbf{parametric family of densities }is a set 
-\[
-\left\{ p(y\mid\theta):\theta\in\Theta\right\} ,
-\]
-
-
-\begin{itemize}
-\item where $p(y\mid\theta)$ is a density on a \textbf{sample space }$\cy$,
-and
-\item $\theta$ is a \textbf{parameter} in a {[}finite dimensional{]} \textbf{parameter
-space $\Theta$.}
-\end{itemize}
-\end{itemize}
-
-\pause{}
-\begin{itemize}
-\item This is the common starting point for a treatment of classical or
-Bayesian statistics.
-\item In this lecture, whenever we say ``density'', we could replace it
-    with ``mass function.'' (and replace integrals with sums).{\scriptsize{} }{\scriptsize\par}
-\end{itemize}
-\end{frame}
-
-\begin{frame}{Frequentist or ``Classical'' Statistics}
-\begin{itemize}
-\item We're still working with a parametric family of densities:
-\[
-\left\{ p(y\mid\theta)\mid\theta\in\Theta\right\} .
-\]
-\end{itemize}
-
-\pause{}
-\begin{itemize}
-\item Assume that $p(y\mid\theta)$ governs the world we are observing,
-for some $\theta\in\Theta$.
-\end{itemize}
-
-\pause{}
-\begin{itemize}
-\item If we knew the right $\theta\in\Theta$, there would be no need for
-statistics.
-\end{itemize}
-
-\pause{}
-\begin{itemize}
-\item But instead of $\theta$, we have data $\cd$: $y_{1},\ldots,y_{n}$ sampled
-i.i.d. from $p(y\mid\theta)$.
-\end{itemize}
-
-\pause{}
-\begin{itemize}
-\item Statistics is about how to get by with $\cd$ in place of $\theta$.
-\end{itemize}
-\end{frame}
-%
-
-\begin{frame}{Point Estimation}
-
-\begin{itemize}
-\item One type of statistical problem is\textbf{ point estimation}.
-\end{itemize}
-
-\pause{}
-\begin{itemize}
-\item A \textbf{statistic} $s=s(\cd)$ is any function of the data.
-\end{itemize}
-
-\pause{}
-\begin{itemize}
-\item A statistic $\hat{\theta}=\hat{\theta}(\cd)$ taking values in $\Theta$
-is a\textbf{ point estimator of} $\theta$.
-\end{itemize}
-
-\pause{}
-\begin{itemize}
-\item A good point estimator will have $\hat{\theta}\approx\theta$.
-% \end{itemize}
-% \end{frame}
-% %
-% \begin{frame}{Desirable Properties of Point Estimators}
+% \section{Bayesian ML: Classical Statistics}
+% \begin{frame}{Parametric Family of Densities}
 % \begin{itemize}
-\item \textbf{Desirable statistical properties of point estimators}:
-
-\pause{}
-\begin{itemize}
-\item \textbf{Consistency: }As data size $n\to\infty$, we get $\hat{\theta}_{n}\to\theta$.
-\end{itemize}
-
-\pause{}
-\begin{itemize}
-\item \textbf{Efficiency:} (Roughly speaking) $\hat{\theta}_{n}$ is as
-accurate as we can get from a sample of size $n$.
-\end{itemize}
-\end{itemize}
-
-
-\pause{}
-\begin{itemize}
-\item \textbf{Maximum likelihood estimators }are consistent and efficient
-under reasonable conditions.
-\end{itemize}
-\end{frame}
-%
-% \begin{frame}{The Likelihood Function}
-% \begin{itemize}
-% \item Consider parametric family $\left\{ p(y\mid\theta):\theta\in\Theta\right\} $
-% and i.i.d. sample $\cd=\left(y_{1},\ldots,y_{n}\right)$.
-
-% \pause{}
-% \item The density for sample $\cd$ for $\theta\in\Theta$ is
+% \item A \textbf{parametric family of densities }is a set 
 % \[
-% p(\cd\mid\theta)\pause=\prod_{i=1}^{n}p(y_{i}\mid\theta).
+% \left\{ p(y\mid\theta):\theta\in\Theta\right\} ,
 % \]
 
 
-% \pause{}
-% \item $p(\cd\mid\theta)$ is a function of $\cd$ and $\theta$. 
+% \begin{itemize}
+% \item where $p(y\mid\theta)$ is a density on a \textbf{sample space }$\cy$,
+% and
+% \item $\theta$ is a \textbf{parameter} in a {[}finite dimensional{]} \textbf{parameter
+% space $\Theta$.}
+% \end{itemize}
+% \end{itemize}
 
 % \pause{}
-% \item For fixed $\theta$, $p(\cd\mid\theta$) is a density function on
-% $\cy^{n}$.
+% \begin{itemize}
+% \item This is the common starting point for a treatment of classical or
+% Bayesian statistics.
+% \item In this lecture, whenever we say ``density'', we could replace it
+%     with ``mass function.'' (and replace integrals with sums).{\scriptsize{} }{\scriptsize\par}
+% \end{itemize}
+% \end{frame}
 
-% \pause{}
-% \item For fixed $\cd$, the function $\theta\mapsto p(\cd\mid\theta)$ is
-% called the \textbf{likelihood function:
+% \begin{frame}{Frequentist or ``Classical'' Statistics}
+% \begin{itemize}
+% \item We're still working with a parametric family of densities:
 % \[
-% L_{\cd}(\theta):=p(\cd\mid\theta).
+% \left\{ p(y\mid\theta)\mid\theta\in\Theta\right\} .
 % \]
-% }
+% \end{itemize}
+
+% \pause{}
+% \begin{itemize}
+% \item Assume that $p(y\mid\theta)$ governs the world we are observing,
+% for some $\theta\in\Theta$.
+% \end{itemize}
+
+% \pause{}
+% \begin{itemize}
+% \item If we knew the right $\theta\in\Theta$, there would be no need for
+% statistics.
+% \end{itemize}
+
+% \pause{}
+% \begin{itemize}
+% \item But instead of $\theta$, we have data $\cd$: $y_{1},\ldots,y_{n}$ sampled
+% i.i.d. from $p(y\mid\theta)$.
+% \end{itemize}
+
+% \pause{}
+% \begin{itemize}
+% \item Statistics is about how to get by with $\cd$ in place of $\theta$.
 % \end{itemize}
 % \end{frame}
 % %
-% \begin{frame}{Maximum Likelihood Estimation}
-% \begin{definition}
-% The \textbf{maximum likelihood estimator (MLE)} for $\theta$ in the
-% model $\left\{ p(y\mid\theta):\theta\in\Theta\right\} $ is
+
+% \begin{frame}{Point Estimation}
+
+% \begin{itemize}
+% \item One type of statistical problem is\textbf{ point estimation}.
+% \end{itemize}
+
+% \pause{}
+% \begin{itemize}
+% \item A \textbf{statistic} $s=s(\cd)$ is any function of the data.
+% \end{itemize}
+
+% \pause{}
+% \begin{itemize}
+% \item A statistic $\hat{\theta}=\hat{\theta}(\cd)$ taking values in $\Theta$
+% is a\textbf{ point estimator of} $\theta$.
+% \end{itemize}
+
+% \pause{}
+% \begin{itemize}
+% \item A good point estimator will have $\hat{\theta}\approx\theta$.
+% % \end{itemize}
+% % \end{frame}
+% % %
+% % \begin{frame}{Desirable Properties of Point Estimators}
+% % \begin{itemize}
+% \item \textbf{Desirable statistical properties of point estimators}:
+
+% \pause{}
+% \begin{itemize}
+% \item \textbf{Consistency: }As data size $n\to\infty$, we get $\hat{\theta}_{n}\to\theta$.
+% \end{itemize}
+
+% \pause{}
+% \begin{itemize}
+% \item \textbf{Efficiency:} (Roughly speaking) $\hat{\theta}_{n}$ is as
+% accurate as we can get from a sample of size $n$.
+% \end{itemize}
+% \end{itemize}
+
+
+% \pause{}
+% \begin{itemize}
+% \item \textbf{Maximum likelihood estimators }are consistent and efficient
+% under reasonable conditions.
+% \end{itemize}
+% \end{frame}
+% %
+% % \begin{frame}{The Likelihood Function}
+% % \begin{itemize}
+% % \item Consider parametric family $\left\{ p(y\mid\theta):\theta\in\Theta\right\} $
+% % and i.i.d. sample $\cd=\left(y_{1},\ldots,y_{n}\right)$.
+
+% % \pause{}
+% % \item The density for sample $\cd$ for $\theta\in\Theta$ is
+% % \[
+% % p(\cd\mid\theta)\pause=\prod_{i=1}^{n}p(y_{i}\mid\theta).
+% % \]
+
+
+% % \pause{}
+% % \item $p(\cd\mid\theta)$ is a function of $\cd$ and $\theta$. 
+
+% % \pause{}
+% % \item For fixed $\theta$, $p(\cd\mid\theta$) is a density function on
+% % $\cy^{n}$.
+
+% % \pause{}
+% % \item For fixed $\cd$, the function $\theta\mapsto p(\cd\mid\theta)$ is
+% % called the \textbf{likelihood function:
+% % \[
+% % L_{\cd}(\theta):=p(\cd\mid\theta).
+% % \]
+% % }
+% % \end{itemize}
+% % \end{frame}
+% % %
+% % \begin{frame}{Maximum Likelihood Estimation}
+% % \begin{definition}
+% % The \textbf{maximum likelihood estimator (MLE)} for $\theta$ in the
+% % model $\left\{ p(y\mid\theta):\theta\in\Theta\right\} $ is
+% % \begin{eqnarray*}
+% % \hat{\theta}_{\text{MLE}} & = & \argmax_{\theta\in\Theta}L_{\cd}(\theta).
+% % \end{eqnarray*}
+
+% % \pause{}
+% % \end{definition}
+
+% % \begin{itemize}
+% % \item Maximum likelihood is just one approach to getting a point estimator
+% % for $\theta$.
+
+% % \pause{}
+% % \item \textbf{Method of moments} is another general approach one learns
+% % about in statistics.
+
+% % \pause{}
+% % \item Later we'll talk about \textbf{MAP }and \textbf{posterior mean }as
+% % approaches to point estimation.
+% % \begin{itemize}
+% % \item These arise naturally in Bayesian settings.
+% % \end{itemize}
+% % \end{itemize}
+% % \end{frame}
+% %
+% \begin{frame}{Example of Point Estimation: Coin Flipping}
+% \begin{itemize}
+% \item Parametric family of mass functions:
+% \[
+% p(\text{Heads}\mid\theta)=\theta,
+% \]
+% for $\theta\in\Theta=\left(0,1\right)$.
+% \end{itemize}
+% \end{frame}
+% %
+% \begin{frame}{Coin Flipping: MLE}
+% \begin{itemize}
+% \item Data $\cd=\left(H,H,T,T,T,T,T,H,\ldots,T\right)$, assumed i.i.d. flips.
+% \begin{itemize}
+% \item $n_{h}$: number of heads
+% \item $n_{t}$: number of tails\textbf{ }
+% \end{itemize}
+% % \item 
+
+% \pause{}
+% \item \textbf{Likelihood function }for data $\cd$:
+
+% \[
+% L_{\cd}(\theta)=\pause p(\cd\mid\theta)=\theta^{n_{h}}\left(1-\theta\right)^{n_{t}}
+% \]
+
+% % \pause{}
+% % \item (This is the probability of getting the flips in the order they were
+% % received)
+% % \end{itemize}
+% % \end{frame}
+% %
+% % \begin{frame}{Coin Flipping: MLE}
+ 
+% % \begin{itemize}
+% \item As usual, it is easier to maximize the log-likelihood function:
 % \begin{eqnarray*}
-% \hat{\theta}_{\text{MLE}} & = & \argmax_{\theta\in\Theta}L_{\cd}(\theta).
+% \hat{\theta}_{\text{MLE}} & = & \argmax_{\theta\in\Theta}\log L_{\cd}(\theta)\\
+%  & = & \argmax_{\theta\in\Theta}\left[n_{h}\log\theta+n_{t}\log(1-\theta)\right]
 % \end{eqnarray*}
+% \end{itemize}
+
+% \pause{}
+% \begin{itemize}
+%     \item First order condition (equating the derivative to zero):
+% \[
+% \frac{n_{h}}{\theta}-\frac{n_{t}}{1-\theta} = 0 \iff\theta  =  \frac{n_{h}}{n_{h}+n_{t}} \pause \quad \quad  \hat{\theta}_{\text{MLE}} \text{ is the empirical fraction of heads.}
+% \]
+% % \item So $\hat{\theta}_{\text{MLE}}$ 
+% \end{itemize}
+% \end{frame}
+
+% \section{Bayesian Statistics: Introduction}
+% \begin{frame}{Bayesian Statistics}
+ 
+
+% \begin{itemize}
+% \item Baysian statistics introduces a crucial new ingredient: the \textbf{prior distribution.}
+% \end{itemize}
+
+% \pause{}
+% \begin{itemize}
+% \item A \textbf{prior distribution} $p(\theta)$ is a distribution on the parameter
+% space $\Theta$.
+% \end{itemize}
+
+% \pause{}
+% \begin{itemize}
+% \item The prior reflects our belief about $\theta$, \textbf{before seeing
+% any data}.
+% \end{itemize}
+% \end{frame}
+% %
+% \begin{frame}{A Bayesian Model }
+% \begin{itemize}
+% \item A {[}parametric{]} Bayesian model consists of two pieces:
+% \begin{enumerate}
+% \item A parametric family of densities 
+% \[
+% \left\{ p(\cd\mid\theta)\mid\theta\in\Theta\right\} .
+% \]
+
+
+% \pause{}
+% \item A \textbf{prior distribution} $p(\theta)$ on parameter space $\Theta$.
+
+% \pause{}
+% \end{enumerate}
+% \item Putting the pieces together, we get a joint density on $\theta$ and $\cd$:
+% \[
+% p(\cd,\theta)=p(\cd\mid\theta)p(\theta).
+% \]
+% \end{itemize}
+% \end{frame}
+% %
+% \begin{frame}{The Posterior Distribution}
+% \begin{itemize}
+% \item The \textbf{posterior distribution }for $\theta$ is $p(\theta\mid\cd)$.
+% \end{itemize}
+
+% \pause{}
+% \begin{itemize}
+% \item Whereas the prior represents belief about $\theta$ before observing data $\cd$,
+% \end{itemize}
+
+% \pause{}
+% \begin{itemize}
+% \item The posterior represents the\textbf{ rationally updated belief}
+% about $\theta$, after seeing $\cd$.
+% \end{itemize}
+% \end{frame}
+% %
+% \begin{frame}{Expressing the Posterior Distribution}
+% \begin{itemize}
+% \item By Bayes rule, can write the posterior distribution as
+% \[
+% p(\theta\mid\cd)\pause=\frac{p(\cd\mid\theta)p(\theta)}{p(\cd)}.
+% \]
+
+
+% \pause{}
+% \item Let's consider both sides as functions of $\theta$, for fixed $\cd$.
+
+% \pause{}
+% \item Then both sides are densities on $\Theta$ and we can write
+% \[
+% \underbrace{p(\theta\mid\cd)}_{\text{posterior}}\propto\underbrace{p(\cd\mid\theta)}_{\text{likelihood}}\underbrace{p(\theta)}_{\text{prior}}.
+% \]
+
+
+% \pause{}
+% \item Where $\propto$ means we've dropped factors that are independent of $\theta$. 
+% \end{itemize}
+% \end{frame}
+% %
+% \begin{frame}{Coin Flipping: Bayesian Model}
+% \begin{itemize}
+% \item Recall that we have a parametric family of mass functions:
+% \[
+% p(\text{Heads}\mid\theta)=\theta,
+% \]
+% for $\theta\in\Theta=\left(0,1\right)$.
+% \end{itemize}
+
+% \pause{}
+% \begin{itemize}
+% \item We need a prior distribution $p(\theta)$ on $\Theta=(0,1)$.
+% \end{itemize}
+
+% \pause{}
+% \begin{itemize}
+% \item One convenient choice would be a distribution from the Beta family
+% \end{itemize}
+% \end{frame}
+% %
+% \begin{frame}{Coin Flipping: Beta Prior}
+% \begin{itemize}
+% \item \textbf{Prior:}
+% \begin{eqnarray*}
+% \theta & \sim & \text{Beta}(\alpha,\beta)\\
+% p(\theta) & \propto & \theta^{\alpha-1}\left(1-\theta\right)^{\beta-1}
+% \end{eqnarray*}
+
+
+% \pause{}
+% \end{itemize}
+% \begin{center}
+% \includegraphics[height=0.55\textheight]{figures/betaFamily}
+% \par\end{center}
+
+
+% \let\thefootnote\relax\footnotetext{\tiny{Figure by Horas based on the work of Krishnavedala (Own work) [Public domain], via Wikimedia Commons \url{http://commons.wikimedia.org/wiki/File:Beta_distribution_pdf.svg}.}}
+% \end{frame}
+
+% %
+% \begin{frame}{Coin Flipping: Beta Prior}
+% \begin{itemize}
+% \item \textbf{Prior:}
+% \begin{eqnarray*}
+% \theta & \sim & \text{Beta}(h,t)\\
+% p(\theta) & \propto & \theta^{h-1}\left(1-\theta\right)^{t-1}
+% \end{eqnarray*}
+
+
+% \pause{}
+% \item \textbf{Mean of Beta distribution:} 
+% \[
+% \ex\theta=\frac{h}{h+t}
+% \]
+
+
+% \pause{}
+% \item \textbf{Mode of Beta distribution:} 
+% \[
+% \argmax_{\theta}p(\theta)=\frac{h-1}{h+t-2}
+% \]
+% for $h,t>1$.
+% \end{itemize}
+% \end{frame}
+% %
+% \begin{frame}{Coin Flipping: Posterior}
+% \begin{itemize}
+% \item \textbf{Prior:}
+% \begin{eqnarray*}
+% \theta & \sim & \text{Beta}(h,t)\\
+% p(\theta) & \propto & \theta^{h-1}\left(1-\theta\right)^{t-1}
+% \end{eqnarray*}
+% \end{itemize}
+
+% \pause{}
+% \begin{itemize}
+% \item \textbf{Likelihood function}
+% \[
+% L(\theta)=p(\cd\mid\theta)=\theta^{n_{h}}\left(1-\theta\right)^{n_{t}}
+% \]
+% \end{itemize}
+
+% \pause{}
+% \begin{itemize}
+% \item \textbf{Posterior density:}
+% \begin{eqnarray*}
+% p(\theta\mid\cd) & \propto & p(\theta)p(\cd\mid\theta)\\
+% \pause & \propto & \theta^{h-1}\left(1-\theta\right)^{t-1}\times\theta^{n_{h}}\left(1-\theta\right)^{n_{t}}\\
+% \pause & = & \theta^{h-1+n_{h}}\left(1-\theta\right)^{t-1+n_{t}}
+% \end{eqnarray*}
+ 
+% \end{itemize}
+% \end{frame}
+% %
+% \begin{frame}{The Posterior is in the Beta Family!}
+% \begin{itemize}
+% \item \textbf{Prior:}
+% \begin{eqnarray*}
+% \theta & \sim & \text{Beta}(h,t)\\
+% p(\theta) & \propto & \theta^{h-1}\left(1-\theta\right)^{t-1}
+% \end{eqnarray*}
+ 
+% \item \textbf{Posterior density:}
+% \begin{eqnarray*}
+% p(\theta\mid\cd) & \propto & \theta^{h-1+n_{h}}\left(1-\theta\right)^{t-1+n_{t}}
+% \end{eqnarray*}
+% \end{itemize}
+
+% \pause{}
+% \begin{itemize}
+% \item \textbf{Posterior is in the beta family}:
+% \begin{eqnarray*}
+% \theta\mid\cd & \sim & \text{Beta}(h+n_{h},t+n_{t})
+% \end{eqnarray*}
+% \end{itemize}
+
+% \pause{}
+% \begin{itemize}
+% \item \textbf{Interpretation}:
+% \begin{itemize}
+% \item Prior initializes our counts with $h$ heads and $t$ tails.
+% \item Posterior increments counts by observed $n_{h}$ and $n_{t}$. 
+% \end{itemize}
+% \end{itemize}
+% \end{frame}
+% %
+% \begin{frame}{Sidebar: Conjugate Priors}
+% \begin{itemize}
+% \item In this case, the posterior is in the same distribution family as the prior.
+% \item Let $\pi$ be a family of prior distributions on $\Theta$.
+
+% \pause{}
+% \item Let $P$ parametric family of distributions with parameter space $\Theta$.
+
+% \pause{}
+
+% \end{itemize}
+% \begin{definition}
+% A family of distributions \textbf{$\pi$ is conjugate to }parametric
+% model \textbf{$P$} if for any prior in $\pi$, the posterior is always
+% in $\pi$.
 
 % \pause{}
 % \end{definition}
 
 % \begin{itemize}
-% \item Maximum likelihood is just one approach to getting a point estimator
-% for $\theta$.
+% \item The beta family is conjugate to the coin-flipping (i.e. Bernoulli)
+% model.
 
-% \pause{}
-% \item \textbf{Method of moments} is another general approach one learns
-% about in statistics.
+% %\pause{}
+% %\item The family of all probability distributions is conjugate to any parametric
+% %model. {[}Trvially{]}
+% \end{itemize}
 
-% \pause{}
-% \item Later we'll talk about \textbf{MAP }and \textbf{posterior mean }as
-% approaches to point estimation.
-% \begin{itemize}
-% \item These arise naturally in Bayesian settings.
-% \end{itemize}
-% \end{itemize}
 % \end{frame}
-%
-\begin{frame}{Example of Point Estimation: Coin Flipping}
-\begin{itemize}
-\item Parametric family of mass functions:
-\[
-p(\text{Heads}\mid\theta)=\theta,
-\]
-for $\theta\in\Theta=\left(0,1\right)$.
-\end{itemize}
-\end{frame}
-%
-\begin{frame}{Coin Flipping: MLE}
-\begin{itemize}
-\item Data $\cd=\left(H,H,T,T,T,T,T,H,\ldots,T\right)$, assumed i.i.d. flips.
-\begin{itemize}
-\item $n_{h}$: number of heads
-\item $n_{t}$: number of tails\textbf{ }
-\end{itemize}
-% \item 
+% %
+% \begin{frame}{Coin Flipping: Concrete Example}
+% \begin{itemize}
+% \item Suppose we have a coin, possibly biased (\textbf{parametric probability
+% model}):
+% \[
+% p(\mbox{Heads}\mid\theta)=\theta.
+% \]
 
-\pause{}
-\item \textbf{Likelihood function }for data $\cd$:
-
-\[
-L_{\cd}(\theta)=\pause p(\cd\mid\theta)=\theta^{n_{h}}\left(1-\theta\right)^{n_{t}}
-\]
 
 % \pause{}
-% \item (This is the probability of getting the flips in the order they were
-% received)
+% \item \textbf{Parameter space }$\theta\in\Theta=[0,1]$. 
+% \item \textbf{Prior distribution: }$\theta\sim\mbox{Beta}(2,2)$.
+
+% \pause{}
 % \end{itemize}
+% \begin{center}
+% \includegraphics[height=0.5\textheight]{figures/beta2-2}
+% \par\end{center}
+
 % \end{frame}
-%
-% \begin{frame}{Coin Flipping: MLE}
- 
+% %
+% \begin{frame}{Example: Coin Flipping}
 % \begin{itemize}
-\item As usual, it is easier to maximize the log-likelihood function:
-\begin{eqnarray*}
-\hat{\theta}_{\text{MLE}} & = & \argmax_{\theta\in\Theta}\log L_{\cd}(\theta)\\
- & = & \argmax_{\theta\in\Theta}\left[n_{h}\log\theta+n_{t}\log(1-\theta)\right]
-\end{eqnarray*}
-\end{itemize}
+% \item Next, we gather some data $\cd=\left\{ H,H,T,T,T,T,T,H,\ldots,T\right\} $:
+% \end{itemize}
 
-\pause{}
+% \pause{}
+% \begin{itemize}
+% \item Heads: 75\qquad{}Tails: 60 
+
+% \pause{}
+% \begin{itemize}
+% \item $\hat{\theta}_{\text{MLE}}=\frac{75}{75+60}\approx0.556$
+
+% \pause{}
+% \end{itemize}
+% \item \textbf{Posterior distribution: $\theta\mid\cd\sim\mbox{Beta}(77,62)$:}
+% \end{itemize}
+% \begin{center}
+% \includegraphics[height=0.6\textheight]{figures/beta77-62}
+% \par\end{center}
+
+% \end{frame}
+
+\begin{frame}{Announcement}
 \begin{itemize}
-    \item First order condition (equating the derivative to zero):
-\[
-\frac{n_{h}}{\theta}-\frac{n_{t}}{1-\theta} = 0 \iff\theta  =  \frac{n_{h}}{n_{h}+n_{t}} \pause \quad \quad  \hat{\theta}_{\text{MLE}} \text{ is the empirical fraction of heads.}
-\]
-% \item So $\hat{\theta}_{\text{MLE}}$ 
+  \item Schedule your project consultation soon.
+  \item Use the provided template! (if your final report fails to use template then there will be marks off)
+  \item Homework 3 is released and due Nov 14 11:59AM.
 \end{itemize}
 \end{frame}
 
-\section{Bayesian Statistics: Introduction}
-\begin{frame}{Bayesian Statistics}
- 
+\begin{frame}{Recap}
 
 \begin{itemize}
-\item Baysian statistics introduces a crucial new ingredient: the \textbf{prior distribution.}
+  \item Bayesian modeling adds a prior on the parameters.
+  \item Models the distribution of parameters.
+  \item Bayes Rule:
+  $$
+  p(y\mid x) = \frac{p(x\mid y) p(y)}{p(x)} 
+  $$
+  \item $$p(\theta\mid\cd)\pause=\frac{p(\cd\mid\theta)p(\theta)}{p(\cd)}.$$
+  \item $$\underbrace{p(\theta\mid\cd)}_{\text{posterior}}\propto\underbrace{p(\cd\mid\theta)}_{\text{likelihood}}\underbrace{p(\theta)}_{\text{prior}}.$$
+  \item Conjugate prior: Having the same form of distribution as the posterior.
+  % \item 
 \end{itemize}
-
-\pause{}
-\begin{itemize}
-\item A \textbf{prior distribution} $p(\theta)$ is a distribution on the parameter
-space $\Theta$.
-\end{itemize}
-
-\pause{}
-\begin{itemize}
-\item The prior reflects our belief about $\theta$, \textbf{before seeing
-any data}.
-\end{itemize}
-\end{frame}
-%
-\begin{frame}{A Bayesian Model }
-\begin{itemize}
-\item A {[}parametric{]} Bayesian model consists of two pieces:
-\begin{enumerate}
-\item A parametric family of densities 
-\[
-\left\{ p(\cd\mid\theta)\mid\theta\in\Theta\right\} .
-\]
-
-
-\pause{}
-\item A \textbf{prior distribution} $p(\theta)$ on parameter space $\Theta$.
-
-\pause{}
-\end{enumerate}
-\item Putting the pieces together, we get a joint density on $\theta$ and $\cd$:
-\[
-p(\cd,\theta)=p(\cd\mid\theta)p(\theta).
-\]
-\end{itemize}
-\end{frame}
-%
-\begin{frame}{The Posterior Distribution}
-\begin{itemize}
-\item The \textbf{posterior distribution }for $\theta$ is $p(\theta\mid\cd)$.
-\end{itemize}
-
-\pause{}
-\begin{itemize}
-\item Whereas the prior represents belief about $\theta$ before observing data $\cd$,
-\end{itemize}
-
-\pause{}
-\begin{itemize}
-\item The posterior represents the\textbf{ rationally updated belief}
-about $\theta$, after seeing $\cd$.
-\end{itemize}
-\end{frame}
-%
-\begin{frame}{Expressing the Posterior Distribution}
-\begin{itemize}
-\item By Bayes rule, can write the posterior distribution as
-\[
-p(\theta\mid\cd)\pause=\frac{p(\cd\mid\theta)p(\theta)}{p(\cd)}.
-\]
-
-
-\pause{}
-\item Let's consider both sides as functions of $\theta$, for fixed $\cd$.
-
-\pause{}
-\item Then both sides are densities on $\Theta$ and we can write
-\[
-\underbrace{p(\theta\mid\cd)}_{\text{posterior}}\propto\underbrace{p(\cd\mid\theta)}_{\text{likelihood}}\underbrace{p(\theta)}_{\text{prior}}.
-\]
-
-
-\pause{}
-\item Where $\propto$ means we've dropped factors that are independent of $\theta$. 
-\end{itemize}
-\end{frame}
-%
-\begin{frame}{Coin Flipping: Bayesian Model}
-\begin{itemize}
-\item Recall that we have a parametric family of mass functions:
-\[
-p(\text{Heads}\mid\theta)=\theta,
-\]
-for $\theta\in\Theta=\left(0,1\right)$.
-\end{itemize}
-
-\pause{}
-\begin{itemize}
-\item We need a prior distribution $p(\theta)$ on $\Theta=(0,1)$.
-\end{itemize}
-
-\pause{}
-\begin{itemize}
-\item One convenient choice would be a distribution from the Beta family
-\end{itemize}
-\end{frame}
-%
-\begin{frame}{Coin Flipping: Beta Prior}
-\begin{itemize}
-\item \textbf{Prior:}
-\begin{eqnarray*}
-\theta & \sim & \text{Beta}(\alpha,\beta)\\
-p(\theta) & \propto & \theta^{\alpha-1}\left(1-\theta\right)^{\beta-1}
-\end{eqnarray*}
-
-
-\pause{}
-\end{itemize}
-\begin{center}
-\includegraphics[height=0.55\textheight]{figures/betaFamily}
-\par\end{center}
-
-
-\let\thefootnote\relax\footnotetext{\tiny{Figure by Horas based on the work of Krishnavedala (Own work) [Public domain], via Wikimedia Commons \url{http://commons.wikimedia.org/wiki/File:Beta_distribution_pdf.svg}.}}
-\end{frame}
-
-%
-\begin{frame}{Coin Flipping: Beta Prior}
-\begin{itemize}
-\item \textbf{Prior:}
-\begin{eqnarray*}
-\theta & \sim & \text{Beta}(h,t)\\
-p(\theta) & \propto & \theta^{h-1}\left(1-\theta\right)^{t-1}
-\end{eqnarray*}
-
-
-\pause{}
-\item \textbf{Mean of Beta distribution:} 
-\[
-\ex\theta=\frac{h}{h+t}
-\]
-
-
-\pause{}
-\item \textbf{Mode of Beta distribution:} 
-\[
-\argmax_{\theta}p(\theta)=\frac{h-1}{h+t-2}
-\]
-for $h,t>1$.
-\end{itemize}
-\end{frame}
-%
-\begin{frame}{Coin Flipping: Posterior}
-\begin{itemize}
-\item \textbf{Prior:}
-\begin{eqnarray*}
-\theta & \sim & \text{Beta}(h,t)\\
-p(\theta) & \propto & \theta^{h-1}\left(1-\theta\right)^{t-1}
-\end{eqnarray*}
-\end{itemize}
-
-\pause{}
-\begin{itemize}
-\item \textbf{Likelihood function}
-\[
-L(\theta)=p(\cd\mid\theta)=\theta^{n_{h}}\left(1-\theta\right)^{n_{t}}
-\]
-\end{itemize}
-
-\pause{}
-\begin{itemize}
-\item \textbf{Posterior density:}
-\begin{eqnarray*}
-p(\theta\mid\cd) & \propto & p(\theta)p(\cd\mid\theta)\\
-\pause & \propto & \theta^{h-1}\left(1-\theta\right)^{t-1}\times\theta^{n_{h}}\left(1-\theta\right)^{n_{t}}\\
-\pause & = & \theta^{h-1+n_{h}}\left(1-\theta\right)^{t-1+n_{t}}
-\end{eqnarray*}
- 
-\end{itemize}
-\end{frame}
-%
-\begin{frame}{The Posterior is in the Beta Family!}
-\begin{itemize}
-\item \textbf{Prior:}
-\begin{eqnarray*}
-\theta & \sim & \text{Beta}(h,t)\\
-p(\theta) & \propto & \theta^{h-1}\left(1-\theta\right)^{t-1}
-\end{eqnarray*}
- 
-\item \textbf{Posterior density:}
-\begin{eqnarray*}
-p(\theta\mid\cd) & \propto & \theta^{h-1+n_{h}}\left(1-\theta\right)^{t-1+n_{t}}
-\end{eqnarray*}
-\end{itemize}
-
-\pause{}
-\begin{itemize}
-\item \textbf{Posterior is in the beta family}:
-\begin{eqnarray*}
-\theta\mid\cd & \sim & \text{Beta}(h+n_{h},t+n_{t})
-\end{eqnarray*}
-\end{itemize}
-
-\pause{}
-\begin{itemize}
-\item \textbf{Interpretation}:
-\begin{itemize}
-\item Prior initializes our counts with $h$ heads and $t$ tails.
-\item Posterior increments counts by observed $n_{h}$ and $n_{t}$. 
-\end{itemize}
-\end{itemize}
-\end{frame}
-%
-\begin{frame}{Sidebar: Conjugate Priors}
-\begin{itemize}
-\item In this case, the posterior is in the same distribution family as the prior.
-\item Let $\pi$ be a family of prior distributions on $\Theta$.
-
-\pause{}
-\item Let $P$ parametric family of distributions with parameter space $\Theta$.
-
-\pause{}
-
-\end{itemize}
-\begin{definition}
-A family of distributions \textbf{$\pi$ is conjugate to }parametric
-model \textbf{$P$} if for any prior in $\pi$, the posterior is always
-in $\pi$.
-
-\pause{}
-\end{definition}
-
-\begin{itemize}
-\item The beta family is conjugate to the coin-flipping (i.e. Bernoulli)
-model.
-
-%\pause{}
-%\item The family of all probability distributions is conjugate to any parametric
-%model. {[}Trvially{]}
-\end{itemize}
-
-\end{frame}
-%
-\begin{frame}{Coin Flipping: Concrete Example}
-\begin{itemize}
-\item Suppose we have a coin, possibly biased (\textbf{parametric probability
-model}):
-\[
-p(\mbox{Heads}\mid\theta)=\theta.
-\]
-
-
-\pause{}
-\item \textbf{Parameter space }$\theta\in\Theta=[0,1]$. 
-\item \textbf{Prior distribution: }$\theta\sim\mbox{Beta}(2,2)$.
-
-\pause{}
-\end{itemize}
-\begin{center}
-\includegraphics[height=0.5\textheight]{figures/beta2-2}
-\par\end{center}
-
-\end{frame}
-%
-\begin{frame}{Example: Coin Flipping}
-\begin{itemize}
-\item Next, we gather some data $\cd=\left\{ H,H,T,T,T,T,T,H,\ldots,T\right\} $:
-\end{itemize}
-
-\pause{}
-\begin{itemize}
-\item Heads: 75\qquad{}Tails: 60 
-
-\pause{}
-\begin{itemize}
-\item $\hat{\theta}_{\text{MLE}}=\frac{75}{75+60}\approx0.556$
-
-\pause{}
-\end{itemize}
-\item \textbf{Posterior distribution: $\theta\mid\cd\sim\mbox{Beta}(77,62)$:}
-\end{itemize}
-\begin{center}
-\includegraphics[height=0.6\textheight]{figures/beta77-62}
-\par\end{center}
-
 \end{frame}
 
 \begin{frame}{Bayesian Point Estimates}
@@ -1538,7 +1564,7 @@ bands:
 % \end{comment}
 
 
-\section{Overview}
+\section{Multi-class Overview}
 \begin{frame}
 {Motivation}
 \begin{itemize}
