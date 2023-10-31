@@ -1,6 +1,6 @@
 %% LyX 2.3.6.2 created this file.  For more info, see http://www.lyx.org/.
 %% Do not edit unless you really know what you are doing.
-\documentclass[english,dvipsnames,aspectratio=169,handout]{beamer}
+\documentclass[english,dvipsnames,aspectratio=169]{beamer}
 \usepackage{mathptmx}
 \usepackage{algorithm2e}
 \usepackage{eulervm}
@@ -636,13 +636,17 @@
 
 \begin{itemize}
   \item Bayesian modeling adds a prior on the parameters.
-  \item Models the distribution of parameters.
+  \item Models the distribution of parameters
+  \pause
   \item Bayes Rule:
   $$
   p(y\mid x) = \frac{p(x\mid y) p(y)}{p(x)} 
   $$
+  \pause
   \item $$p(\theta\mid\cd)\pause=\frac{p(\cd\mid\theta)p(\theta)}{p(\cd)}.$$
+  \pause
   \item $$\underbrace{p(\theta\mid\cd)}_{\text{posterior}}\propto\underbrace{p(\cd\mid\theta)}_{\text{likelihood}}\underbrace{p(\theta)}_{\text{prior}}.$$
+  \pause
   \item Conjugate prior: Having the same form of distribution as the posterior.
   % \item 
 \end{itemize}
@@ -651,7 +655,7 @@
 \begin{frame}{Bayesian Point Estimates}
 \begin{itemize}
 \item We have the posterior distribution $\theta\mid\cd$.
-\item What if someone asks us for a point estimate $\hat{\theta}$ for $\theta$?
+\item What if someone asks us to choose a single $\hat{\theta}$ (i.e. a point estimate of $\theta$)?
 
 \pause{}
 \item Common options:
@@ -768,7 +772,11 @@ r(\hat{\theta}) & = & \ex\left[\ell(\hat{\theta},\theta)\mid\cd\right]\\
 \pause
 \begin{itemize}
     \item Optimal decision depends on the loss function and the posterior distribution.
-    \item We will derive the square loss case next.
+    % \item We will derive the square loss case next.
+    \pause
+    \item Example: I have a card drawing from a deck of 2,3,3,4,4,5,5,5, and you guess the value of my card.
+    \pause
+    \item mean: 3.875; mode: 5; median: 4
 \end{itemize}
 \end{frame}
 %
