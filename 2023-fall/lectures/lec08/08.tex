@@ -575,7 +575,7 @@ where $L$ is the sequence length.
 \begin{itemize}
 \item Write down the objective of structured SVM using the structured hinge loss.
 
-\item Stochastic sub-gradient descent for structured SVM (similar to HW3 P3)
+\item Stochastic sub-gradient descent for structured SVM % (similar to HW3 P3)
 \item Compare with the structured perceptron algorithm
 \end{itemize}
 \end{frame}
@@ -594,38 +594,59 @@ $\Psi(x,y)$ decomposes to $\sum_i \Psi_i(x,y)$.
 \item[Solution]
 Dynamic programming (similar to the Viterbi algorithm)
 \includegraphics[height=0.4\textheight]{figures/dp}
-What's the running time?
-\note<.>{Let $K=\vert\sY\vert$, DP runtime $O(K^2L)$, $m$th order Markov feature has runtime $O(K^mL)$, naive runtime $O(K^L)$.}
+% What's the running time?
+% \note<.>{Let $K=\vert\sY\vert$, DP runtime $O(K^2L)$, $m$th order Markov feature has runtime $O(K^mL)$, naive runtime $O(K^L)$.}
 \end{description}
 \let\thefootnote\relax\footnotetext{\tiny{Figure by Daum\'e III. A course in machine learning. Figure 17.1}.}
 \end{frame}
 
-% \begin{frame}
-% {The argmax problem in general}
-% Efficient problem-specific algorithms:
-% \begin{table}
-% \begin{tabular}{llll}
-% \toprule
-% problem & structure & algorithm \\
-% \midrule
-% constituent parsing & binary trees with context-free features & CYK  \\
-% dependency parsing & spanning trees with edge features & Chu-Liu-Edmonds \\
-% image segmentation & 2d with adjacent-pixel features & graph cuts \\
-% \bottomrule
-% \end{tabular}
-% \end{table}
-% \pause
+\begin{frame}{Structured SVM inference (linear chain)}
+% Dynamic programming (similar to the Viterbi algorithm)
+\begin{center}
+\includegraphics[height=0.35\textheight]{figures/dp}
+\end{center}
+\begin{itemize}
+  \item Initiate $\alpha_j (1) = w^\top \psi(y_1=j, x_1)$
+  \pause
+  \item Recursion $\alpha_j (t) = \max_i \alpha_i (t-1) + w^\top \psi(y_t=j, y_{t-1}=i, x_t)$
+  \pause
+  \item Pointer $\gamma(t, j) = \argmax_i \alpha_i (t-1) + w^\top \psi(y_t=j, y_{t-1}=i, x_t)$
+  \pause
+  \item Backtrack: $r(T) = \argmax_i \alpha_i(T), r(t) = \gamma(t, r(t+1))$
+\end{itemize}
+\pause
+What's the running time?
+\note<.>{Let $K=\vert\sY\vert$, DP runtime $O(K^2L)$, $m$th order Markov feature has runtime $O(K^mL)$, naive runtime $O(K^L)$.}
+% \end{description}
+% \let\thefootnote\relax\footnotetext{\tiny{Figure by Daum\'e III. A course in machine learning. Figure 17.1}.}
+\end{frame}
 
-% General algorithm:
-% \begin{itemize}
-% \item Integer linear programming (ILP)
-% \begin{align}
-% \max_z\; a^Tz \quad \text{s.t. linear constraints on $z$}
-% \end{align}
-% \item $z$: indicator of substructures, \eg $\1\pc{y_i=\text{article and }y_{i+1}=\text{noun}}$
-% \item constraints: $z$ must correspond to a valid structure
-% \end{itemize}
-% \end{frame}
+\begin{frame}
+{The argmax problem in general}
+Efficient problem-specific algorithms:
+\begin{table}
+\begin{tabular}{llll}
+\toprule
+problem & structure & algorithm \\
+\midrule
+constituent parsing & binary trees with context-free features & CYK  \\
+dependency parsing & spanning trees with edge features & Chu-Liu-Edmonds \\
+image segmentation & 2d with adjacent-pixel features & graph cuts \\
+\bottomrule
+\end{tabular}
+\end{table}
+\pause
+
+General algorithm:
+\begin{itemize}
+\item Integer linear programming (ILP)
+\begin{align}
+\max_z\; a^Tz \quad \text{s.t. linear constraints on $z$}
+\end{align}
+\item $z$: indicator of substructures, \eg $\1\pc{y_i=\text{article and }y_{i+1}=\text{noun}}$
+\item constraints: $z$ must correspond to a valid structure
+\end{itemize}
+\end{frame}
 
 % Additional resource:
 % https://people.cs.umass.edu/~mccallum/papers/crf-tutorial.pdf
@@ -654,7 +675,8 @@ $p(y|x) = \frac{1}{Z(x)} \exp(\sum_t w^\top \psi(x, y_t, y_{t-1}))$
   \item Compared to Structured SVM, CRF has a probabilistic interpretation.
   \item We can draw samples in the output space.
   \pause
-  \item How do we learn $w$? Maximum log likelihood, and regularization term: $\lambda \lVert w \rVert^2$
+  \item How do we learn $w$? Maximum log likelihood, and regularization term: $\lambda \lVert w \rVert^2$.
+  \item $p(y|x) = \frac{1}{Z(x)} \exp(w^\top \psi(x, y))$.
   \item Loss function:
   \begin{align*}
   l(w) &= - \frac{1}{N} \sum_{i=1}^{N} \log p(y^{(i)} | x^{(i)}) + \frac{1}{2} \lambda \lVert w \rVert^2 \\
@@ -766,7 +788,7 @@ Multiclass algorithms
 % \item Related problems: ranking, multi-label classification
 \end{itemize}
 \pause
-\item Structured prediction: Structured SVM, CRF. Data containing structure. Extremely large output space. Text and image applications.
+\item Structured prediction: Structured SVM, CRF. Data containing structure. Extremely large output space. Text and image applications. More in-depth content in a probabilistic graphical model (PGM) course.
 \end{itemize}
 \end{frame}
 
