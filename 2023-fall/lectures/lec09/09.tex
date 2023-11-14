@@ -1207,72 +1207,72 @@ Given training set $\cd=\left\{ \left(x_{1},y_{1}\right),\ldots,\left(x_{n},y_{n
 \end{itemize}
 \end{frame}
 
-\begin{frame}{Harr wavelet basis functions}
-\begin{itemize}
-    \item A simple way to generate rectangular weights.
-    \item Over 180,000 filters on a small image (subwindow) of 24x24.
-\end{itemize}
-\begin{center}
-    \includegraphics[width=0.4\linewidth]{figures/harr-wavelet.png} 
-\end{center}
-\end{frame}
+% \begin{frame}{Harr wavelet basis functions}
+% \begin{itemize}
+%     \item A simple way to generate rectangular weights.
+%     \item Over 180,000 filters on a small image (subwindow) of 24x24.
+% \end{itemize}
+% \begin{center}
+%     \includegraphics[width=0.4\linewidth]{figures/harr-wavelet.png} 
+% \end{center}
+% \end{frame}
 
-\begin{frame}{Integral image}
-\begin{itemize}
-    \item How to efficiently compute [image * weights] (hint: the sum of an area of the image).
-    \item Compute an ``integral image''
-    \item Store a 2-D array: S[i, j] = Sum of the image from (0,0) to (i,j).
-    \item D = ABCD - AB - AC + A
-\end{itemize}
-\begin{center}
-    \includegraphics[width=0.4\linewidth, trim={0 9cm 0 0},clip]{figures/integral-image.png} 
-\end{center}
-\end{frame}
+% \begin{frame}{Integral image}
+% \begin{itemize}
+%     \item How to efficiently compute [image * weights] (hint: the sum of an area of the image).
+%     \item Compute an ``integral image''
+%     \item Store a 2-D array: S[i, j] = Sum of the image from (0,0) to (i,j).
+%     \item D = ABCD - AB - AC + A
+% \end{itemize}
+% \begin{center}
+%     \includegraphics[width=0.4\linewidth, trim={0 9cm 0 0},clip]{figures/integral-image.png} 
+% \end{center}
+% \end{frame}
 
 
-\begin{frame}{Learning Procedure (AdaBoost)}
-\begin{itemize}
-    \item Review AdaBoost again here, with a slightly different but equivalent setup.
-    \item Given example images $(x_1, y_1), \dots, (x_n, y_n)$ where $y_i=0,1$ for negative and positive.
-    \pause
-    \item Initialize example weights $w_{1,i} = \frac{1}{2m}, \frac{1}{2l}$ for $y_i=0,1$ respectively, where $m$ and $l$ are the number of negatives and positives.
-    \pause
-    \item For $t = 1, \dots, T$:
-    \begin{enumerate}
-        \item Normalize the example weights, $w_{t,i} \gets \frac{w_{t,i}}{\sum_{i'=1}^n w_{t,i'}}$
-    \pause
-        \item For each feature $j$, train a classifier $h_j$. Evaluate weighted error $\epsilon_j = \sum_i w_i |h_j(x_i) - y_i|$.
-    \pause
-        \item Choose the classifier $h_t$, with the lowest error $\epsilon_t$.
-    \pause
-        \item Update the example weights:
-        $w_{t+1} = w_{t,i} \beta_t^{1-e_i}$, $\beta_t = \frac{\epsilon_t}{1-\epsilon_t}, e_i=0\text{ if correct else } 1$,
-    \pause
-        \item Final classifier
-        $h(x) = \begin{cases}
-        1\text{ if } \sum_t \alpha_t h_t(x) > \frac{1}{2} \sum_t \alpha_t \\
-        0\text{ otherwise},
-        \end{cases}
-        \alpha_t = -\log \beta_t
-        $
-    \end{enumerate}
-\end{itemize}
-\end{frame}
+% \begin{frame}{Learning Procedure (AdaBoost)}
+% \begin{itemize}
+%     \item Review AdaBoost again here, with a slightly different but equivalent setup.
+%     \item Given example images $(x_1, y_1), \dots, (x_n, y_n)$ where $y_i=0,1$ for negative and positive.
+%     \pause
+%     \item Initialize example weights $w_{1,i} = \frac{1}{2m}, \frac{1}{2l}$ for $y_i=0,1$ respectively, where $m$ and $l$ are the number of negatives and positives.
+%     \pause
+%     \item For $t = 1, \dots, T$:
+%     \begin{enumerate}
+%         \item Normalize the example weights, $w_{t,i} \gets \frac{w_{t,i}}{\sum_{i'=1}^n w_{t,i'}}$
+%     \pause
+%         \item For each feature $j$, train a classifier $h_j$. Evaluate weighted error $\epsilon_j = \sum_i w_i |h_j(x_i) - y_i|$.
+%     \pause
+%         \item Choose the classifier $h_t$, with the lowest error $\epsilon_t$.
+%     \pause
+%         \item Update the example weights:
+%         $w_{t+1} = w_{t,i} \beta_t^{1-e_i}$, $\beta_t = \frac{\epsilon_t}{1-\epsilon_t}, e_i=0\text{ if correct else } 1$,
+%     \pause
+%         \item Final classifier
+%         $h(x) = \begin{cases}
+%         1\text{ if } \sum_t \alpha_t h_t(x) > \frac{1}{2} \sum_t \alpha_t \\
+%         0\text{ otherwise},
+%         \end{cases}
+%         \alpha_t = -\log \beta_t
+%         $
+%     \end{enumerate}
+% \end{itemize}
+% \end{frame}
 
-\begin{frame}{Cascaded Processing for Faster Speed}
-\begin{itemize}
-    \item Object detection: A large number of subwindows to process.
-    \item Do we need to run all the weak classifiers at test time?
-    \pause
-    \item Threshold can be adjusted so that there is almost no false negative.
-    \item False positive is ok. We can reject the windows later.
-    \pause
-    \item Stop processing if one weak classifier says no.
-\end{itemize}
-\begin{center}
-\includegraphics[width=0.35\textwidth]{figures/cascade.png}
-\end{center}
-\end{frame}
+% \begin{frame}{Cascaded Processing for Faster Speed}
+% \begin{itemize}
+%     \item Object detection: A large number of subwindows to process.
+%     \item Do we need to run all the weak classifiers at test time?
+%     \pause
+%     \item Threshold can be adjusted so that there is almost no false negative.
+%     \item False positive is ok. We can reject the windows later.
+%     \pause
+%     \item Stop processing if one weak classifier says no.
+% \end{itemize}
+% \begin{center}
+% \includegraphics[width=0.35\textwidth]{figures/cascade.png}
+% \end{center}
+% \end{frame}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}{AdaBoost Face Detection Results}
@@ -1287,9 +1287,9 @@ Given training set $\cd=\left\{ \left(x_{1},y_{1}\right),\ldots,\left(x_{n},y_{n
     \begin{itemize}[<+->]
 \item Boosting is used to reduce bias from shallow decision trees
 \item Each classifier is trained to reduce errors of its previous ensemble.
-\item AdaBoost is a very powerful off-the-self classifier.
-\item A real-time face detection algorithm made by AdaBoost.
-% \item Next week
+\item AdaBoost is a very powerful off-the-shelf classifier.
+% \item A real-time face detection algorithm made by AdaBoost.
+\item Next
 \begin{itemize}
 \item What is the objective function of AdaBoost?
 \item Generalizations to other loss functions
@@ -1298,61 +1298,62 @@ Given training set $\cd=\left\{ \left(x_{1},y_{1}\right),\ldots,\left(x_{n},y_{n
 \end{itemize}
 \end{frame}
 
-\begin{frame}
-{Gradient Boosting}
-\begin{itemize}
-\item Another way to get non-linear models in a linear form---adaptive basis function models.
-\item A general algorithm for greedy function approximation---gradient boosting machine.
-    \begin{itemize}
-        \item Adaboost is a special case.
-    \end{itemize}
-\end{itemize}
-\note[item]{We've learned kernel methods which gives you a non-linear classifier in a linear form. Today we are going to learn another method called ``adaptive basis function models''.
-}
-\note[item]{And we are going to learn a general algorithm for learning these basis functions, which give rise to a family of boosting algorithms, including Adaboost we saw last time.}
-\end{frame}
+% \begin{frame}
+% {Gradient Boosting}
+% \begin{itemize}
+% \item Another way to get non-linear models in a linear form---adaptive basis function models.
+% \item A general algorithm for greedy function approximation---gradient boosting machine.
+%     \begin{itemize}
+%         \item Adaboost is a special case.
+%     \end{itemize}
+% \end{itemize}
+% \note[item]{We've learned kernel methods which gives you a non-linear classifier in a linear form. Today we are going to learn another method called ``adaptive basis function models''.
+% }
+% \note[item]{And we are going to learn a general algorithm for learning these basis functions, which give rise to a family of boosting algorithms, including Adaboost we saw last time.}
+% \end{frame}
 
-\section{Motivation}
-\begin{frame}
-{Recap: Adaboost}
-\begin{center}
-\includegraphics[height=0.7\textheight]{figures/adaboostSchematic}
-\par\end{center}
-\let\thefootnote\relax\footnotetext{\tiny{From ESL Figure 10.1}}
-\note[item]{Recall the Adaboost algorithm we talked about last time. We want to learn a sequence of base classifiers; each of them minimizes weighted zero-one error, where the weights are higher on previously misclassified examples. It's like when you study for an exam, you go over all practice questions; then you look at the answers. The next time you spend more time on questions you go wrong. In the end you would grasp everything.}
-\note[item]{Our final classifier is a weighted combination the base classifiers. The weights on good classifiers are higher, where ``good'' is measured by weighted zero-one error.}
-\note[item]{Last time we went over a greedy algorithm for obtaining the base classifiers and the weights. Let's review the Adaboost algorithm.}
-\end{frame}
+% \section{Motivation}
+% \begin{frame}
+% {Recap: Adaboost}
+% \begin{center}
+% \includegraphics[height=0.7\textheight]{figures/adaboostSchematic}
+% \par\end{center}
+% \let\thefootnote\relax\footnotetext{\tiny{From ESL Figure 10.1}}
+% \note[item]{Recall the Adaboost algorithm we talked about last time. We want to learn a sequence of base classifiers; each of them minimizes weighted zero-one error, where the weights are higher on previously misclassified examples. It's like when you study for an exam, you go over all practice questions; then you look at the answers. The next time you spend more time on questions you go wrong. In the end you would grasp everything.}
+% \note[item]{Our final classifier is a weighted combination the base classifiers. The weights on good classifiers are higher, where ``good'' is measured by weighted zero-one error.}
+% \note[item]{Last time we went over a greedy algorithm for obtaining the base classifiers and the weights. Let's review the Adaboost algorithm.}
+% \end{frame}
 
-\begin{frame}{AdaBoost: Algorithm}
+% \begin{frame}{AdaBoost: Algorithm}
 
-Given training set $\cd=\left\{ \left(x_{1},y_{1}\right),\ldots,\left(x_{n},y_{n}\right)\right\} $.
-\begin{enumerate}
-\item Initialize observation weights $w_{i}=1$, $i=1,2,\ldots,n$.
+% Given training set $\cd=\left\{ \left(x_{1},y_{1}\right),\ldots,\left(x_{n},y_{n}\right)\right\} $.
+% \begin{enumerate}
+% \item Initialize observation weights $w_{i}=1$, $i=1,2,\ldots,n$.
 
-\item For $m=1$ to $M$:
-\begin{enumerate}
-\item Base learner fits weighted training data and returns $G_{m}(x)$
+% \item For $m=1$ to $M$:
+% \begin{enumerate}
+% \item Base learner fits weighted training data and returns $G_{m}(x)$
 
-\item Compute \emph{weighted empirical 0-1 risk}:
-\[
-\mbox{err}_{m}=\frac{1}{W}\sum_{i=1}^{n}w_{i}\ind{y_{i}\neq G_{m}(x_{i})}\quad\text{where }W=\sum_{i=1}^{n}w_{i}.
-\]
+% \item Compute \emph{weighted empirical 0-1 risk}:
+% \[
+% \mbox{err}_{m}=\frac{1}{W}\sum_{i=1}^{n}w_{i}\ind{y_{i}\neq G_{m}(x_{i})}\quad\text{where }W=\sum_{i=1}^{n}w_{i}.
+% \]
 
-\item Compute  \emph{classifier weight}: $\alpha_{m}=\ln\left(\frac{1-\text{err}_{m}}{\text{err}_{m}}\right)$.
+% \item Compute  \emph{classifier weight}: $\alpha_{m}=\ln\left(\frac{1-\text{err}_{m}}{\text{err}_{m}}\right)$.
 
-\item Update \emph{example weight}: $w_{i}\gets w_{i}\cdot\exp\left[\alpha_{m}\ind{y_{i}\neq G_{m}(x_{i})}\right]$
-\end{enumerate}
-\item Return \emph{voted classifier}: $G(x)=\sign\left[\sum_{m=1}^{M}\alpha_{m}G_{m}(x)\right]$.
-\onslide<+->{\hspace{2em}{\color{red}Why not learn $G(x)$ directly?}}
-\end{enumerate}
-%\note[item]{But why does this algorithm work? Does it actually gives us a good classifier in our hypothesis space? Let's work backwards. Since $G(x)$ is the final model we want, why don't we learn it directly? This is actually a special case of additive basis function models.}
-\note[item]{Now that we have a hypothesis space, and a loss function depending on whether we are doing classification or regression, why don't we follow our familiar recipe to write down the ERM objective, and run gradient descent to learn the parameters.}
-\end{frame}
+% \item Update \emph{example weight}: $w_{i}\gets w_{i}\cdot\exp\left[\alpha_{m}\ind{y_{i}\neq G_{m}(x_{i})}\right]$
+% \end{enumerate}
+% \item Return \emph{voted classifier}: $G(x)=\sign\left[\sum_{m=1}^{M}\alpha_{m}G_{m}(x)\right]$.
+% \onslide<+->{\hspace{2em}{\color{red}Why not learn $G(x)$ directly?}}
+% \end{enumerate}
+% %\note[item]{But why does this algorithm work? Does it actually gives us a good classifier in our hypothesis space? Let's work backwards. Since $G(x)$ is the final model we want, why don't we learn it directly? This is actually a special case of additive basis function models.}
+% \note[item]{Now that we have a hypothesis space, and a loss function depending on whether we are doing classification or regression, why don't we follow our familiar recipe to write down the ERM objective, and run gradient descent to learn the parameters.}
+% \end{frame}
 
 \begin{frame}{Nonlinear Regression}
 \begin{itemize}
 \item How do we fit the following data?
+\item Another way to get non-linear models in a linear form---adaptive basis function models.
 \begin{figure}
 \includegraphics[height=0.6\textheight]{figures/nonlinear-regression-data}
 \end{figure}
@@ -1511,7 +1512,7 @@ neurons of last hidden layer.)
 \note[item]{Adaboost gives us a model in the form of an adaptive basis function model. But what the objective function it is optimizing?}
 \end{frame}
 
-\begin{frame}
+\begin{frame}{Gradient Boosting}
 \begin{simpleblock}
 {Today we'll discuss \textbf{gradient boosting}.}
 \begin{itemize}
