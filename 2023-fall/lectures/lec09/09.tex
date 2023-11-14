@@ -2184,8 +2184,8 @@ where $S$ is the number of terminal nodes.
 
 \item $S=2$ gives decision stumps
 
-\item HTF recommends $4\le S\le8$ (but more recent results use much larger
-trees)
+\item Common choice: $4\le S\le8$
+ % (but more recent results use much larger trees)
 \item Software packages:
 \begin{itemize}
 \item Gradient tree boosting is implemented by the {gbm package}
@@ -2255,14 +2255,14 @@ set, right is validation set)
 \note[item]{Right is validation: larger step size converges faster but also converge to a worse solution.}
 \end{frame}
 %
-\begin{frame}{Rule of Thumb}
-\begin{itemize}
-\item The smaller the step size, the more steps you'll need.
-\item But never seems to make results worse, and often better.
-\item So set your step size as small as you have patience for.
-\end{itemize}
-\note[item]{Next let's consider subsampling method.}
-\end{frame}
+% \begin{frame}{Rule of Thumb}
+% \begin{itemize}
+% \item The smaller the step size, the more steps you'll need.
+% \item But never seems to make results worse, and often better.
+% \item So set your step size as small as you have patience for.
+% \end{itemize}
+% \note[item]{Next let's consider subsampling method.}
+% \end{frame}
 
 \begin{frame}{Stochastic Gradient Boosting}
 \begin{itemize}[<+->]
