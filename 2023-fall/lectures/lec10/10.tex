@@ -1487,17 +1487,32 @@ $w$ and $b$:
         % \item The mean of the pre-activations should be zero.
         \item The variance of the activations should stay the same across every layer.
     \end{itemize}
-    \footnote{He et al. Delving Deep into Rectifiers: Surpassing Human-Level Performance on ImageNet}
 \end{itemize}
 \end{frame}
 
 \begin{frame}{Kaiming Initialization}
 \begin{itemize}
-    \item If we suppose that ReLU is used as the activation,
+    \item Suppose each neuron and weight connection are sampling from a random distribution.
+    \pause
+    \item At $l$-th layer, $Var[z_l] = n_l Var[w_l x_l]$ ($n_l$ = num. input neurons to $l$-th layer)
+    \pause
+    \item If we suppose that ReLU is used as the activation, and $w_l$ is symmetric and zero-mean, $x_{l+1} = \frac{1}{2} Var[z_{l}]$.
+    \pause
+    \item Putting altogether, $x_{l+1} = \frac{1}{2} n_l Var[w_{l}] Var[x_l]$.
+    \pause
+    \item To make the variance constant, we need $\frac{1}{2} n_l Var[w_{l}] = 1$, $Std[w_{l}] = \sqrt{2/n_l}$.
 \end{itemize}
+    See original paper\footnote{He et al. Delving Deep into Rectifiers: Surpassing Human-Level Performance on ImageNet. ICCV, 2015.}.
 \end{frame}
 
 \begin{frame}{Activation functions}
+\begin{itemize}
+    \item ReLU was proposed in 2009-2010\footnote{Jarrett et al. What is the Best Multi-Stage Architecture for Object Recognition? ICCV, 2009.}\footnote{Nair \& Hinton/ Rectified Linear Units Improve Restricted Boltzmann Machines. ICML, 2010.}, and was successfully used in AlexNet for image classification in 2012\footnote{Krizhevsky et al. 
+ImageNet Classification with Deep Convolutional Neural Networks. NIPS, 2012.}.
+    \item Address the vanishing gradient issue in activations, comparing to sigmoid or tanh.
+    \item More variants of activation function in the past decade.
+
+\end{itemize}
 \end{frame}
 
 
