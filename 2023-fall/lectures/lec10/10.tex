@@ -1507,12 +1507,24 @@ $w$ and $b$:
 
 \begin{frame}{Activation functions}
 \begin{itemize}
-    \item ReLU was proposed in 2009-2010\footnote{Jarrett et al. What is the Best Multi-Stage Architecture for Object Recognition? ICCV, 2009.}\footnote{Nair \& Hinton/ Rectified Linear Units Improve Restricted Boltzmann Machines. ICML, 2010.}, and was successfully used in AlexNet for image classification in 2012\footnote{Krizhevsky et al. 
+    \item ReLU was proposed in 2009-2010\footnote{Jarrett et al. What is the Best Multi-Stage Architecture for Object Recognition? ICCV, 2009.}\footnote{Nair \& Hinton/ Rectified Linear Units Improve Restricted Boltzmann Machines. ICML, 2010.}, and was successfully used in AlexNet in 2012\footnote{Krizhevsky et al. 
 ImageNet Classification with Deep Convolutional Neural Networks. NIPS, 2012.}.
     \item Address the vanishing gradient issue in activations, comparing to sigmoid or tanh.
-    \item More variants of activation function in the past decade.
-
+    % \item More variants of activation function in the past decade.
 \end{itemize}
+\begin{center}
+    \includegraphics[width=0.17\textwidth]{figures/sigmoid.png}
+    \quad
+    \includegraphics[width=0.17\textwidth]{figures/relu.png}
+    \quad
+    \includegraphics[width=0.17\textwidth]{figures/relu6.png}
+
+    \includegraphics[width=0.17\textwidth]{figures/leaky_relu.png}
+    \quad
+    \includegraphics[width=0.17\textwidth]{figures/elu.png}
+    \quad
+    \includegraphics[width=0.17\textwidth]{figures/gelu.png}
+\end{center}
 \end{frame}
 
 
@@ -1559,483 +1571,596 @@ ImageNet Classification with Deep Convolutional Neural Networks. NIPS, 2012.}.
   % \end{itemize}
   % }
 \end{frame}
-\begin{frame}{Adam}
+
+\begin{frame}{Adam optimizer}
+\begin{columns}
+\begin{column}{0.6\textwidth}
 \begin{itemize}
-  \item \alert{Adam} = RMSprop + momentum
+  \item \alert{Adam} = RMSprop + momentum = Adaptive Momentum estimation
+  \item Smoother estimate of the average gradient and gradient norm.
+  \item $m_t$: exponential moving average of gradient.
+  \item $v_t$: exponential moving average of gradient squared.
+  \item $\hat{m}_t$, $\hat{v}_t$: Bias correction.
+  \item $\theta_t \leftarrow \theta_{t-1} - \alpha \hat{m}_t / (\sqrt{\hat{v_t}} + \epsilon)$
+  \item The ``default'' optimizer for modern networks.
 \end{itemize}
+\end{column}
+\begin{column}{0.38\textwidth}
+\begin{center}
+\includegraphics[width=0.8\textwidth]{figures/adam.png}
+\end{center}
+\end{column}
+\end{columns}
 \end{frame}
 
 \begin{frame}{Normalization}
-\end{frame}
-
-\begin{frame}{Residual connection}
-\end{frame}
-
-\begin{frame}{Dropout}
-\end{frame}
-
-\begin{frame}{Data augmentation}
-\end{frame}
-
-\section{Language and sequential signals}
-\begin{frame}{Weight sharing}
-\end{frame}
-
-\begin{frame}{Recurrent networks}
-\end{frame}
-
-\begin{frame}{Attention}
-\end{frame}
-
-\begin{frame}{Transformers}
-\end{frame}
-
-\begin{frame}{Autoregressive modeling}
-\end{frame}
-
-\begin{frame}{Multi-modal learning}
-\end{frame}
-
-\section{Interpretability}
-
-\begin{frame}{ML Interpretability}
+% \begin{columns}
+% \begin{column}{0.6\textwidth}
 \begin{itemize}
-  \item Linear regression: Weights represent feature selection strength
-  \item SVMs: Dual weights represent sample selection
-  \item Bayesian methods: Model the generative process as a probabilistic model, fully transparent
-  \item Decision trees: If-else decision making process
-  \item Neural networks: ?
+    \item Weight initialization is tricky, and there is no guarantee that the distribution of activations will stay the same over the learning process.
+    \item What if the weights keep grow bigger and activation may explode?
+    \item We can ``normalize'' the activations.
+    \item The idea is to control the activation within a normal range: zero-mean, uni-variance.
 \end{itemize}
+% \end{column}
+% \begin{column}{0.38\textwidth}
+% \begin{center}
+% \includegraphics[width=0.8\textwidth]{figures/normalization.png}
+% \end{center}
+% \end{column}
+% \end{columns}
 \end{frame}
 
-\begin{frame}{Feature Visualization}
+\begin{frame}{Batch Normalization (BN)}
+
+\begin{columns}
+\begin{column}{0.6\textwidth}
 \begin{itemize}
-  \item Recall: we can understand what first-layer features are doing by visualizing the weight matrices.
-  \item Higher-level weight matrices are hard to interpret.
-  \begin{center}
-    \begin{columns}
-      \begin{column}{0.35 \textwidth}
-        \begin{center}
-          Fully connected
-          \includegraphics[width=0.6 \textwidth]{figures/mnist_filters.png}
-        \end{center}
-      \end{column}
-      \begin{column}{0.35 \textwidth}
-        \begin{center}
-          Convolutional
-          \includegraphics[width=0.55 \textwidth]{figures/zeiler_filters.pdf}
-        \end{center}
-        \begin{flushright}
-  \tiny{Zeiler and Fergus, Visualizing and understanding convolutional networks, ECCV 2014.}
-        \end{flushright}
-      \end{column}
-    \end{columns}
-  \end{center}
-\item The better the input matches these weights, the more the feature activates.
-  \begin{itemize}
-  \item Obvious generalization: visualize higher-level features by seeing what inputs activate them.
-  \end{itemize}
+    % \item What is the population to normalize it from?
+    \item Training image distribution -> activation distribution
+    \item In CNNs, neurons across different spatial locations are also samples of the same feature channel.
+    \item Batch norm: Normalize across N H W dimensions, leaving C channels.
+    \item $\tilde{x} = \gamma \frac{x - \mu}{\sigma} + \beta$
+    \item Test time: using the mean and variance from the entire training set.
 \end{itemize}
-\end{frame}
+\end{column}
 
-\begin{frame}{Feature Visualization}
-\begin{itemize}
-\item One way to formalize: pick the images in the training set which activate a unit most strongly.
-\item Here's the visualization for layer 1:
-  \begin{center}
-    \includegraphics[width=0.3 \textwidth]{figures/layer1.png}
-  \end{center}
-\end{itemize}
-\begin{flushright}
-  \tiny{Zeiler and Fergus, Visualizing and understanding convolutional networks, ECCV 2014.}
-\end{flushright}
-\end{frame}
-
-\begin{frame}{Feature Visualization}
-\begin{itemize}
-\item Layer 3:
-  \begin{center}
-    \includegraphics[width=0.4 \textwidth]{figures/layer3.png}
-  \end{center}
-\end{itemize}
-\begin{flushright}
-  \tiny{Zeiler and Fergus, Visualizing and understanding convolutional networks, ECCV 2014.}
-\end{flushright}
-\end{frame}
-
-\begin{frame}{Feature Visualization}
-\begin{itemize}
-\item Layer 4:
-  \begin{center}
-    \includegraphics[width=0.4 \textwidth]{figures/layer4.png}
-  \end{center}
-\end{itemize}
-\begin{flushright}
-  \tiny{Zeiler and Fergus, Visualizing and understanding convolutional networks, ECCV 2014.}
-\end{flushright}
-\end{frame}
-
-\begin{frame}{Feature Visualization}
-\begin{itemize}
-\item Layer 5:
-  \begin{center}
-    \includegraphics[width=0.7 \textwidth]{figures/layer5.png}
-  \end{center}
-\end{itemize}
-\begin{flushright}
-  \tiny{Zeiler and Fergus, Visualizing and understanding convolutional networks, ECCV 2014.}
-\end{flushright}
-\end{frame}
-
-\begin{frame}{Feature Visualization}
-\begin{itemize}
-  \item Higher layers seem to pick up more abstract, high-level information.
-  \item Problems?
-    \begin{itemize}
-    \item Can't tell what the unit is actually responding to in the image.
-    \item We may read too much into the results, e.g.~a unit may detect red, and the images that maximize its activation will all be stop signs.
-    \end{itemize}
-  \item Can use input gradients to diagnose what the unit is responding to.
-\end{itemize}
-\end{frame}
-
-\begin{frame}{Feature Visualization}
-\begin{itemize}
-\item Input gradients can be hard to interpret.
-\item Take a good object recognition conv net (Alex Net) and compute the gradient of $\log p(y= \textrm{``cat''} | \mathbf{x})$:
-  \begin{center}
-    \begin{columns}
-      \begin{column}{0.35 \textwidth}
-        \begin{center}
-          Original image
-          \includegraphics[width=0.8 \textwidth]{figures/cat.pdf}
-        \end{center}
-      \end{column}
-      \begin{column}{0.35 \textwidth}
-        \begin{center}
-          Gradient for ``cat''
-          \includegraphics[width=0.7 \textwidth]{figures/cat_gradient.pdf}
-        \end{center}
-      \end{column}
-    \end{columns}
-  \end{center}
-\end{itemize}
-\end{frame}
-
-\begin{frame}{Feature Visualization}
-  \begin{itemize}
-  \item \alert{Guided backprop} is a total hack to prevent this cancellation.
-  \item Do the backward pass as normal, but apply the ReLU nonlinearity to all the activation error signals.
-    \[ y = \textrm{ReLU}(z) \qquad \bar{z} = \begin{cases} \bar{y} & \text{if $z > 0$ {\color{red} and $\bar{y} > 0$}} \\ 0 & \text{otherwise} \end{cases} \]
-  \item We want to visualize what excites given unit, not what suppresses it.
-    \begin{center}
-      \includegraphics[width=0.5 \textwidth]{figures/guided_backprop_results.pdf}
-    \end{center}
-  \end{itemize}
-\end{frame}
-
-\begin{frame}{Guided Backprop}
+\begin{column}{0.38\textwidth}
 \begin{center}
-  \includegraphics[width=0.85 \textwidth]{figures/guided_backprop_results2.pdf}
+\includegraphics[width=0.7\textwidth,trim={0 0 25.5cm 0},clip]{figures/normalization.png}
 \end{center}
-\begin{flushright}
-{\tiny Springerberg et al., Striving for simplicity: The all convolutional net, ICLR workshop 2015.}
-\end{flushright}
+\end{column}
+\end{columns}
 
-% \notenew{
+\end{frame}
+
+\begin{frame}{BN Alternatives}
+\begin{itemize}
+    \item Need a considerable batch size to estimate mean and variance correctly.
+    \item Training is different from testing.
+    \item Alternatives consider the C channel dimension instead of N batch dimension.
+    % \item No longer estimating the distribution from training samples.
+\end{itemize}
+\begin{center}
+\includegraphics[width=0.7\textwidth,trim={10cm 0 0 0},clip]{figures/normalization.png}
+\end{center}
+\end{frame}
+
+\begin{frame}{Going Deeper}
+\begin{itemize}
+    \item The progress of normalization allowed us to train even deeper networks.
+    \item The networks are no longer too sensitive with initialization.
+    \item But the best networks were still around 20 layers and deeper results in worse performance.
+\end{itemize}
+\begin{center}
+\includegraphics[width=0.6\textwidth]{figures/googlenet.png}
+\includegraphics[width=0.35\textwidth]{figures/20layer.png}
+\end{center}
+\end{frame}
+
+% \begin{frame}{Residual Networks}
 % \begin{itemize}
-%   \item We start from here.
-%   \item Visualize one neuron in the input image.
-%   \item Draw one neuron in the middle.
+%     \item Recall in gradient boosting, we are iteratively adding a function to the model to expand the capacity.
+%     \item 
 % \end{itemize}
-% }
-\end{frame}
+% \end{frame}
 
+\begin{frame}{Residual Networks (ResNet)}
 
-\begin{frame}{Class activation map (CAM)}
-
-Classification networks typically use global avg pooling before the final layer.
-
-This pooling layer can already contain semantic information.
-
-We can visualize a heat map 
+\begin{itemize}
+    \item Recall in gradient boosting, we are iteratively adding a function to the model to expand the capacity.
+    \item Residual connection: Skip connection to prevent gradient vanishing.\footnote{He et al. Deep Residual Learning for Image Recognition. CVPR 2016.}
+    % \item A simple ``addition'' operation on the activation.
+\end{itemize}
 
 \begin{center}
-\includegraphics[height=0.3\textheight]{figures/cam.png}
-\includegraphics[height=0.3\textheight]{figures/cam2.png}
+% \includegraphics[width=0.75\textwidth]{figures/residual_connect.png}
+\includegraphics[width=0.5\textwidth]{figures/resnet.png}
 \end{center}
 
-\begin{flushright}
-{\tiny Zhou et al. Learning deep features for discriminative localization. CVPR 2016.}
-\end{flushright}
-
-% \notenew{
-%   \begin{itemize}
-%     \item Another way is to think about the output classes.
-%     \item Imagine you have a classifier.
-%     \item What would be the region of the input that is responsible 
-%     \item Utilize the average pooling layer.
-%     \item Take the dot product between the activation at each location and the class vector
-%   \end{itemize}
-% }
 \end{frame}
 
-\begin{frame}{GradCAM}
-
-\begin{center}
-\vspace{-0.2in}
-\includegraphics[width=0.7\textwidth]{figures/gradcam.png}
-\includegraphics[width=0.45\textwidth,trim={0 0 16cm 0},clip]{figures/gradcam2.png}
-\end{center}
-
-\begin{flushright}
-{\tiny Selvaraju et al. Grad-CAM: Visual explanations from deep networks via gradient-based localization. ICCV 2017.}
-\end{flushright}
-
-% \notenew{
-%   \begin{itemize}
-%     \item Potentially a way to combine guided backprop and CAM.
-%     \item In the example, GBP is still plotting the dog, even though we are visualizing the cat neuron.
-%     \item We can suppress it by overlapping it with CAM.
-%   \end{itemize}
-% }
-\end{frame}
-
-\begin{frame}{Gradient Ascent on Images}
+\begin{frame}{ResNet Success}
 \begin{itemize}
-\item Can do gradient ascent on an image to maximize the activation of a given neuron.
-  \begin{center}
-    \hspace{-3em}\includegraphics[width=\textwidth]{figures/distill_gd.png}
-  \end{center}
-\end{itemize}
-\begin{flushright}
-  \begin{tiny}
-    \vspace{-1em}
-    \url{https://distill.pub/2017/feature-visualization/}
-  \end{tiny}
-\end{flushright}
-
-% \notenew{
-%   \begin{itemize}
-%     \item Guided backpropagation = 1 step
-%     \item What if we run multiple steps of gradients?
-%   \end{itemize}
-% }
-\end{frame}
-
-\begin{frame}{Gradient Ascent on Images}
-\begin{center}
-  \hspace{-1em}\includegraphics[width=\textwidth]{figures/distill_why_optimize.png}
-\end{center}
-\begin{flushright}
-  \begin{tiny}
-    \vspace{-1em}
-    \url{https://distill.pub/2017/feature-visualization/}
-  \end{tiny}
-\end{flushright}
-
-% \notenew{
-%   \begin{itemize}
-%     \item For the same layer, we can run it on different units, and get different results.
-%     \item Above: dataset examples that maximizes neuron activation
-%     \item Below: optimized images that maximizes neuron activation
-%   \end{itemize}
-% }
-\end{frame}
-
-\begin{frame}{Gradient Ascent on Images}
-\begin{itemize}
-  \item Higher layers in the network often learn higher-level, more interpretable representations
-    \begin{center}
-      \includegraphics[width=0.85 \linewidth]{figures/olah.png}
-    \end{center}
-    \begin{flushright}
-      \begin{tiny}
-        \vspace{-1em}
-        \url{https://distill.pub/2017/feature-visualization/}
-      \end{tiny}
-    \end{flushright}
-\end{itemize}
-\end{frame}
-
-\begin{frame}{Gradient Ascent on Images}
-\begin{itemize}
-  \item Higher layers in the network often learn higher-level, more interpretable representations
-    \begin{center}
-      \includegraphics[width=0.6 \linewidth]{figures/olah2.png}
-    \end{center}
-    \begin{flushright}
-      \begin{tiny}
-        \vspace{-1em}
-        \url{https://distill.pub/2017/feature-visualization/}
-      \end{tiny}
-    \end{flushright}
-\end{itemize}
-\end{frame}
-
-\begin{frame}{Deep dream}
-\begin{itemize}
-\item Start with an image, and run a conv net on it.
-\item Change the image such that units which were already highly activated get activated even more strongly.
-``Rich get richer.''
+    \item Now able to train over 100 layers.
+    \item One of the most important network design choices in the past decade.
+    \item Prevalent in almost all network architectures, including Transformers.
+    \item Loss landscape view: Skip connections makes loss smoother -> easier to optimize \footnote{Li et al. Visualizing the Loss Landscape of Neural Nets. NIPS 2018.}.
 \end{itemize}
 \begin{center}
-  \hspace{-1em}\includegraphics[width=\textwidth]{figures/deepdream1.pdf}
+% \includegraphics[width=0.75\textwidth]{figures/residual_connect.png}
+\includegraphics[width=0.5\textwidth]{figures/resnetlandscape.png}
 \end{center}
+\end{frame}
 
-% \notenew{
+% \begin{frame}{Dropout}
+% \end{frame}
+
+% \begin{frame}{Data augmentation}
+% \end{frame}
+
+% \section{Language and sequential signals}
+% \begin{frame}{Weight sharing}
+% \end{frame}
+
+% \begin{frame}{Recurrent networks}
+% \end{frame}
+
+% \begin{frame}{Gating functions}
+% \end{frame}
+
+% \begin{frame}{Attention}
+% \end{frame}
+
+% \begin{frame}{Transformers}
+% \end{frame}
+
+% \begin{frame}{Autoregressive modeling}
+% \end{frame}
+
+% \begin{frame}{Multi-modal learning}
+% \end{frame}
+
+% \section{Interpretability}
+
+% \begin{frame}{ML Interpretability}
 % \begin{itemize}
-%   \item What if we try to maximize all neuron in one layer at once?
+%   \item Linear regression: Weights represent feature selection strength
+%   \item SVMs: Dual weights represent sample selection
+%   \item Bayesian methods: Model the generative process as a probabilistic model, fully transparent
+%   \item Decision trees: If-else decision making process
+%   \item Neural networks: ?
 % \end{itemize}
-% }
-\end{frame}
+% \end{frame}
 
-\begin{frame}{Deep dream}
-\begin{center}
-  \hspace{-1em}\includegraphics[width=\textwidth]{figures/deepdream2.pdf}
-\end{center}
-\end{frame}
-
-\begin{frame}{Deep dream}
-\begin{center}
-  \hspace{-1em}\includegraphics[width=0.9\textwidth]{figures/deepdream3.pdf}
-\end{center}
-\end{frame}
-
-\begin{frame}{Artistic style transfer}
-\begin{itemize}
-\item Activation stores content information
-\item Activation correlation across space stores style information and discards spatial arrangement
-\end{itemize}
-\begin{center}
-\includegraphics[width=0.55\textwidth]{figures/style_transfer.png}
-\end{center}
-\begin{flushright}
-{\tiny Gatys et al., Image style transfer Using convolutional neural networks, CVPR 2016.}
-\end{flushright}
-
-% \notenew{
+% \begin{frame}{Feature Visualization}
+% \begin{itemize}
+%   \item Recall: we can understand what first-layer features are doing by visualizing the weight matrices.
+%   \item Higher-level weight matrices are hard to interpret.
+%   \begin{center}
+%     \begin{columns}
+%       \begin{column}{0.35 \textwidth}
+%         \begin{center}
+%           Fully connected
+%           \includegraphics[width=0.6 \textwidth]{figures/mnist_filters.png}
+%         \end{center}
+%       \end{column}
+%       \begin{column}{0.35 \textwidth}
+%         \begin{center}
+%           Convolutional
+%           \includegraphics[width=0.55 \textwidth]{figures/zeiler_filters.pdf}
+%         \end{center}
+%         \begin{flushright}
+%   \tiny{Zeiler and Fergus, Visualizing and understanding convolutional networks, ECCV 2014.}
+%         \end{flushright}
+%       \end{column}
+%     \end{columns}
+%   \end{center}
+% \item The better the input matches these weights, the more the feature activates.
 %   \begin{itemize}
-%     \item Backprop into the inputs can generate a lot of interesting patterns.
-%     \item This could include low level image patterns.
-%     \item What about change the style of an image?
+%   \item Obvious generalization: visualize higher-level features by seeing what inputs activate them.
 %   \end{itemize}
-% }
-\end{frame}
+% \end{itemize}
+% \end{frame}
 
-\begin{frame}{Artistic style transfer}
-\begin{itemize}
-  \item Optimizing both content \& style from random noise
-\end{itemize}
-\begin{center}
-\includegraphics[width=0.85\textwidth]{figures/style_transfer2.png}
-\end{center}
-\begin{flushright}
-{\tiny Gatys et al., Image style transfer Using convolutional neural networks, CVPR 2016.}
-\end{flushright}
-\end{frame}
+% \begin{frame}{Feature Visualization}
+% \begin{itemize}
+% \item One way to formalize: pick the images in the training set which activate a unit most strongly.
+% \item Here's the visualization for layer 1:
+%   \begin{center}
+%     \includegraphics[width=0.3 \textwidth]{figures/layer1.png}
+%   \end{center}
+% \end{itemize}
+% \begin{flushright}
+%   \tiny{Zeiler and Fergus, Visualizing and understanding convolutional networks, ECCV 2014.}
+% \end{flushright}
+% \end{frame}
 
-\begin{frame}{Artistic style transfer}
-\begin{center}
-\includegraphics[width=0.7\textwidth,trim={0 7cm 0 0},clip]{figures/style_transfer3.png}
-\end{center}
-\begin{flushright}
-{\tiny Gatys et al., Image style transfer Using convolutional neural networks, CVPR 2016.}
-\end{flushright}
-\end{frame}
+% \begin{frame}{Feature Visualization}
+% \begin{itemize}
+% \item Layer 3:
+%   \begin{center}
+%     \includegraphics[width=0.4 \textwidth]{figures/layer3.png}
+%   \end{center}
+% \end{itemize}
+% \begin{flushright}
+%   \tiny{Zeiler and Fergus, Visualizing and understanding convolutional networks, ECCV 2014.}
+% \end{flushright}
+% \end{frame}
 
-\begin{frame}{Adversarial Examples}
-\begin{itemize}
-\item One of the most surprising findings about neural nets has been the existence of \alert{adversarial inputs}, i.e.~inputs optimized to fool an algorithm.
-\end{itemize}
-\begin{center}
-    \includegraphics[width=0.75 \linewidth]{figures/fgsm.png}
-  \end{center}
-\begin{flushright}
-  \tiny{Goodfellow et al., Explaining and harnessing adversarial examples, ICLR 2015.}
-\end{flushright}
-% \notenew{
-%     Given an image for one category (e.g.~``cat''), compute the image gradient to maximize the network's output unit for a different category (e.g.~``dog'')
+% \begin{frame}{Feature Visualization}
+% \begin{itemize}
+% \item Layer 4:
+%   \begin{center}
+%     \includegraphics[width=0.4 \textwidth]{figures/layer4.png}
+%   \end{center}
+% \end{itemize}
+% \begin{flushright}
+%   \tiny{Zeiler and Fergus, Visualizing and understanding convolutional networks, ECCV 2014.}
+% \end{flushright}
+% \end{frame}
+
+% \begin{frame}{Feature Visualization}
+% \begin{itemize}
+% \item Layer 5:
+%   \begin{center}
+%     \includegraphics[width=0.7 \textwidth]{figures/layer5.png}
+%   \end{center}
+% \end{itemize}
+% \begin{flushright}
+%   \tiny{Zeiler and Fergus, Visualizing and understanding convolutional networks, ECCV 2014.}
+% \end{flushright}
+% \end{frame}
+
+% \begin{frame}{Feature Visualization}
+% \begin{itemize}
+%   \item Higher layers seem to pick up more abstract, high-level information.
+%   \item Problems?
 %     \begin{itemize}
-%       \item Perturb the image very slightly in this direction
-%       \item Works slightly better if you take the sign of the entries in the gradient; this is called the \high{fast gradient sign method}.
+%     \item Can't tell what the unit is actually responding to in the image.
+%     \item We may read too much into the results, e.g.~a unit may detect red, and the images that maximize its activation will all be stop signs.
 %     \end{itemize}
-% }
-\end{frame}
+%   \item Can use input gradients to diagnose what the unit is responding to.
+% \end{itemize}
+% \end{frame}
 
-\begin{frame}{Adversarial Examples}
-\begin{itemize}
-\item The following adversarial examples are misclassified as ostriches. ( $10 \times$ perturbation visualized in middle.)
-  \begin{center}
-    \includegraphics[width=0.85 \linewidth]{figures/adversarial_examples.png}
-  \end{center}
-\end{itemize}
-\begin{flushright}
-  \tiny{Szegedy et al., Intriguing properties of neural networks, ICLR 2014.}
-\end{flushright}
-\end{frame}
+% \begin{frame}{Feature Visualization}
+% \begin{itemize}
+% \item Input gradients can be hard to interpret.
+% \item Take a good object recognition conv net (Alex Net) and compute the gradient of $\log p(y= \textrm{``cat''} | \mathbf{x})$:
+%   \begin{center}
+%     \begin{columns}
+%       \begin{column}{0.35 \textwidth}
+%         \begin{center}
+%           Original image
+%           \includegraphics[width=0.8 \textwidth]{figures/cat.pdf}
+%         \end{center}
+%       \end{column}
+%       \begin{column}{0.35 \textwidth}
+%         \begin{center}
+%           Gradient for ``cat''
+%           \includegraphics[width=0.7 \textwidth]{figures/cat_gradient.pdf}
+%         \end{center}
+%       \end{column}
+%     \end{columns}
+%   \end{center}
+% \end{itemize}
+% \end{frame}
 
-\begin{frame}{Adversarial Examples}
-\begin{itemize}
-\item You can print out an adversarial image and take a picture of it, and it still works!
-  \begin{center}
-    \includegraphics[width=0.9 \linewidth]{figures/printed_adversarial.png}
-  \end{center}
-  \begin{flushright}
-    \tiny{Kurakin et al., Adversarial examples in the physical world, ICLR workshop 2017.}
-  \end{flushright}
-\end{itemize}
-\end{frame}
-
-\begin{frame}{Adversarial Examples}
-\begin{itemize}
-\item An adversarial example in the physical world (network thinks it's a gun, from a variety of viewing angles!)
-  \begin{center}
-    \includegraphics[width=0.8\textwidth]{figures/adversarial_physical.png}
-  \end{center}
-\end{itemize}
-\begin{flushright}
-  \tiny{Athalye et al., Synthesizing robust adversarial examples, ICML 2018.}
-\end{flushright}
-% \notenew{
+% \begin{frame}{Feature Visualization}
 %   \begin{itemize}
-%   \item Optimize different view angles in 3D simulation, randomizing a lot of transformations.
+%   \item \alert{Guided backprop} is a total hack to prevent this cancellation.
+%   \item Do the backward pass as normal, but apply the ReLU nonlinearity to all the activation error signals.
+%     \[ y = \textrm{ReLU}(z) \qquad \bar{z} = \begin{cases} \bar{y} & \text{if $z > 0$ {\color{red} and $\bar{y} > 0$}} \\ 0 & \text{otherwise} \end{cases} \]
+%   \item We want to visualize what excites given unit, not what suppresses it.
+%     \begin{center}
+%       \includegraphics[width=0.5 \textwidth]{figures/guided_backprop_results.pdf}
+%     \end{center}
 %   \end{itemize}
-% }
-\end{frame}
+% \end{frame}
 
-\begin{frame}{Adversarial Examples}
-\begin{itemize}
-\item An adversarial mesh object that can hide cars from LiDAR detector
-  \begin{center}
-    \includegraphics[width=0.6\textwidth]{figures/adv_mesh.png}
-  \end{center}
-\end{itemize}
-\begin{flushright}
-  \tiny{Tu et al., Physically realizable adversarial examples for LiDAR object detection, CVPR 2020.}
-\end{flushright}
-% \notenew{
-%   \begin{itemize}
-%     \item People often use self-driving car as an example to emphasize the importance.
-%     \item In this example, this is a 3D vision task, but the intuition is similar.
-%     \item Tries to fool an object detector with a strange looking shape.
-%   \end{itemize}
-% }
-\end{frame}
+% \begin{frame}{Guided Backprop}
+% \begin{center}
+%   \includegraphics[width=0.85 \textwidth]{figures/guided_backprop_results2.pdf}
+% \end{center}
+% \begin{flushright}
+% {\tiny Springerberg et al., Striving for simplicity: The all convolutional net, ICLR workshop 2015.}
+% \end{flushright}
 
-\begin{frame}{Large Language Model Safety}
-\end{frame}
+% % \notenew{
+% % \begin{itemize}
+% %   \item We start from here.
+% %   \item Visualize one neuron in the input image.
+% %   \item Draw one neuron in the middle.
+% % \end{itemize}
+% % }
+% \end{frame}
 
-\begin{frame}{Adversarial Defense}
-\begin{itemize}
-  \item How to defend from adversarial perturbation is still an active research area.
-  \item One common approach is to train with millions of adversarial examples.
-  \item Needs to train much longer, and also suffers a little from normal accuracy.
-\end{itemize}
-% \notenew{
-%   More to be covered in security \& privacy of deep learning.
-% }
-\end{frame}
+
+% \begin{frame}{Class activation map (CAM)}
+
+% Classification networks typically use global avg pooling before the final layer.
+
+% This pooling layer can already contain semantic information.
+
+% We can visualize a heat map 
+
+% \begin{center}
+% \includegraphics[height=0.3\textheight]{figures/cam.png}
+% \includegraphics[height=0.3\textheight]{figures/cam2.png}
+% \end{center}
+
+% \begin{flushright}
+% {\tiny Zhou et al. Learning deep features for discriminative localization. CVPR 2016.}
+% \end{flushright}
+
+% % \notenew{
+% %   \begin{itemize}
+% %     \item Another way is to think about the output classes.
+% %     \item Imagine you have a classifier.
+% %     \item What would be the region of the input that is responsible 
+% %     \item Utilize the average pooling layer.
+% %     \item Take the dot product between the activation at each location and the class vector
+% %   \end{itemize}
+% % }
+% \end{frame}
+
+% \begin{frame}{GradCAM}
+
+% \begin{center}
+% \vspace{-0.2in}
+% \includegraphics[width=0.7\textwidth]{figures/gradcam.png}
+% \includegraphics[width=0.45\textwidth,trim={0 0 16cm 0},clip]{figures/gradcam2.png}
+% \end{center}
+
+% \begin{flushright}
+% {\tiny Selvaraju et al. Grad-CAM: Visual explanations from deep networks via gradient-based localization. ICCV 2017.}
+% \end{flushright}
+
+% % \notenew{
+% %   \begin{itemize}
+% %     \item Potentially a way to combine guided backprop and CAM.
+% %     \item In the example, GBP is still plotting the dog, even though we are visualizing the cat neuron.
+% %     \item We can suppress it by overlapping it with CAM.
+% %   \end{itemize}
+% % }
+% \end{frame}
+
+% \begin{frame}{Gradient Ascent on Images}
+% \begin{itemize}
+% \item Can do gradient ascent on an image to maximize the activation of a given neuron.
+%   \begin{center}
+%     \hspace{-3em}\includegraphics[width=\textwidth]{figures/distill_gd.png}
+%   \end{center}
+% \end{itemize}
+% \begin{flushright}
+%   \begin{tiny}
+%     \vspace{-1em}
+%     \url{https://distill.pub/2017/feature-visualization/}
+%   \end{tiny}
+% \end{flushright}
+
+% % \notenew{
+% %   \begin{itemize}
+% %     \item Guided backpropagation = 1 step
+% %     \item What if we run multiple steps of gradients?
+% %   \end{itemize}
+% % }
+% \end{frame}
+
+% \begin{frame}{Gradient Ascent on Images}
+% \begin{center}
+%   \hspace{-1em}\includegraphics[width=\textwidth]{figures/distill_why_optimize.png}
+% \end{center}
+% \begin{flushright}
+%   \begin{tiny}
+%     \vspace{-1em}
+%     \url{https://distill.pub/2017/feature-visualization/}
+%   \end{tiny}
+% \end{flushright}
+
+% % \notenew{
+% %   \begin{itemize}
+% %     \item For the same layer, we can run it on different units, and get different results.
+% %     \item Above: dataset examples that maximizes neuron activation
+% %     \item Below: optimized images that maximizes neuron activation
+% %   \end{itemize}
+% % }
+% \end{frame}
+
+% \begin{frame}{Gradient Ascent on Images}
+% \begin{itemize}
+%   \item Higher layers in the network often learn higher-level, more interpretable representations
+%     \begin{center}
+%       \includegraphics[width=0.85 \linewidth]{figures/olah.png}
+%     \end{center}
+%     \begin{flushright}
+%       \begin{tiny}
+%         \vspace{-1em}
+%         \url{https://distill.pub/2017/feature-visualization/}
+%       \end{tiny}
+%     \end{flushright}
+% \end{itemize}
+% \end{frame}
+
+% \begin{frame}{Gradient Ascent on Images}
+% \begin{itemize}
+%   \item Higher layers in the network often learn higher-level, more interpretable representations
+%     \begin{center}
+%       \includegraphics[width=0.6 \linewidth]{figures/olah2.png}
+%     \end{center}
+%     \begin{flushright}
+%       \begin{tiny}
+%         \vspace{-1em}
+%         \url{https://distill.pub/2017/feature-visualization/}
+%       \end{tiny}
+%     \end{flushright}
+% \end{itemize}
+% \end{frame}
+
+% \begin{frame}{Deep dream}
+% \begin{itemize}
+% \item Start with an image, and run a conv net on it.
+% \item Change the image such that units which were already highly activated get activated even more strongly.
+% ``Rich get richer.''
+% \end{itemize}
+% \begin{center}
+%   \hspace{-1em}\includegraphics[width=\textwidth]{figures/deepdream1.pdf}
+% \end{center}
+
+% % \notenew{
+% % \begin{itemize}
+% %   \item What if we try to maximize all neuron in one layer at once?
+% % \end{itemize}
+% % }
+% \end{frame}
+
+% \begin{frame}{Deep dream}
+% \begin{center}
+%   \hspace{-1em}\includegraphics[width=\textwidth]{figures/deepdream2.pdf}
+% \end{center}
+% \end{frame}
+
+% \begin{frame}{Deep dream}
+% \begin{center}
+%   \hspace{-1em}\includegraphics[width=0.9\textwidth]{figures/deepdream3.pdf}
+% \end{center}
+% \end{frame}
+
+% \begin{frame}{Artistic style transfer}
+% \begin{itemize}
+% \item Activation stores content information
+% \item Activation correlation across space stores style information and discards spatial arrangement
+% \end{itemize}
+% \begin{center}
+% \includegraphics[width=0.55\textwidth]{figures/style_transfer.png}
+% \end{center}
+% \begin{flushright}
+% {\tiny Gatys et al., Image style transfer Using convolutional neural networks, CVPR 2016.}
+% \end{flushright}
+
+% % \notenew{
+% %   \begin{itemize}
+% %     \item Backprop into the inputs can generate a lot of interesting patterns.
+% %     \item This could include low level image patterns.
+% %     \item What about change the style of an image?
+% %   \end{itemize}
+% % }
+% \end{frame}
+
+% \begin{frame}{Artistic style transfer}
+% \begin{itemize}
+%   \item Optimizing both content \& style from random noise
+% \end{itemize}
+% \begin{center}
+% \includegraphics[width=0.85\textwidth]{figures/style_transfer2.png}
+% \end{center}
+% \begin{flushright}
+% {\tiny Gatys et al., Image style transfer Using convolutional neural networks, CVPR 2016.}
+% \end{flushright}
+% \end{frame}
+
+% \begin{frame}{Artistic style transfer}
+% \begin{center}
+% \includegraphics[width=0.7\textwidth,trim={0 7cm 0 0},clip]{figures/style_transfer3.png}
+% \end{center}
+% \begin{flushright}
+% {\tiny Gatys et al., Image style transfer Using convolutional neural networks, CVPR 2016.}
+% \end{flushright}
+% \end{frame}
+
+% \begin{frame}{Adversarial Examples}
+% \begin{itemize}
+% \item One of the most surprising findings about neural nets has been the existence of \alert{adversarial inputs}, i.e.~inputs optimized to fool an algorithm.
+% \end{itemize}
+% \begin{center}
+%     \includegraphics[width=0.75 \linewidth]{figures/fgsm.png}
+%   \end{center}
+% \begin{flushright}
+%   \tiny{Goodfellow et al., Explaining and harnessing adversarial examples, ICLR 2015.}
+% \end{flushright}
+% % \notenew{
+% %     Given an image for one category (e.g.~``cat''), compute the image gradient to maximize the network's output unit for a different category (e.g.~``dog'')
+% %     \begin{itemize}
+% %       \item Perturb the image very slightly in this direction
+% %       \item Works slightly better if you take the sign of the entries in the gradient; this is called the \high{fast gradient sign method}.
+% %     \end{itemize}
+% % }
+% \end{frame}
+
+% \begin{frame}{Adversarial Examples}
+% \begin{itemize}
+% \item The following adversarial examples are misclassified as ostriches. ( $10 \times$ perturbation visualized in middle.)
+%   \begin{center}
+%     \includegraphics[width=0.85 \linewidth]{figures/adversarial_examples.png}
+%   \end{center}
+% \end{itemize}
+% \begin{flushright}
+%   \tiny{Szegedy et al., Intriguing properties of neural networks, ICLR 2014.}
+% \end{flushright}
+% \end{frame}
+
+% \begin{frame}{Adversarial Examples}
+% \begin{itemize}
+% \item You can print out an adversarial image and take a picture of it, and it still works!
+%   \begin{center}
+%     \includegraphics[width=0.9 \linewidth]{figures/printed_adversarial.png}
+%   \end{center}
+%   \begin{flushright}
+%     \tiny{Kurakin et al., Adversarial examples in the physical world, ICLR workshop 2017.}
+%   \end{flushright}
+% \end{itemize}
+% \end{frame}
+
+% \begin{frame}{Adversarial Examples}
+% \begin{itemize}
+% \item An adversarial example in the physical world (network thinks it's a gun, from a variety of viewing angles!)
+%   \begin{center}
+%     \includegraphics[width=0.8\textwidth]{figures/adversarial_physical.png}
+%   \end{center}
+% \end{itemize}
+% \begin{flushright}
+%   \tiny{Athalye et al., Synthesizing robust adversarial examples, ICML 2018.}
+% \end{flushright}
+% % \notenew{
+% %   \begin{itemize}
+% %   \item Optimize different view angles in 3D simulation, randomizing a lot of transformations.
+% %   \end{itemize}
+% % }
+% \end{frame}
+
+% \begin{frame}{Adversarial Examples}
+% \begin{itemize}
+% \item An adversarial mesh object that can hide cars from LiDAR detector
+%   \begin{center}
+%     \includegraphics[width=0.6\textwidth]{figures/adv_mesh.png}
+%   \end{center}
+% \end{itemize}
+% \begin{flushright}
+%   \tiny{Tu et al., Physically realizable adversarial examples for LiDAR object detection, CVPR 2020.}
+% \end{flushright}
+% % \notenew{
+% %   \begin{itemize}
+% %     \item People often use self-driving car as an example to emphasize the importance.
+% %     \item In this example, this is a 3D vision task, but the intuition is similar.
+% %     \item Tries to fool an object detector with a strange looking shape.
+% %   \end{itemize}
+% % }
+% \end{frame}
+
+% \begin{frame}{Large Language Model Safety}
+% \end{frame}
+
+% \begin{frame}{Adversarial Defense}
+% \begin{itemize}
+%   \item How to defend from adversarial perturbation is still an active research area.
+%   \item One common approach is to train with millions of adversarial examples.
+%   \item Needs to train much longer, and also suffers a little from normal accuracy.
+% \end{itemize}
+% % \notenew{
+% %   More to be covered in security \& privacy of deep learning.
+% % }
+% \end{frame}
 
 
 \end{document}
