@@ -118,7 +118,7 @@
 
 %\setbeameroption{show notes on second screen}
 
-\title[DS-GA 1003]{Feature learning, neural networks and backpropagation}
+\title[CSCI-GA 2565]{Feature learning, neural networks and backpropagation}
 \author{Mengye Ren
 % \\
 % Slides based on Lecture
@@ -556,13 +556,15 @@ satisfies $\vert \hat{F}(x) - F(x)\vert < \epsilon$.
 
 \begin{frame}{Multilayer Perceptron (MLP): formal definition}
 \begin{itemize}
-\item \textbf{Input space}: $\cx=\reals^{d}$$\qquad$\textbf{Action space}
-$\ca=\reals^{k}$ (for $k$-class classification).
+\item \textbf{Input space}: $\cx=\reals^{d}$$\qquad$\textbf{Output space}
+$\cy=\reals^{k}$ (for $k$-class classification).
 
 \item Let $\sigma:\reals\to\reals$ be an activation function
 (e.g. $\tanh$ or ReLU).
 
 \item Let's consider an MLP of $L$ hidden layers, each having $m$ hidden units.
+
+\pause
 
 \item First hidden layer is given by
 \[
@@ -645,12 +647,14 @@ where $f_i$'s are the outputs of the last hidden layer of a neural network.
 \begin{itemize}
 \item With the right representations, we can turn nonlinear problems into linear ones
 \item The goal of represenation learning is to automatically discover useful features from raw data
+\pause
 \item Building blocks:
 \begin{description}[Hidden layer(s)]
 \item[Input layer] no learnable parameters
 \item[Hidden layer(s)] affine + \emph{nonlinear} activation function
 \item[Output layer] affine (+ softmax)
 \end{description}
+\pause
 \item A single, potentially huge hidden layer is sufficient to approximate any function
 \item In practice, it is often helpful to have multiple hidden layers
 \end{itemize}
@@ -662,7 +666,7 @@ where $f_i$'s are the outputs of the last hidden layer of a neural network.
 \begin{frame}{Fitting the parameters of an MLP}
 \begin{itemize}
 \item \textbf{Input space}: $\cx=\reals$ 
-\item \textbf{Action Space / Output space}: $\ca=\cy=\reals$
+\item \textbf{Output space}: $\cy=\reals$
 \item \textbf{Hypothesis space}: MLPs with a single 3-node hidden layer:
 \[
 f(x)=w_{0}+w_{1}h_{1}(x)+w_{2}h_{2}(x)+w_{3}h_{3}(x),
@@ -1199,12 +1203,17 @@ $w$ and $b$:
 
 \begin{frame}{Why backward?}
 \begin{itemize}
-    \item<+-> We can write the gradient in terms of chain rule.
+    \item<+-> We can write the chain rule in different orders of computation.
     \begin{align}
     y &= y(c(b(a)))\\
+    \uncover<+->{
     \frac{\partial y}{\partial a} &= \underbrace{\frac{\partial y}{\partial c}}_{D_4 \times D_3} \underbrace{\frac{\partial c}{\partial b}}_{D_3 \times D_2} \underbrace{\frac{\partial b}{\partial a}}_{D_2 \times D_1} \\
+    }
+    \uncover<+->{
     \text{Backward:\ \ \ } \frac{\partial y}{\partial a} &= \underbrace{\frac{\partial y}{\partial c}\frac{\partial c}{\partial b}}_{D_4 \times D_3 \cdot D_3 \times D_2 \rightarrow D_4 \times D_2}\ \underbrace{\frac{\partial b}{\partial a}}_{D_2 \times D_1} \\
-    \text{Forward:\ \ \ }\frac{\partial y}{\partial a} &= \underbrace{\frac{\partial y}{\partial c}}_{D_4 \times D_3} \underbrace{\frac{\partial c}{\partial b}\frac{\partial b}{\partial a}}_{D_3 \times D_2 \cdot D_2 \times D_1 \rightarrow D_3 \times D_1} 
+    }
+    \uncover<+->{
+    \text{Forward:\ \ \ }\frac{\partial y}{\partial a} &= \underbrace{\frac{\partial y}{\partial c}}_{D_4 \times D_3} \underbrace{\frac{\partial c}{\partial b}\frac{\partial b}{\partial a}}_{D_3 \times D_2 \cdot D_2 \times D_1 \rightarrow D_3 \times D_1}}
     \end{align}
     
 \end{itemize}
@@ -1212,11 +1221,11 @@ $w$ and $b$:
 
 \begin{frame}{Trade-offs}
 \begin{itemize}
-    \item<+-> The reversed order: The last dimention ($D_4$) is preserved throughout propagation.
-    \item<+-> The forward order: The first dimension ($D_1$) is preserved throughout propagation.
-    \item<+->  The reverse order (backprop) is faster since we have a scalar output and a vector input, and it works well on most neural networks.
-    \item<+->  Forward order could be faster if we have a scalar input and a vector output (less memory).
-    \item<+->  Optimal ordering = matrix chain ordering problem.
+    \item<+-> The \textbf{reverse} order: The \textbf{last} dimention ($D_4$) is preserved throughout propagation.
+    \item<+-> The \textbf{forward} order: The \textbf{first} dimension ($D_1$) is preserved throughout propagation.
+    \item<+->  Reverse mode automatic differentiation (backprop) is faster since we have a scalar output and a vector input, and it works well on most neural networks.
+    \item<+->  Forward mode automatic differentiation could be faster if we have a scalar input and a vector output (less memory).
+    \item<+->  Optimal ordering = matrix chain ordering problem. Dynamic programming solution.
 \end{itemize}
 \end{frame}
 
@@ -1236,26 +1245,30 @@ $w$ and $b$:
 \begin{column}{0.6\textwidth}
 \begin{itemize}
 \item What if we converge to a bad local minimum?
+\uncover<+->{
 \begin{itemize}
 \item Rerun with a different initialization
 \end{itemize}
-\pause
+}
+\uncover<+->{
 \item Hit a saddle point 
 \begin{itemize}
 \item Doesn't often happen with SGD 
 \item Second partial derivative test
 \end{itemize}
-\pause
+}
+\uncover<+->{
 \item Flat region: low gradient magnitude
 \begin{itemize}
 \item Possible solution: use ReLU instead of sigmoid 
 \end{itemize}
-\pause
+}
+\uncover<+->{
 \item High curvature: large gradient magnitude
 \begin{itemize}
 \item Possible solutions: Gradient clipping, adaptive step sizes
 \end{itemize}
-\pause
+}
 \end{itemize}
 \end{column}
 \begin{column}{0.4\textwidth}
@@ -1291,15 +1304,25 @@ $w$ and $b$:
 % \end{itemize}
 % \end{frame}
 
-\begin{frame}{A side note}
+\begin{frame}{Biological Plausibility}
 \begin{itemize}
     \item<+-> Backprop is used to train the overwhelming majority of neural nets today.
     \item<+-> Despite its practical success, backprop is believed to be neurally implausible.
     \item<+-> No evidence for biological signals analogous to error derivatives.
-    \item<+-> Forward \& backward weights are tied in backprop.
-    \item<+-> Backprop requires synchronous update (1 forward followed by 1 backward).
-    \item<+-> Biologically plausible alternatives we know about learn much more slowly on computers.
+    \item<+-> Two main problems with implementing in an asynchronous analog hardware like our brain.
+    % \item<+-> Forward \& backward weights are tied in backprop.
+    % \item<+-> Backprop requires synchronous update (1 forward followed by 1 backward).
+    % \item<+-> Biologically plausible alternatives we know about learn much more slowly on computers.
 \end{itemize}
+\end{frame}
+
+\begin{frame}{Biological Plausibility}
+\begin{center}
+\includegraphics[height=0.7\textheight]{figures/symmetry.pdf}
+\quad
+\pause
+\includegraphics[height=0.7\textheight]{figures/synchronization.pdf}
+\end{center}
 \end{frame}
 
 \begin{frame}
@@ -1334,6 +1357,7 @@ $w$ and $b$:
     \item So far we apply a layer where all output neurons are connected to all input neurons.
     \item In matrix form, $\mathbf{z} = W \mathbf{x}$.
     \item This is also called a fully connected layer or a dense layer or a linear layer.
+    \pause
     \item For $200 \times 200$ image and 1000 hidden units, the matrix of a single layer will have 40M parameters!
 \end{itemize}
 \begin{center}
@@ -1358,17 +1382,25 @@ $w$ and $b$:
 \begin{columns}
 \begin{column}{0.65\textwidth}
 \begin{itemize}
-    \item The typical image input layer has 3 channels R G B for color or 1 channel for grayscale.
+    \onslide<1->{\item The typical image input layer has 3 channels R G B for color or 1 channel for grayscale.
     \item The hidden layers may have $C$ channels, at each spatial location $(i, j)$.
+    }
+    \onslide<2->{
     \item Now each hidden neuron $z_{i,j,c}$ receives inputs from $x_{i \pm k, j \pm k, \cdot}$ 
     % - taking all the channels at neighboring spatial locations.
     \item $k$ is the ``kernel'' size - do not confuse with the other kernel we learned.
+    \item $z_{i,j,c} = \sum_{i'\in[i\pm k], j' \in [j \pm k], c'} x_{i'j'c'} \textcolor{red}{w_{i, j, i'-i, j'-j, c',c}}$
+    }
+    \onslide<3->{
     \item The spatial awareness (receptive field) of the neighborhood grows bigger as we go deeper.
+    }
 \end{itemize}
 \end{column}
 \begin{column}{0.34\textwidth}
 \begin{center}
+\onslide<1->{
 \includegraphics[width=0.8\textwidth]{figures/locally_connected_3d.png}
+}
 \end{center}
 \end{column}
 \end{columns}
@@ -1377,8 +1409,10 @@ $w$ and $b$:
 \begin{frame}{Weight sharing}
 \begin{itemize}
 \item Still a lot of weights: If we have 100 channels in the second layer, then $200 \times 200 \times 3 \times 100 = 12M$
+\pause
 \item Local information is the same regardless of the position of an element.
 % \item E.g. A dog is a dog anywhere in an image.
+\pause
 \item Solution: We can tie the weights at different locations.
 \end{itemize}
 \begin{center}
@@ -1395,6 +1429,7 @@ $w$ and $b$:
     \item Using the same weight connections for each activation spatial location works like the ``filtering operation'' or ``convolution''
     \item The neighborhood window is the filter window.
     \item The weight connection is called ``convolution filter''
+    \item $z_{i,j,c} = \sum_{i'\in[i\pm k], j' \in [j \pm k], c'} x_{i'j'c'} \textcolor{red}{w_{i-i', j-j', c',c}}$
 \end{itemize}
 \end{column}
 \begin{column}{0.5\textwidth}
@@ -1421,16 +1456,18 @@ $w$ and $b$:
     \item Need to summarize global information more efficiently.
     \item Pooling reduces image / activation dimensions.
     \item Max-pooling or average-pooling
+    \onslide<2->{
     \item You can also perform a ``strided'' convolution by jumping multiple steps.
+    }
 \end{itemize}
 \end{column}
 \begin{column}{0.5\textwidth}
 \begin{center}
 \includegraphics[width=0.8\textwidth]{figures/maxpooling.png}
-\includegraphics<1>[width=0.5\textwidth]{figures/stride2_conv/frame_0.png}
-\includegraphics<2>[width=0.5\textwidth]{figures/stride2_conv/frame_1.png}
-\includegraphics<3>[width=0.5\textwidth]{figures/stride2_conv/frame_2.png}
-\includegraphics<4>[width=0.5\textwidth]{figures/stride2_conv/frame_3.png}
+\includegraphics<2>[width=0.5\textwidth]{figures/stride2_conv/frame_0.png}
+\includegraphics<3>[width=0.5\textwidth]{figures/stride2_conv/frame_1.png}
+\includegraphics<4>[width=0.5\textwidth]{figures/stride2_conv/frame_2.png}
+\includegraphics<5>[width=0.5\textwidth]{figures/stride2_conv/frame_3.png}
 \end{center}
 \end{column}
 \end{columns}
@@ -1468,6 +1505,7 @@ $w$ and $b$:
     \item Optimizing deeper layers of networks is not trivial.
     \item Loss often stalls or blows up.
     \item Why?
+    \pause
     \begin{itemize}
         \item Backpropagation: multiplying the Jacobian $\frac{\partial y}{\partial x}$ by each layer.
         \item If the maximum singular value of each layer of Jacobian is less than 1: then the gradient will converge to 0 with more layers.
@@ -1481,11 +1519,11 @@ $w$ and $b$:
 \begin{itemize}
     \item Even with a few layers (>3), optimization is still hard.
     \item If weight initialization is bad (too small or too big), then optimization is hard to kick off.
-    \item We can consider the distribution of whole dataset in the activation space.
+    \item Consider the distribution of whole dataset in the activation space.
     % \item Pre-activation: $z=Wx$; Post-activation: $h=f(z)$
     \begin{itemize}
         % \item The mean of the pre-activations should be zero.
-        \item The variance of the activations should stay the same across every layer.
+        \item Intuition: upon initialization, the variance of the activations should stay the same across every layer.
     \end{itemize}
 \end{itemize}
 \end{frame}
@@ -1500,9 +1538,8 @@ $w$ and $b$:
     \pause
     \item Putting altogether, $x_{l+1} = \frac{1}{2} n_l Var[w_{l}] Var[x_l]$.
     \pause
-    \item To make the variance constant, we need $\frac{1}{2} n_l Var[w_{l}] = 1$, $Std[w_{l}] = \sqrt{2/n_l}$.
+    \item To make the variance constant, we need $\frac{1}{2} n_l Var[w_{l}] = 1$, $Std[w_{l}] = \sqrt{2/n_l}$\footnote{He et al. Delving Deep into Rectifiers: Surpassing Human-Level Performance on ImageNet. ICCV, 2015.}.
 \end{itemize}
-    See original paper\footnote{He et al. Delving Deep into Rectifiers: Surpassing Human-Level Performance on ImageNet. ICCV, 2015.}.
 \end{frame}
 
 \begin{frame}{Activation functions}
@@ -1526,7 +1563,6 @@ ImageNet Classification with Deep Convolutional Neural Networks. NIPS, 2012.}.
     \includegraphics[width=0.17\textwidth]{figures/gelu.png}
 \end{center}
 \end{frame}
-
 
 \begin{frame}{SGD Learning Rate}
   \begin{itemize}
@@ -1693,17 +1729,101 @@ ImageNet Classification with Deep Convolutional Neural Networks. NIPS, 2012.}.
 \end{center}
 \end{frame}
 
-% \begin{frame}{Dropout}
-% \end{frame}
+\begin{frame}{Dropout\footnote{Srivastava et al. A Simple Way to Prevent Neural Networks from Overfitting. JMLR, 2014.}
+}
+\begin{itemize}
+    \item Want to reduce overfitting in neural networks.
+    \item Stochastically turning off neurons in propagation.
+    \onslide<2->{
+    \item Training to preserve redundancy.
+    \item Test time: multiplying activations with probability. Model ensembling effect.
+    }
+\end{itemize}
+\begin{center}
+\onslide<1->{
+\includegraphics[width=0.4\textwidth]{figures/dropout.png}
+}
+\end{center}
 
-% \begin{frame}{Data augmentation}
-% \end{frame}
+\end{frame}
 
-% \section{Language and sequential signals}
-% \begin{frame}{Weight sharing}
-% \end{frame}
+\begin{frame}{GELU\footnote{Hendrycks \& Gimpel. Gaussian Error Linear Unit (GELU). CoRR abs/1606.08415, 2016.}}
+\begin{columns}
+\begin{column}{0.49\textwidth}
+\begin{itemize}
+    \item Gaussian Error Linear Unit - A smoother activation function. 
+    \item Motivated by Dropout.
+    \onslide<2->{
+    \item $f(x) = \mathbb{E}[x \cdot m].$
+    }
+    \onslide<3->{
+    \item $m \sim Bernoulli(\Phi(x)).$
+    \item $\Phi(x) = P(X \le x).$
+    \item $X \sim \mathcal{N}(0,1).$
+    }
+\end{itemize}
+\end{column}
+\begin{column}{0.49\textwidth}
+\begin{center}
+    \onslide<1->{\includegraphics[width=0.8\textwidth]{figures/gelu.png}}
+\end{center}
+\end{column}
+\end{columns}
+\end{frame}
 
-% \begin{frame}{Recurrent networks}
+\begin{frame}{Data augmentation}
+\begin{columns}
+\begin{column}{0.4\textwidth}
+\begin{itemize}
+    \item Leverage the invariances of images
+    \item Create more data points for free
+    \begin{itemize}
+    \item<2->Random cropping
+    \item<3->Left+right flipping
+    \item<4->Random color jittering
+    \item<5->Random blurring
+    \item<6->Affine warping
+    \item<6->Etc.
+    \end{itemize}
+\end{itemize}
+\end{column}
+\begin{column}{0.59\textwidth}
+\onslide<1->\includegraphics[width=0.9\textwidth]{figures/data_aug.png}
+\end{column}
+\end{columns}
+    \small{Image credit}\footnote{Chen et al. A Simple Framework for Contrastive Learning of Visual Representations. ICML 2020.}
+\end{frame}
+
+
+\section{Language and sequential signals}
+\begin{frame}{What about natural language}
+\begin{itemize}
+    \item<+-> Neural networks are great for dealing with naturalistic and unstructured signals.
+     % such as images, sound, language, where there are no good manual feature extractors.
+    \item<+-> Past lectures: Feature functions in structured models, but still primitive.
+    \item<+-> Design neural networks to accomodate sequential signals such as language.
+\end{itemize}
+\begin{center}
+\onslide<1->\includegraphics[width=0.7\textwidth,trim={0 0 0 3cm},clip]{figures/neural-machine-translation.png}
+\end{center}
+\end{frame}
+
+\begin{frame}{Word embeddings}
+\begin{itemize}
+    \item<+-> Neural networks are best dealing with real valued vectors.
+    \item<+-> Need to convert words (discrete) into vectors (continuous).
+    \item<+-> A large matrix of $V \times D$. V = vocab size, D = network embedding size.
+\end{itemize}
+\begin{center}
+\includegraphics[width=0.4\textwidth]{figures/word_embedding.png}\footnote{https://aelang.github.io/word-embeddings.html}
+\end{center}
+\end{frame}
+
+% \begin{frame}{Convolutional vs. recurrent networks}
+% \begin{itemize}
+%     \item Recall in images we used the convolution operation.
+%     \item We can also use the idea of convolution for temporal signals.
+% \end{itemize}
 % \end{frame}
 
 % \begin{frame}{Gating functions}
@@ -1719,6 +1839,15 @@ ImageNet Classification with Deep Convolutional Neural Networks. NIPS, 2012.}.
 % \end{frame}
 
 % \begin{frame}{Multi-modal learning}
+% \end{frame}
+
+% \begin{frame}{Visual attention}
+% \end{frame}
+
+% \begin{frame}{Visual question answering}
+% \end{frame}
+
+% \begin{frame}{Interim Summary}
 % \end{frame}
 
 % \section{Interpretability}
