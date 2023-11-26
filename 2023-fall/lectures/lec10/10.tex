@@ -1406,418 +1406,410 @@ $w$ and $b$:
 \end{columns}
 \end{frame}
 
-\begin{frame}{Weight sharing}
-\begin{itemize}
-\item Still a lot of weights: If we have 100 channels in the second layer, then $200 \times 200 \times 3 \times 100 = 12M$
-\pause
-\item Local information is the same regardless of the position of an element.
-% \item E.g. A dog is a dog anywhere in an image.
-\pause
-\item Solution: We can tie the weights at different locations.
-\end{itemize}
-\begin{center}
-\includegraphics[width=0.3\textwidth,trim={0 0 0 6.2cm},clip]{figures/weight_share_2d.png}
-\includegraphics[width=0.3\textwidth]{figures/weight_share_3d.png}
-\end{center}
-\end{frame}
-
-\begin{frame}{2D convolution}
-
-\begin{columns}
-\begin{column}{0.5\textwidth}
-\begin{itemize}
-    \item Using the same weight connections for each activation spatial location works like the ``filtering operation'' or ``convolution''
-    \item The neighborhood window is the filter window.
-    \item The weight connection is called ``convolution filter''
-    \item $z_{i,j,c} = \sum_{i'\in[i\pm k], j' \in [j \pm k], c'} x_{i'j'c'} \textcolor{red}{w_{i-i', j-j', c',c}}$
-\end{itemize}
-\end{column}
-\begin{column}{0.5\textwidth}
-\begin{center}
-\includegraphics<1>[width=0.8\textwidth]{figures/2d_conv/frame_0.png}
-\includegraphics<2>[width=0.8\textwidth]{figures/2d_conv/frame_1.png}
-\includegraphics<3>[width=0.8\textwidth]{figures/2d_conv/frame_2.png}
-\includegraphics<4>[width=0.8\textwidth]{figures/2d_conv/frame_3.png}
-\includegraphics<5>[width=0.8\textwidth]{figures/2d_conv/frame_4.png}
-\includegraphics<6>[width=0.8\textwidth]{figures/2d_conv/frame_5.png}
-\includegraphics<7>[width=0.8\textwidth]{figures/2d_conv/frame_6.png}
-\includegraphics<8>[width=0.8\textwidth]{figures/2d_conv/frame_7.png}
-\includegraphics<9>[width=0.8\textwidth]{figures/2d_conv/frame_8.png}
-\end{center}
-\end{column}
-\end{columns}
-\end{frame}
-
-
-\begin{frame}{Pooling}
-\begin{columns}
-\begin{column}{0.5\textwidth}
-\begin{itemize}
-    \item Need to summarize global information more efficiently.
-    \item Pooling reduces image / activation dimensions.
-    \item Max-pooling or average-pooling
-    \onslide<2->{
-    \item You can also perform a ``strided'' convolution by jumping multiple steps.
-    }
-\end{itemize}
-\end{column}
-\begin{column}{0.5\textwidth}
-\begin{center}
-\includegraphics[width=0.8\textwidth]{figures/maxpooling.png}
-\includegraphics<2>[width=0.5\textwidth]{figures/stride2_conv/frame_0.png}
-\includegraphics<3>[width=0.5\textwidth]{figures/stride2_conv/frame_1.png}
-\includegraphics<4>[width=0.5\textwidth]{figures/stride2_conv/frame_2.png}
-\includegraphics<5>[width=0.5\textwidth]{figures/stride2_conv/frame_3.png}
-\end{center}
-\end{column}
-\end{columns}
-\end{frame}
-
-\begin{frame}{Assembling together: LeNet}
-\begin{center}
-\includegraphics[width=0.8\textwidth]{figures/lenet2.png}
-\end{center}
-\begin{itemize}
-    \item Used by USPS to read post code in the 90s.
-\end{itemize}
-\end{frame}
-
-\begin{frame}{Historical development}
-\begin{itemize}
-    \item LeNet has worked and being put to practice in the 1990s.
-    \pause
-    \item Neural networks for images start to dominate in the last 10 years (starting 2012) for understanding general high resolution natural images.
-    \pause
-    \item During the years:
-    \begin{itemize}
-        \item Neural networks were difficult to work
-        \item People focused on feature engineering
-        \item Then apply SVM or random forest (e.g. AdaBoost face detector)
-        \item What has changed?
-    \end{itemize}
-\end{itemize}
-\end{frame}
-
-\section{Gradient learning conditioning}
-\begin{frame}{Optimization challenges}
-\begin{itemize}
-    \item Larger images require deeper networks (more stages of processing at different resolutions)
-    \item Optimizing deeper layers of networks is not trivial.
-    \item Loss often stalls or blows up.
-    \item Why?
-    \pause
-    \begin{itemize}
-        \item Backpropagation: multiplying the Jacobian $\frac{\partial y}{\partial x}$ by each layer.
-        \item If the maximum singular value of each layer of Jacobian is less than 1: then the gradient will converge to 0 with more layers.
-        \item If the greater than 1: then the gradient will explode with more layers.
-        \item The bottom (input) layer may get 0 or infinite gradients.
-    \end{itemize}
-\end{itemize}
-\end{frame}
-
-\begin{frame}{Weight initialization}
-\begin{itemize}
-    \item Even with a few layers (>3), optimization is still hard.
-    \item If weight initialization is bad (too small or too big), then optimization is hard to kick off.
-    \item Consider the distribution of whole dataset in the activation space.
-    % \item Pre-activation: $z=Wx$; Post-activation: $h=f(z)$
-    \begin{itemize}
-        % \item The mean of the pre-activations should be zero.
-        \item Intuition: upon initialization, the variance of the activations should stay the same across every layer.
-    \end{itemize}
-\end{itemize}
-\end{frame}
-
-\begin{frame}{Kaiming Initialization}
-\begin{itemize}
-    \item Suppose each neuron and weight connection are sampling from a random distribution.
-    \pause
-    \item At $l$-th layer, $Var[z_l] = n_l Var[w_l x_l]$ ($n_l$ = num. input neurons to $l$-th layer)
-    \pause
-    \item If we suppose that ReLU is used as the activation, and $w_l$ is symmetric and zero-mean, $x_{l+1} = \frac{1}{2} Var[z_{l}]$.
-    \pause
-    \item Putting altogether, $x_{l+1} = \frac{1}{2} n_l Var[w_{l}] Var[x_l]$.
-    \pause
-    \item To make the variance constant, we need $\frac{1}{2} n_l Var[w_{l}] = 1$, $Std[w_{l}] = \sqrt{2/n_l}$\footnote{He et al. Delving Deep into Rectifiers: Surpassing Human-Level Performance on ImageNet. ICCV, 2015.}.
-\end{itemize}
-\end{frame}
-
-\begin{frame}{Activation functions}
-\begin{itemize}
-    \item ReLU was proposed in 2009-2010\footnote{Jarrett et al. What is the Best Multi-Stage Architecture for Object Recognition? ICCV, 2009.}\footnote{Nair \& Hinton/ Rectified Linear Units Improve Restricted Boltzmann Machines. ICML, 2010.}, and was successfully used in AlexNet in 2012\footnote{Krizhevsky et al. 
-ImageNet Classification with Deep Convolutional Neural Networks. NIPS, 2012.}.
-    \item Address the vanishing gradient issue in activations, comparing to sigmoid or tanh.
-    % \item More variants of activation function in the past decade.
-\end{itemize}
-\begin{center}
-    \includegraphics[width=0.17\textwidth]{figures/sigmoid.png}
-    \quad
-    \includegraphics[width=0.17\textwidth]{figures/relu.png}
-    \quad
-    \includegraphics[width=0.17\textwidth]{figures/relu6.png}
-
-    \includegraphics[width=0.17\textwidth]{figures/leaky_relu.png}
-    \quad
-    \includegraphics[width=0.17\textwidth]{figures/elu.png}
-    \quad
-    \includegraphics[width=0.17\textwidth]{figures/gelu.png}
-\end{center}
-\end{frame}
-
-\begin{frame}{SGD Learning Rate}
-  \begin{itemize}
-    \item In stochastic training, the learning rate also influences the \alert{fluctuations} due to the stochasticity of the gradients.
-    \item Typical strategy:
-      \begin{itemize}
-        \item Use a large learning rate early in training so you can get close to the optimum
-        \item Gradually decay the learning rate to reduce the fluctuations
-      \end{itemize}
-  \end{itemize}
-\end{frame}
-
-\begin{frame}{Learning Rate Decay}
-    \begin{itemize}
-      \item We also need to be aware about the impact of learning rate due to the stochasticity.
-    \end{itemize}
-    \begin{center}
-      \includegraphics[width=0.3\textwidth]{figures/fluctuations.png}
-    \end{center}
-    \begin{center}
-      \includegraphics[width=0.25\linewidth]{figures/premature_lr_decay.png}
-      \hspace{0.05 \linewidth}
-      \includegraphics[width=0.25\linewidth]{figures/sgd_learning_curves.png}
-    \end{center}
-\end{frame}
-
-\begin{frame}{RMSprop and Adam}
-  \begin{itemize}
-  \item Recall: SGD takes large steps in directions of high curvature and small steps in directions of low curvature.
-  \item \alert{RMSprop} is a variant of SGD which rescales each coordinate of the gradient to have norm 1 on average. It does this by keeping an exponential moving average $s_j$ of the squared gradients.
-  \item The following update is applied to each coordinate $j$ independently:
-    \begin{align*}
-      s_j &\gets (1-\gamma) s_j + \gamma [\tfrac{\partial L}{\partial \theta_j}]^2 \\
-      \theta_j &\gets \theta_j - \frac{\alpha}{\sqrt{s_j + \epsilon}} \frac{\partial L}{\partial \theta_j}
-    \end{align*}
-  % \item Both optimizers are included in TensorFlow, Pytorch, etc.
-  \end{itemize}
-  % \notenew{
-  % \begin{itemize}
-  %   \item Draw a skewed axis-aligned quadratic.
-  %   \item If the eigenvectors of the Hessian are axis-aligned (dubious assumption), then RMSprop can correct for the curvature. In practice, it typically works slightly better than SGD.
-  % \end{itemize}
-  % }
-\end{frame}
-
-\begin{frame}{Adam optimizer}
-\begin{columns}
-\begin{column}{0.6\textwidth}
-\begin{itemize}
-  \item \alert{Adam} = RMSprop + momentum = Adaptive Momentum estimation
-  \item Smoother estimate of the average gradient and gradient norm.
-  \item $m_t$: exponential moving average of gradient.
-  \item $v_t$: exponential moving average of gradient squared.
-  \item $\hat{m}_t$, $\hat{v}_t$: Bias correction.
-  \item $\theta_t \leftarrow \theta_{t-1} - \alpha \hat{m}_t / (\sqrt{\hat{v_t}} + \epsilon)$
-  \item The ``default'' optimizer for modern networks.
-\end{itemize}
-\end{column}
-\begin{column}{0.38\textwidth}
-\begin{center}
-\includegraphics[width=0.8\textwidth]{figures/adam.png}
-\end{center}
-\end{column}
-\end{columns}
-\end{frame}
-
-\begin{frame}{Normalization}
-% \begin{columns}
-% \begin{column}{0.6\textwidth}
-\begin{itemize}
-    \item Weight initialization is tricky, and there is no guarantee that the distribution of activations will stay the same over the learning process.
-    \item What if the weights keep grow bigger and activation may explode?
-    \item We can ``normalize'' the activations.
-    \item The idea is to control the activation within a normal range: zero-mean, uni-variance.
-\end{itemize}
-% \end{column}
-% \begin{column}{0.38\textwidth}
+% \begin{frame}{Weight sharing}
+% \begin{itemize}
+% \item Still a lot of weights: If we have 100 channels in the second layer, then $200 \times 200 \times 3 \times 100 = 12M$
+% \pause
+% \item Local information is the same regardless of the position of an element.
+% % \item E.g. A dog is a dog anywhere in an image.
+% \pause
+% \item Solution: We can tie the weights at different locations.
+% \end{itemize}
 % \begin{center}
-% \includegraphics[width=0.8\textwidth]{figures/normalization.png}
+% \includegraphics[width=0.3\textwidth,trim={0 0 0 6.2cm},clip]{figures/weight_share_2d.png}
+% \includegraphics[width=0.3\textwidth]{figures/weight_share_3d.png}
+% \end{center}
+% \end{frame}
+
+% \begin{frame}{2D convolution}
+
+% \begin{columns}
+% \begin{column}{0.5\textwidth}
+% \begin{itemize}
+%     \item Using the same weight connections for each activation spatial location works like the ``filtering operation'' or ``convolution''
+%     \item The neighborhood window is the filter window.
+%     \item The weight connection is called ``convolution filter''
+%     \item $z_{i,j,c} = \sum_{i'\in[i\pm k], j' \in [j \pm k], c'} x_{i'j'c'} \textcolor{red}{w_{i-i', j-j', c',c}}$
+% \end{itemize}
+% \end{column}
+% \begin{column}{0.5\textwidth}
+% \begin{center}
+% \includegraphics<1>[width=0.8\textwidth]{figures/2d_conv/frame_0.png}
+% \includegraphics<2>[width=0.8\textwidth]{figures/2d_conv/frame_1.png}
+% \includegraphics<3>[width=0.8\textwidth]{figures/2d_conv/frame_2.png}
+% \includegraphics<4>[width=0.8\textwidth]{figures/2d_conv/frame_3.png}
+% \includegraphics<5>[width=0.8\textwidth]{figures/2d_conv/frame_4.png}
+% \includegraphics<6>[width=0.8\textwidth]{figures/2d_conv/frame_5.png}
+% \includegraphics<7>[width=0.8\textwidth]{figures/2d_conv/frame_6.png}
+% \includegraphics<8>[width=0.8\textwidth]{figures/2d_conv/frame_7.png}
+% \includegraphics<9>[width=0.8\textwidth]{figures/2d_conv/frame_8.png}
 % \end{center}
 % \end{column}
 % \end{columns}
-\end{frame}
+% \end{frame}
 
-\begin{frame}{Batch Normalization (BN)}
-
-\begin{columns}
-\begin{column}{0.6\textwidth}
-\begin{itemize}
-    % \item What is the population to normalize it from?
-    \item Training image distribution -> activation distribution
-    \item In CNNs, neurons across different spatial locations are also samples of the same feature channel.
-    \item Batch norm: Normalize across N H W dimensions, leaving C channels.
-    \item $\tilde{x} = \gamma \frac{x - \mu}{\sigma} + \beta$
-    \item Test time: using the mean and variance from the entire training set.
-\end{itemize}
-\end{column}
-
-\begin{column}{0.38\textwidth}
-\begin{center}
-\includegraphics[width=0.7\textwidth,trim={0 0 25.5cm 0},clip]{figures/normalization.png}
-\end{center}
-\end{column}
-\end{columns}
-
-\end{frame}
-
-\begin{frame}{BN Alternatives}
-\begin{itemize}
-    \item Need a considerable batch size to estimate mean and variance correctly.
-    \item Training is different from testing.
-    \item Alternatives consider the C channel dimension instead of N batch dimension.
-    % \item No longer estimating the distribution from training samples.
-\end{itemize}
-\begin{center}
-\includegraphics[width=0.7\textwidth,trim={10cm 0 0 0},clip]{figures/normalization.png}
-\end{center}
-\end{frame}
-
-\begin{frame}{Going Deeper}
-\begin{itemize}
-    \item The progress of normalization allowed us to train even deeper networks.
-    \item The networks are no longer too sensitive with initialization.
-    \item But the best networks were still around 20 layers and deeper results in worse performance.
-\end{itemize}
-\begin{center}
-\includegraphics[width=0.6\textwidth]{figures/googlenet.png}
-\includegraphics[width=0.35\textwidth]{figures/20layer.png}
-\end{center}
-\end{frame}
-
-% \begin{frame}{Residual Networks}
+% \begin{frame}{Pooling}
+% \begin{columns}
+% \begin{column}{0.5\textwidth}
 % \begin{itemize}
-%     \item Recall in gradient boosting, we are iteratively adding a function to the model to expand the capacity.
-%     \item 
+%     \item Need to summarize global information more efficiently.
+%     \item Pooling reduces image / activation dimensions.
+%     \item Max-pooling or average-pooling
+%     \onslide<2->{
+%     \item You can also perform a ``strided'' convolution by jumping multiple steps.
+%     }
+% \end{itemize}
+% \end{column}
+% \begin{column}{0.5\textwidth}
+% \begin{center}
+% \includegraphics[width=0.8\textwidth]{figures/maxpooling.png}
+% \includegraphics<2>[width=0.5\textwidth]{figures/stride2_conv/frame_0.png}
+% \includegraphics<3>[width=0.5\textwidth]{figures/stride2_conv/frame_1.png}
+% \includegraphics<4>[width=0.5\textwidth]{figures/stride2_conv/frame_2.png}
+% \includegraphics<5>[width=0.5\textwidth]{figures/stride2_conv/frame_3.png}
+% \end{center}
+% \end{column}
+% \end{columns}
+% \end{frame}
+
+% \begin{frame}{Assembling together: LeNet}
+% \begin{center}
+% \includegraphics[width=0.8\textwidth]{figures/lenet2.png}
+% \end{center}
+% \begin{itemize}
+%     \item Used by USPS to read post code in the 90s.
 % \end{itemize}
 % \end{frame}
 
-\begin{frame}{Residual Networks (ResNet)}
+% \begin{frame}{Historical development}
+% \begin{itemize}
+%     \item LeNet has worked and being put to practice in the 1990s.
+%     \pause
+%     \item Neural networks for images start to dominate in the last 10 years (starting 2012) for understanding general high resolution natural images.
+%     \pause
+%     \item During the years:
+%     \begin{itemize}
+%         \item Neural networks were difficult to work
+%         \item People focused on feature engineering
+%         \item Then apply SVM or random forest (e.g. AdaBoost face detector)
+%         \item What has changed?
+%     \end{itemize}
+% \end{itemize}
+% \end{frame}
 
-\begin{itemize}
-    \item Recall in gradient boosting, we are iteratively adding a function to the model to expand the capacity.
-    \item Residual connection: Skip connection to prevent gradient vanishing.\footnote{He et al. Deep Residual Learning for Image Recognition. CVPR 2016.}
-    % \item A simple ``addition'' operation on the activation.
-\end{itemize}
+% \section{Gradient learning conditioning}
+% \begin{frame}{Optimization challenges}
+% \begin{itemize}
+%     \item Larger images require deeper networks (more stages of processing at different resolutions)
+%     \item Optimizing deeper layers of networks is not trivial.
+%     \item Loss often stalls or blows up.
+%     \item Why?
+%     \pause
+%     \begin{itemize}
+%         \item Backpropagation: multiplying the Jacobian $\frac{\partial y}{\partial x}$ by each layer.
+%         \item If the maximum singular value of each layer of Jacobian is less than 1: then the gradient will converge to 0 with more layers.
+%         \item If the greater than 1: then the gradient will explode with more layers.
+%         \item The bottom (input) layer may get 0 or infinite gradients.
+%     \end{itemize}
+% \end{itemize}
+% \end{frame}
 
-\begin{center}
-% \includegraphics[width=0.75\textwidth]{figures/residual_connect.png}
-\includegraphics[width=0.5\textwidth]{figures/resnet.png}
-\end{center}
+% \begin{frame}{Weight initialization}
+% \begin{itemize}
+%     \item Even with a few layers (>3), optimization is still hard.
+%     \item If weight initialization is bad (too small or too big), then optimization is hard to kick off.
+%     \item Consider the distribution of whole dataset in the activation space.
+%     % \item Pre-activation: $z=Wx$; Post-activation: $h=f(z)$
+%     \begin{itemize}
+%         % \item The mean of the pre-activations should be zero.
+%         \item Intuition: upon initialization, the variance of the activations should stay the same across every layer.
+%     \end{itemize}
+% \end{itemize}
+% \end{frame}
 
-\end{frame}
+% \begin{frame}{Kaiming Initialization}
+% \begin{itemize}
+%     \item Suppose each neuron and weight connection are sampling from a random distribution.
+%     \pause
+%     \item At $l$-th layer, $Var[z_l] = n_l Var[w_l x_l]$ ($n_l$ = num. input neurons to $l$-th layer)
+%     \pause
+%     \item If we suppose that ReLU is used as the activation, and $w_l$ is symmetric and zero-mean, $x_{l+1} = \frac{1}{2} Var[z_{l}]$.
+%     \pause
+%     \item Putting altogether, $x_{l+1} = \frac{1}{2} n_l Var[w_{l}] Var[x_l]$.
+%     \pause
+%     \item To make the variance constant, we need $\frac{1}{2} n_l Var[w_{l}] = 1$, $Std[w_{l}] = \sqrt{2/n_l}$\footnote{He et al. Delving Deep into Rectifiers: Surpassing Human-Level Performance on ImageNet. ICCV, 2015.}.
+% \end{itemize}
+% \end{frame}
 
-\begin{frame}{ResNet Success}
-\begin{itemize}
-    \item Now able to train over 100 layers.
-    \item One of the most important network design choices in the past decade.
-    \item Prevalent in almost all network architectures, including Transformers.
-    \item Loss landscape view: Skip connections makes loss smoother -> easier to optimize \footnote{Li et al. Visualizing the Loss Landscape of Neural Nets. NIPS 2018.}.
-\end{itemize}
-\begin{center}
-% \includegraphics[width=0.75\textwidth]{figures/residual_connect.png}
-\includegraphics[width=0.5\textwidth]{figures/resnetlandscape.png}
-\end{center}
-\end{frame}
+% \begin{frame}{Activation functions}
+% \begin{itemize}
+%     \item ReLU was proposed in 2009-2010\footnote{Jarrett et al. What is the Best Multi-Stage Architecture for Object Recognition? ICCV, 2009.}\footnote{Nair \& Hinton/ Rectified Linear Units Improve Restricted Boltzmann Machines. ICML, 2010.}, and was successfully used in AlexNet in 2012\footnote{Krizhevsky et al. 
+% ImageNet Classification with Deep Convolutional Neural Networks. NIPS, 2012.}.
+%     \item Address the vanishing gradient issue in activations, comparing to sigmoid or tanh.
+%     % \item More variants of activation function in the past decade.
+% \end{itemize}
+% \begin{center}
+%     \includegraphics[width=0.17\textwidth]{figures/sigmoid.png}
+%     \quad
+%     \includegraphics[width=0.17\textwidth]{figures/relu.png}
+%     \quad
+%     \includegraphics[width=0.17\textwidth]{figures/relu6.png}
 
-\begin{frame}{Dropout\footnote{Srivastava et al. A Simple Way to Prevent Neural Networks from Overfitting. JMLR, 2014.}
-}
-\begin{itemize}
-    \item Want to reduce overfitting in neural networks.
-    \item Stochastically turning off neurons in propagation.
-    \onslide<2->{
-    \item Training to preserve redundancy.
-    \item Test time: multiplying activations with probability. Model ensembling effect.
-    }
-\end{itemize}
-\begin{center}
-\onslide<1->{
-\includegraphics[width=0.4\textwidth]{figures/dropout.png}
-}
-\end{center}
+%     \includegraphics[width=0.17\textwidth]{figures/leaky_relu.png}
+%     \quad
+%     \includegraphics[width=0.17\textwidth]{figures/elu.png}
+%     \quad
+%     \includegraphics[width=0.17\textwidth]{figures/gelu.png}
+% \end{center}
+% \end{frame}
 
-\end{frame}
+% \begin{frame}{SGD Learning Rate}
+%   \begin{itemize}
+%     \item In stochastic training, the learning rate also influences the \alert{fluctuations} due to the stochasticity of the gradients.
+%     \item Typical strategy:
+%       \begin{itemize}
+%         \item Use a large learning rate early in training so you can get close to the optimum
+%         \item Gradually decay the learning rate to reduce the fluctuations
+%       \end{itemize}
+%   \end{itemize}
+% \end{frame}
 
-\begin{frame}{GELU\footnote{Hendrycks \& Gimpel. Gaussian Error Linear Unit (GELU). CoRR abs/1606.08415, 2016.}}
-\begin{columns}
-\begin{column}{0.49\textwidth}
-\begin{itemize}
-    \item Gaussian Error Linear Unit - A smoother activation function. 
-    \item Motivated by Dropout.
-    \onslide<2->{
-    \item $f(x) = \mathbb{E}[x \cdot m].$
-    }
-    \onslide<3->{
-    \item $m \sim Bernoulli(\Phi(x)).$
-    \item $\Phi(x) = P(X \le x).$
-    \item $X \sim \mathcal{N}(0,1).$
-    }
-\end{itemize}
-\end{column}
-\begin{column}{0.49\textwidth}
-\begin{center}
-    \onslide<1->{\includegraphics[width=0.8\textwidth]{figures/gelu.png}}
-\end{center}
-\end{column}
-\end{columns}
-\end{frame}
+% \begin{frame}{Learning Rate Decay}
+%     \begin{itemize}
+%       \item We also need to be aware about the impact of learning rate due to the stochasticity.
+%     \end{itemize}
+%     \begin{center}
+%       \includegraphics[width=0.3\textwidth]{figures/fluctuations.png}
+%     \end{center}
+%     \begin{center}
+%       \includegraphics[width=0.25\linewidth]{figures/premature_lr_decay.png}
+%       \hspace{0.05 \linewidth}
+%       \includegraphics[width=0.25\linewidth]{figures/sgd_learning_curves.png}
+%     \end{center}
+% \end{frame}
 
-\begin{frame}{Data augmentation}
-\begin{columns}
-\begin{column}{0.4\textwidth}
-\begin{itemize}
-    \item Leverage the invariances of images
-    \item Create more data points for free
-    \begin{itemize}
-    \item<2->Random cropping
-    \item<3->Left+right flipping
-    \item<4->Random color jittering
-    \item<5->Random blurring
-    \item<6->Affine warping
-    \item<6->Etc.
-    \end{itemize}
-\end{itemize}
-\end{column}
-\begin{column}{0.59\textwidth}
-\onslide<1->\includegraphics[width=0.9\textwidth]{figures/data_aug.png}
-\end{column}
-\end{columns}
-    \small{Image credit}\footnote{Chen et al. A Simple Framework for Contrastive Learning of Visual Representations. ICML 2020.}
-\end{frame}
+% \begin{frame}{RMSprop and Adam}
+%   \begin{itemize}
+%   \item Recall: SGD takes large steps in directions of high curvature and small steps in directions of low curvature.
+%   \item \alert{RMSprop} is a variant of SGD which rescales each coordinate of the gradient to have norm 1 on average. It does this by keeping an exponential moving average $s_j$ of the squared gradients.
+%   \item The following update is applied to each coordinate $j$ independently:
+%     \begin{align*}
+%       s_j &\gets (1-\gamma) s_j + \gamma [\tfrac{\partial L}{\partial \theta_j}]^2 \\
+%       \theta_j &\gets \theta_j - \frac{\alpha}{\sqrt{s_j + \epsilon}} \frac{\partial L}{\partial \theta_j}
+%     \end{align*}
+%   % \item Both optimizers are included in TensorFlow, Pytorch, etc.
+%   \end{itemize}
+%   % \notenew{
+%   % \begin{itemize}
+%   %   \item Draw a skewed axis-aligned quadratic.
+%   %   \item If the eigenvectors of the Hessian are axis-aligned (dubious assumption), then RMSprop can correct for the curvature. In practice, it typically works slightly better than SGD.
+%   % \end{itemize}
+%   % }
+% \end{frame}
+
+% \begin{frame}{Adam optimizer}
+% \begin{columns}
+% \begin{column}{0.6\textwidth}
+% \begin{itemize}
+%   \item \alert{Adam} = RMSprop + momentum = Adaptive Momentum estimation
+%   \item Smoother estimate of the average gradient and gradient norm.
+%   \item $m_t$: exponential moving average of gradient.
+%   \item $v_t$: exponential moving average of gradient squared.
+%   \item $\hat{m}_t$, $\hat{v}_t$: Bias correction.
+%   \item $\theta_t \leftarrow \theta_{t-1} - \alpha \hat{m}_t / (\sqrt{\hat{v_t}} + \epsilon)$
+%   \item The ``default'' optimizer for modern networks.
+% \end{itemize}
+% \end{column}
+% \begin{column}{0.38\textwidth}
+% \begin{center}
+% \includegraphics[width=0.8\textwidth]{figures/adam.png}
+% \end{center}
+% \end{column}
+% \end{columns}
+% \end{frame}
+
+% \begin{frame}{Normalization}
+% % \begin{columns}
+% % \begin{column}{0.6\textwidth}
+% \begin{itemize}
+%     \item Weight initialization is tricky, and there is no guarantee that the distribution of activations will stay the same over the learning process.
+%     \item What if the weights keep grow bigger and activation may explode?
+%     \item We can ``normalize'' the activations.
+%     \item The idea is to control the activation within a normal range: zero-mean, uni-variance.
+% \end{itemize}
+% % \end{column}
+% % \begin{column}{0.38\textwidth}
+% % \begin{center}
+% % \includegraphics[width=0.8\textwidth]{figures/normalization.png}
+% % \end{center}
+% % \end{column}
+% % \end{columns}
+% \end{frame}
+
+% \begin{frame}{Batch Normalization (BN)}
+
+% \begin{columns}
+% \begin{column}{0.6\textwidth}
+% \begin{itemize}
+%     % \item What is the population to normalize it from?
+%     \item Training image distribution -> activation distribution
+%     \item In CNNs, neurons across different spatial locations are also samples of the same feature channel.
+%     \item Batch norm: Normalize across N H W dimensions, leaving C channels.
+%     \item $\tilde{x} = \gamma \frac{x - \mu}{\sigma} + \beta$
+%     \item Test time: using the mean and variance from the entire training set.
+% \end{itemize}
+% \end{column}
+
+% \begin{column}{0.38\textwidth}
+% \begin{center}
+% \includegraphics[width=0.7\textwidth,trim={0 0 25.5cm 0},clip]{figures/normalization.png}
+% \end{center}
+% \end{column}
+% \end{columns}
+
+% \end{frame}
+
+% \begin{frame}{BN Alternatives}
+% \begin{itemize}
+%     \item Need a considerable batch size to estimate mean and variance correctly.
+%     \item Training is different from testing.
+%     \item Alternatives consider the C channel dimension instead of N batch dimension.
+%     % \item No longer estimating the distribution from training samples.
+% \end{itemize}
+% \begin{center}
+% \includegraphics[width=0.7\textwidth,trim={10cm 0 0 0},clip]{figures/normalization.png}
+% \end{center}
+% \end{frame}
+
+% \begin{frame}{Going Deeper}
+% \begin{itemize}
+%     \item The progress of normalization allowed us to train even deeper networks.
+%     \item The networks are no longer too sensitive with initialization.
+%     \item But the best networks were still around 20 layers and deeper results in worse performance.
+% \end{itemize}
+% \begin{center}
+% \includegraphics[width=0.6\textwidth]{figures/googlenet.png}
+% \includegraphics[width=0.35\textwidth]{figures/20layer.png}
+% \end{center}
+% \end{frame}
+
+% \begin{frame}{Residual Networks (ResNet)}
+
+% \begin{itemize}
+%     \item Recall in gradient boosting, we are iteratively adding a function to the model to expand the capacity.
+%     \item Residual connection: Skip connection to prevent gradient vanishing.\footnote{He et al. Deep Residual Learning for Image Recognition. CVPR 2016.}
+%     % \item A simple ``addition'' operation on the activation.
+% \end{itemize}
+
+% \begin{center}
+% % \includegraphics[width=0.75\textwidth]{figures/residual_connect.png}
+% \includegraphics[width=0.5\textwidth]{figures/resnet.png}
+% \end{center}
+
+% \end{frame}
+
+% \begin{frame}{ResNet Success}
+% \begin{itemize}
+%     \item Now able to train over 100 layers.
+%     \item One of the most important network design choices in the past decade.
+%     \item Prevalent in almost all network architectures, including Transformers.
+%     \item Loss landscape view: Skip connections makes loss smoother -> easier to optimize \footnote{Li et al. Visualizing the Loss Landscape of Neural Nets. NIPS 2018.}.
+% \end{itemize}
+% \begin{center}
+% % \includegraphics[width=0.75\textwidth]{figures/residual_connect.png}
+% \includegraphics[width=0.5\textwidth]{figures/resnetlandscape.png}
+% \end{center}
+% \end{frame}
+
+% \begin{frame}{Dropout\footnote{Srivastava et al. A Simple Way to Prevent Neural Networks from Overfitting. JMLR, 2014.}
+% }
+% \begin{itemize}
+%     \item Want to reduce overfitting in neural networks.
+%     \item Stochastically turning off neurons in propagation.
+%     \onslide<2->{
+%     \item Training to preserve redundancy.
+%     \item Test time: multiplying activations with probability. Model ensembling effect.
+%     }
+% \end{itemize}
+% \begin{center}
+% \onslide<1->{
+% \includegraphics[width=0.4\textwidth]{figures/dropout.png}
+% }
+% \end{center}
+
+% \end{frame}
+
+% \begin{frame}{GELU\footnote{Hendrycks \& Gimpel. Gaussian Error Linear Unit (GELU). CoRR abs/1606.08415, 2016.}}
+% \begin{columns}
+% \begin{column}{0.49\textwidth}
+% \begin{itemize}
+%     \item Gaussian Error Linear Unit - A smoother activation function. 
+%     \item Motivated by Dropout.
+%     \onslide<2->{
+%     \item $f(x) = \mathbb{E}[x \cdot m].$
+%     }
+%     \onslide<3->{
+%     \item $m \sim Bernoulli(\Phi(x)).$
+%     \item $\Phi(x) = P(X \le x).$
+%     \item $X \sim \mathcal{N}(0,1).$
+%     }
+% \end{itemize}
+% \end{column}
+% \begin{column}{0.49\textwidth}
+% \begin{center}
+%     \onslide<1->{\includegraphics[width=0.8\textwidth]{figures/gelu.png}}
+% \end{center}
+% \end{column}
+% \end{columns}
+% \end{frame}
+
+% \begin{frame}{Data augmentation}
+% \begin{columns}
+% \begin{column}{0.4\textwidth}
+% \begin{itemize}
+%     \item Leverage the invariances of images
+%     \item Create more data points for free
+%     \begin{itemize}
+%     \item<2->Random cropping
+%     \item<3->Left+right flipping
+%     \item<4->Random color jittering
+%     \item<5->Random blurring
+%     \item<6->Affine warping
+%     \item<6->Etc.
+%     \end{itemize}
+% \end{itemize}
+% \end{column}
+% \begin{column}{0.59\textwidth}
+% \onslide<1->\includegraphics[width=0.9\textwidth]{figures/data_aug.png}
+% \end{column}
+% \end{columns}
+%     \small{Image credit}\footnote{Chen et al. A Simple Framework for Contrastive Learning of Visual Representations. ICML 2020.}
+% \end{frame}
 
 
-\section{Language and sequential signals}
-\begin{frame}{What about natural language}
-\begin{itemize}
-    \item<+-> Neural networks are great for dealing with naturalistic and unstructured signals.
-     % such as images, sound, language, where there are no good manual feature extractors.
-    \item<+-> Past lectures: Feature functions in structured models, but still primitive.
-    \item<+-> Design neural networks to accomodate sequential signals such as language.
-\end{itemize}
-\begin{center}
-\onslide<1->\includegraphics[width=0.7\textwidth,trim={0 0 0 3cm},clip]{figures/neural-machine-translation.png}
-\end{center}
-\end{frame}
+% \section{Language and sequential signals}
+% \begin{frame}{What about natural language}
+% \begin{itemize}
+%     \item<+-> Neural networks are great for dealing with naturalistic and unstructured signals.
+%      % such as images, sound, language, where there are no good manual feature extractors.
+%     \item<+-> Past lectures: Feature functions in structured models, but still primitive.
+%     \item<+-> Design neural networks to accomodate sequential signals such as language.
+% \end{itemize}
+% \begin{center}
+% \onslide<1->\includegraphics[width=0.7\textwidth,trim={0 0 0 3cm},clip]{figures/neural-machine-translation.png}
+% \end{center}
+% \end{frame}
 
-\begin{frame}{Word embeddings}
-\begin{itemize}
-    \item<+-> Neural networks are best dealing with real valued vectors.
-    \item<+-> Need to convert words (discrete) into vectors (continuous).
-    \item<+-> A large matrix of $V \times D$. V = vocab size, D = network embedding size.
-\end{itemize}
-\begin{center}
-\includegraphics[width=0.4\textwidth]{figures/word_embedding.png}\footnote{https://aelang.github.io/word-embeddings.html}
-\end{center}
-\end{frame}
+% \begin{frame}{Word embeddings}
+% \begin{itemize}
+%     \item<+-> Neural networks are best dealing with real valued vectors.
+%     \item<+-> Need to convert words (discrete) into vectors (continuous).
+%     \item<+-> A large matrix of $V \times D$. V = vocab size, D = network embedding size.
+% \end{itemize}
+% \begin{center}
+% \includegraphics[width=0.4\textwidth]{figures/word_embedding.png}\footnote{https://aelang.github.io/word-embeddings.html}
+% \end{center}
+% \end{frame}
 
 % \begin{frame}{Convolutional vs. recurrent networks}
 % \begin{itemize}
