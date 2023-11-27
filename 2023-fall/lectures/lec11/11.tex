@@ -580,7 +580,6 @@ ImageNet Classification with Deep Convolutional Neural Networks. NIPS, 2012.}.
     \small{Image credit}\footnote{Chen et al. A Simple Framework for Contrastive Learning of Visual Representations. ICML 2020.}
 \end{frame}
 
-
 \section{Language and sequential signals}
 \begin{frame}{What about natural language}
 \begin{itemize}
@@ -620,46 +619,172 @@ ImageNet Classification with Deep Convolutional Neural Networks. NIPS, 2012.}.
 
 \begin{frame}{Recurrent neural networks (RNNs)}
 \begin{itemize}
-  \item A simple RNN can be made similar to a standard NN with one hidden layer.
+  \item<+-> A simple RNN can be made similar to a standard NN with one hidden layer.
   \item $h_{t} = \tanh(W h_{t-1} + U x_{t})$.
   \item $y_{t} = \softmax(V h_t)$.
 \end{itemize}
 \begin{center}
 \includegraphics[width=0.7\textwidth]{figures/rnn.png}
 \end{center}
+Image credit: Chris Olah~\footnote{https://colah.github.io/posts/2015-08-Understanding-LSTMs/}
 \end{frame}
 
 \begin{frame}{Gradient vanishing}
 \begin{itemize}
-  \item Every iteration, we multiply the hidden state $h_{t-1}$ from the previous iteration with $W$.
+  \item<+-> Every iteration, we multiply the hidden state $h_{t-1}$ from the previous iteration with the same $W$.
+  \item<+-> If the largest singular value of $W$ is less than one then back-propagation will be attenuated.
+  \item<+-> Similarly, we apply $\tanh$ activation every iteration -- further reducing gradient flow.
+\end{itemize}
+\begin{center}
+\includegraphics[width=0.7\textwidth]{figures/rnn.png}
+\end{center}
+\end{frame}
+
+\begin{frame}{Gating functions in LSTM}
+\begin{itemize}
+    \item Long short-term memory is a network that addresses the gradient vanishing problem by introducing gating functions.
+    \item Gating functions provide ``shortcuts'', like ResNet.
+    \item Originally proposed by Hochreiter and Schmidhuber in 1997.
+\end{itemize}
+\includegraphics[width=0.49\textwidth]{figures/rnn_cell.png}
+\includegraphics[width=0.49\textwidth]{figures/lstm_cell.png}
+\end{frame}
+
+\begin{frame}{Gating functions in LSTM}
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\begin{itemize}
+    \item<+-> Input gate: $i_t = \sigma(W_i [h_{t-1}, x_t] + b_i)$.
+    \item<1-> Forget gate: $f_t = \sigma(W_f [h_{t-1}, x_t] + b_f)$.
+    \item<1-> $z_t = \tanh(w_z [h_{t-1} x_t] + b_z)$.
+    \item<+-> $c_t = f_t \odot c_{t-1} + i_t \odot z_t$.
+    \item<+-> Output gate: $\sigma(W_o [h_{t-1}, x_t] + b_o)$.
+    \item<3-> $h_t = o_t \odot \tanh(c_t)$.
+\end{itemize}
+\end{column}
+\begin{column}{0.5\textwidth}
+\begin{center}
+\includegraphics[width=\textwidth]{figures/lstm_cell.png}
+\end{center}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}{Gated Recurrent Unit}
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\begin{itemize}
+    \item<+-> Proposed by Chung et al. in 2015, a simplified variant compared to LSTM.
+    \item<+-> Input gate $i_t = \sigma(W_i [h_{t-1}, x_t] + b_i)$.
+    \item<+-> Reset gate $r_t = \sigma(W_r [h_{t-1}, x_t] + b_r)$.
+    \item<+-> $\tilde{h}_t = \tanh(W_h [r_t \odot h_t, x_t] + b_h)$.
+    \item<+-> $h_t = (1-i_t) \odot h_{t-1} + i_t \odot \tilde{h}_t$.
+\end{itemize}
+\end{column}
+\begin{column}{0.5\textwidth}
+\begin{center}
+\includegraphics[width=\textwidth]{figures/gru_cell.png}
+\end{center}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}{Attention Mechanisms}
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\begin{itemize}
+    \item Earlier content will decay more.
+    \item Hard to refer back to the raw content.
+    \item Reverse order better than forward order [abcde -> a'b'c'd'e' vs. abcde -> e'd'c'b'a'].
+    \item Attending to arbitrary sequence tokens.
+    \item $s_t = f(s_{t-1}, y_{t-1}, c_t)$
+    \item $c_t = \sum_\tau \alpha_{t, \tau} h_\tau$, $\alpha_{t,\tau} = \frac{\exp(a_(s_{t-1},h_k))}{\sum_{k} \exp(a_(s_{t-1},h_k))}$
+    \item $a(s_{t-1}, h_k) = v_a^\top \tanh(W_a [s_{i-1}, h_k])$
+\end{itemize}
+\end{column}
+\begin{column}{0.5\textwidth}
+\begin{center}
+\includegraphics[width=0.6\textwidth]{figures/attention_nmt.png}\\
+Bahdanau et al., 2014
+\end{center}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}{Transformers (``Attention is All You Need'')}
+\begin{itemize}
+    \item The previous architecture is very complicated.
+    \begin{itemize}
+    \item 1 RNN for encoding the tokens.
+    \item Attention mechanisms for accessing content
+    \item 1 RNN for combining attended tokens.
+    \end{itemize}
+    \item RNNs have the ability to incorporate past information, so does attention.
+    \item In turns out that just attention is sufficient, with additional ``positional encoding''
+\end{itemize}
+\begin{center}
+\includegraphics[width=0.5\textwidth]{figures/transformer_attention.png}\\
+Image credit: \footnote{https://blog.research.google/2017/08/transformer-novel-neural-network.html}
+\end{center}
+\end{frame}
+
+\begin{frame}{Positional encoding}
+\end{frame}
+
+\begin{frame}{Multi-headed attention}
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\begin{itemize}
+    \item The vanilla form of attention in Bahdanau et al. only considers a single set of softmax values.
+    \item It's found to be more advantageous to have multiple set of attentions for each token, so it can more efficiently incorporate information from multiple sources.
+\end{itemize}
+\end{column}
+\begin{column}{0.5\textwidth}
+\begin{center}
+\includegraphics[width=0.5\textwidth]{figures/multi_headed_attention.png}
+\end{center}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}
+\begin{itemize}
+    \item Attention is expensive - quadratic to the number of tokens
+    \item 
 \end{itemize}
 \end{frame}
 
-\begin{frame}{Gating function}
-\end{frame}
-
-\begin{frame}{Attention}
-\end{frame}
-
-\begin{frame}{Transformers}
-\end{frame}
-
 \begin{frame}{Autoregressive modeling}
+\begin{itemize}
+    \item Recall the chain rule on joint distribution:
+    \[
+    p(x_{1:t}) = p(x_1, \dots, x_t) = p(x_1) p(x_2 | x_1) \dots p(x_t | x_{t-1})
+    \]
+\end{itemize}
 \end{frame}
 
-\begin{frame}{Multi-modal learning}
+\begin{frame}{Large Language Models}
 \end{frame}
 
-\begin{frame}{Visual attention}
-\end{frame}
+% \begin{frame}{Multi-modal learning}
+% \end{frame}
 
-\begin{frame}{Visual question answering}
-\end{frame}
+% \begin{frame}{Visual attention}
+% \end{frame}
+
+% \begin{frame}{Visual question answering}
+% \end{frame}
+
+% \begin{frame}{Sequential attention}
+% \end{frame}
+
+% \begin{frame}{Instance segmentation with recurrent attention}
+% \end{frame}
 
 \begin{frame}{Interim Summary}
 \end{frame}
 
-\section{Interpretability}
+\section{Interpretability in Deep Neural Networks}
 
 \begin{frame}{ML Interpretability}
 \begin{itemize}
@@ -1098,6 +1223,9 @@ We can visualize a heat map
 % \notenew{
 %   More to be covered in security \& privacy of deep learning.
 % }
+\end{frame}
+
+\begin{frame}{Summary}
 \end{frame}
 
 \section{K-means Clustering}
