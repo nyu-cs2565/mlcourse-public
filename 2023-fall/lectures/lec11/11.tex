@@ -626,7 +626,7 @@ ImageNet Classification with Deep Convolutional Neural Networks. NIPS, 2012.}.
 \begin{center}
 \includegraphics[width=0.7\textwidth]{figures/rnn.png}
 \end{center}
-Image credit: Chris Olah~\footnote{https://colah.github.io/posts/2015-08-Understanding-LSTMs/}
+\footnote{Image credit: Chris Olah~\url{https://colah.github.io/posts/2015-08-Understanding-LSTMs/}}
 \end{frame}
 
 \begin{frame}{Gradient vanishing}
@@ -714,29 +714,44 @@ Bahdanau et al., 2014
 \begin{frame}{Transformers (``Attention is All You Need'')}
 \begin{itemize}
     \item The previous architecture is very complicated.
+    {\small
     \begin{itemize}
     \item 1 RNN for encoding the tokens.
     \item Attention mechanisms for accessing content
     \item 1 RNN for combining attended tokens.
     \end{itemize}
+    }
     \item RNNs have the ability to incorporate past information, so does attention.
-    \item In turns out that just attention is sufficient, with additional ``positional encoding''
+    % \item Just attention is sufficient.
 \end{itemize}
 \begin{center}
-\includegraphics[width=0.5\textwidth]{figures/transformer_attention.png}\\
-Image credit: \footnote{https://blog.research.google/2017/08/transformer-novel-neural-network.html}
+\includegraphics[width=0.4\textwidth]{figures/transformer_attention.png}\\
+\footnote{Image credit: \href{https://blog.research.google/2017/08/transformer-novel-neural-network.html}{Google Research Blog}}
 \end{center}
 \end{frame}
 
 \begin{frame}{Positional encoding}
+\begin{itemize}
+  \item Attention operation is permuation equivariant.
+  % \item We need to encode the sequence order information in the inputs.
+  \item Solution: Encode the position of each token.
+  \item $PE(pos, 2i) = \sin(p/k^{2i/d}), PE(pos, 2i+1) = \cos(p/k^{2i/d})$.
+\end{itemize}
+\begin{center}
+\includegraphics[width=0.6\textwidth]{figures/position_encoding.png}
+\end{center}
 \end{frame}
 
 \begin{frame}{Multi-headed attention}
 \begin{columns}
 \begin{column}{0.5\textwidth}
 \begin{itemize}
-    \item The vanilla form of attention in Bahdanau et al. only considers a single set of softmax values.
-    \item It's found to be more advantageous to have multiple set of attentions for each token, so it can more efficiently incorporate information from multiple sources.
+    \item<+-> Map tokens into query, key, and value.
+    \item<+-> $Attention(Q,K,V)=\softmax(\frac{Q K^\top}{\sqrt{d_k}})V$.
+    \item<+-> $H_i = Attention(Q W_i^Q, K W_i^K, V W_i^V)$.
+    \item<+-> $MultiHead(Q, K, V) = [H_1, ..., H_n] W^O$
+    % \item<+-> The vanilla form of attention in Bahdanau et al. only considers a single set of softmax values.
+    \item<+-> More advantageous to have multiple set of attentions for each token, so it can more efficiently incorporate information from multiple sources.
 \end{itemize}
 \end{column}
 \begin{column}{0.5\textwidth}
@@ -747,23 +762,50 @@ Image credit: \footnote{https://blog.research.google/2017/08/transformer-novel-n
 \end{columns}
 \end{frame}
 
-\begin{frame}
+\begin{frame}{Machine Translation}
 \begin{itemize}
-    \item Attention is expensive - quadratic to the number of tokens
-    \item 
+  \item Achieved superior performance on machine translation.
+  \item Animation \href{https://3.bp.blogspot.com/-aZ3zvPiCoXM/WaiKQO7KRnI/AAAAAAAAB_8/7a1CYjp40nUg4lKpW7covGZJQAySxlg8QCLcBGAs/s1600/transform20fps.gif}{link}
 \end{itemize}
+\begin{center}
+\includegraphics[height=4cm]{figures/en_de.png}
+\quad
+\includegraphics[height=4cm]{figures/en_fr.png}
+\end{center}
 \end{frame}
 
 \begin{frame}{Autoregressive modeling}
 \begin{itemize}
     \item Recall the chain rule on joint distribution:
     \[
-    p(x_{1:t}) = p(x_1, \dots, x_t) = p(x_1) p(x_2 | x_1) \dots p(x_t | x_{t-1})
+    p(x_{1:t}) = p(x_1, \dots, x_t) = p(x_1) p(x_2 | x_1) \dots p(x_t | x_{t-1}) = p(x_1) \prod_i p(x_i|x_{1:i-1}).
     \]
+    \item In Naive Bayes, we treat each variable as independent, but this cannot perform sequence generation.
+    \item<+-> How do we model a conditional distribution $p(x_i|x_{1:i-1})$ using an RNN or a Transformer?
+    \item<+-> RNN is naturally autoregressive: $h_t$ contains all information up to time t.
+    \item<+-> For Transformers, $h_t$ contains information about the future.
 \end{itemize}
 \end{frame}
 
+\begin{frame}{Causal Attention}
+  \begin{itemize}
+    \item For Transformers, we need to ``mask'' the attention so that each token can only attend to tokens prior to itself.
+    \item This is called ``causal attention''.
+  \end{itemize}
+  \begin{center}
+  \includegraphics[width=0.7\textwidth]{figures/attention_graph.png}
+  \end{center}
+    \footnote{Image credit: \href{https://www.wolfram.com/language/12/neural-network-framework/use-transformer-neural-nets.html}{Wolfram.com}}
+\end{frame}
+
 \begin{frame}{Large Language Models}
+\begin{itemize}
+  \item Most LLMs today are large-scale decoder-only autoregressive (causal) Transformers (>1B parameters).
+\end{itemize}
+\begin{center}
+\includegraphics[width=0.7\textwidth]{figures/llm.png}
+\footnote{Image credit: \href{https://medium.com/@thedatabeast/top-free-courses-on-large-language-models-abf2722d15c5}{Medium.com}}
+\end{center}
 \end{frame}
 
 % \begin{frame}{Multi-modal learning}
@@ -782,24 +824,31 @@ Image credit: \footnote{https://blog.research.google/2017/08/transformer-novel-n
 % \end{frame}
 
 \begin{frame}{Interim Summary}
+\begin{itemize}
+  % \item A chunk of deep learning literature in the past 10 years focuses on better optimization, reduce overfitting, and architecture motifs.
+  \item<+-> Optimization: Learning rate, initialization, activation functions, normalization, shortcut skip connection, attention, etc.
+  \item<+-> Overfitting: Dropout, Data augmentation, etc.
+  \item<+-> Architecture Motifs: MLP, CNN, RNN, Transformers, etc.
+  \item<+-> Why it works? Data, optimization, compute.
+  \item<+-> Still many open questions: Interpretability, fairness, uncertainty, data efficiency, energy efficiency, theory, etc.
+\end{itemize}
 \end{frame}
 
 \section{Interpretability in Deep Neural Networks}
 
 \begin{frame}{ML Interpretability}
 \begin{itemize}
-  \item Linear regression: Weights represent feature selection strength
-  \item SVMs: Dual weights represent sample selection
-  \item Bayesian methods: Model the generative process as a probabilistic model, fully transparent
-  \item Decision trees: If-else decision making process
-  \item Neural networks: ?
+  \item<+-> Linear regression: Weights represent feature selection strength
+  \item<+-> SVMs: Dual weights represent sample selection
+  \item<+-> Bayesian methods: Model the generative process as a probabilistic model, fully transparent
+  \item<+-> Decision trees: If-else decision making process
+  \item<+-> Neural networks: ?
 \end{itemize}
 \end{frame}
 
 \begin{frame}{Feature Visualization}
 \begin{itemize}
   \item Recall: we can understand what first-layer features are doing by visualizing the weight matrices.
-  \item Higher-level weight matrices are hard to interpret.
   \begin{center}
     \begin{columns}
       \begin{column}{0.35 \textwidth}
@@ -820,9 +869,10 @@ Image credit: \footnote{https://blog.research.google/2017/08/transformer-novel-n
     \end{columns}
   \end{center}
 \item The better the input matches these weights, the more the feature activates.
-  \begin{itemize}
+\item Higher-level weight matrices are hard to interpret.
+\begin{itemize}
   \item Obvious generalization: visualize higher-level features by seeing what inputs activate them.
-  \end{itemize}
+\end{itemize}
 \end{itemize}
 \end{frame}
 
@@ -877,13 +927,13 @@ Image credit: \footnote{https://blog.research.google/2017/08/transformer-novel-n
 
 \begin{frame}{Feature Visualization}
 \begin{itemize}
-  \item Higher layers seem to pick up more abstract, high-level information.
-  \item Problems?
+  \item<+-> Higher layers seem to pick up more abstract, high-level information.
+  \item<+-> Problems?
     \begin{itemize}
-    \item Can't tell what the unit is actually responding to in the image.
-    \item We may read too much into the results, e.g.~a unit may detect red, and the images that maximize its activation will all be stop signs.
+    \item<+->  Can't tell what the unit is actually responding to in the image.
+    \item<+->  We may read too much into the results, e.g.~a unit may detect red, and the images that maximize its activation will all be stop signs.
     \end{itemize}
-  \item Can use input gradients to diagnose what the unit is responding to.
+  \item<+-> Can use input gradients to diagnose what the unit is responding to.
 \end{itemize}
 \end{frame}
 
@@ -942,11 +992,13 @@ Image credit: \footnote{https://blog.research.google/2017/08/transformer-novel-n
 
 \begin{frame}{Class activation map (CAM)}
 
-Classification networks typically use global avg pooling before the final layer.
+\begin{itemize}
+\item Classification networks typically use global avg pooling before the final layer.
 
-This pooling layer can already contain semantic information.
+\item This pooling layer can already contain semantic information.
 
-We can visualize a heat map 
+\item We can visualize a heat map 
+\end{itemize}
 
 \begin{center}
 \includegraphics[height=0.3\textheight]{figures/cam.png}
@@ -989,9 +1041,39 @@ We can visualize a heat map
 % }
 \end{frame}
 
+
+\begin{frame}{DeepDream\footnote{\href{https://blog.research.google/2015/07/deepdream-code-example-for-visualizing.html?m=1}{Google Research Blog}}}
+\begin{itemize}
+\item Start with an image, and run a conv net on it.
+\item Change the image such that units which were already highly activated get activated even more strongly.
+``Rich get richer.''
+\end{itemize}
+\begin{center}
+  \hspace{-1em}\includegraphics[width=0.9\textwidth]{figures/deepdream1.pdf}
+\end{center}
+
+% \notenew{
+% \begin{itemize}
+%   \item What if we try to maximize all neuron in one layer at once?
+% \end{itemize}
+% }
+\end{frame}
+
+\begin{frame}{DeepDream}
+\begin{center}
+  \hspace{-1em}\includegraphics[width=0.9\textwidth]{figures/deepdream2.pdf}
+\end{center}
+\end{frame}
+
+\begin{frame}{DeepDream}
+\begin{center}
+  \hspace{-1em}\includegraphics[width=0.7\textwidth]{figures/deepdream3.pdf}
+\end{center}
+\end{frame}
+
 \begin{frame}{Gradient Ascent on Images}
 \begin{itemize}
-\item Can do gradient ascent on an image to maximize the activation of a given neuron.
+\item Doing gradient ascent on an image to maximize the activation of a given neuron.
   \begin{center}
     \hspace{-3em}\includegraphics[width=\textwidth]{figures/distill_gd.png}
   \end{center}
@@ -1061,34 +1143,6 @@ We can visualize a heat map
 \end{itemize}
 \end{frame}
 
-\begin{frame}{Deep dream}
-\begin{itemize}
-\item Start with an image, and run a conv net on it.
-\item Change the image such that units which were already highly activated get activated even more strongly.
-``Rich get richer.''
-\end{itemize}
-\begin{center}
-  \hspace{-1em}\includegraphics[width=\textwidth]{figures/deepdream1.pdf}
-\end{center}
-
-% \notenew{
-% \begin{itemize}
-%   \item What if we try to maximize all neuron in one layer at once?
-% \end{itemize}
-% }
-\end{frame}
-
-\begin{frame}{Deep dream}
-\begin{center}
-  \hspace{-1em}\includegraphics[width=\textwidth]{figures/deepdream2.pdf}
-\end{center}
-\end{frame}
-
-\begin{frame}{Deep dream}
-\begin{center}
-  \hspace{-1em}\includegraphics[width=0.9\textwidth]{figures/deepdream3.pdf}
-\end{center}
-\end{frame}
 
 \begin{frame}{Artistic style transfer}
 \begin{itemize}
@@ -1096,7 +1150,7 @@ We can visualize a heat map
 \item Activation correlation across space stores style information and discards spatial arrangement
 \end{itemize}
 \begin{center}
-\includegraphics[width=0.55\textwidth]{figures/style_transfer.png}
+\includegraphics[width=0.45\textwidth]{figures/style_transfer.png}
 \end{center}
 \begin{flushright}
 {\tiny Gatys et al., Image style transfer Using convolutional neural networks, CVPR 2016.}
@@ -1116,7 +1170,7 @@ We can visualize a heat map
   \item Optimizing both content \& style from random noise
 \end{itemize}
 \begin{center}
-\includegraphics[width=0.85\textwidth]{figures/style_transfer2.png}
+\includegraphics[width=0.65\textwidth]{figures/style_transfer2.png}
 \end{center}
 \begin{flushright}
 {\tiny Gatys et al., Image style transfer Using convolutional neural networks, CVPR 2016.}
@@ -1125,7 +1179,7 @@ We can visualize a heat map
 
 \begin{frame}{Artistic style transfer}
 \begin{center}
-\includegraphics[width=0.7\textwidth,trim={0 7cm 0 0},clip]{figures/style_transfer3.png}
+\includegraphics[width=0.6\textwidth,trim={0 7cm 0 0},clip]{figures/style_transfer3.png}
 \end{center}
 \begin{flushright}
 {\tiny Gatys et al., Image style transfer Using convolutional neural networks, CVPR 2016.}
@@ -1179,7 +1233,7 @@ We can visualize a heat map
 \begin{itemize}
 \item An adversarial example in the physical world (network thinks it's a gun, from a variety of viewing angles!)
   \begin{center}
-    \includegraphics[width=0.8\textwidth]{figures/adversarial_physical.png}
+    \includegraphics[width=0.7\textwidth]{figures/adversarial_physical.png}
   \end{center}
 \end{itemize}
 \begin{flushright}
@@ -1211,14 +1265,20 @@ We can visualize a heat map
 % }
 \end{frame}
 
-\begin{frame}{Large Language Model Safety}
-\end{frame}
+% \begin{frame}{Large Language Model Safety}
+% \begin{itemize}
+%   \item The vulnerability of deep networks also extend to LLMs.
+%   \item People have recently come up with 
+% \end{itemize}
+% \end{frame}
 
 \begin{frame}{Adversarial Defense}
 \begin{itemize}
   \item How to defend from adversarial perturbation is still an active research area.
+  \item Blackbox vs. whitebox attacks.
   \item One common approach is to train with millions of adversarial examples.
   \item Needs to train much longer, and also suffers a little from normal accuracy.
+  \item Data augmentation and label smoothing also help.
 \end{itemize}
 % \notenew{
 %   More to be covered in security \& privacy of deep learning.
@@ -1226,6 +1286,13 @@ We can visualize a heat map
 \end{frame}
 
 \begin{frame}{Summary}
+\begin{itemize}
+  \item<+-> Interpretability - ways to open up the black box of neural networks
+  \item<+-> Knowing what each neuron does is like studying a ``brain'' with perfect observation and measurement.
+  \item<+-> Still very open research area.
+  \item<+-> Adversarial examples are safety vulnerabilities of deep learning.
+  \item<+-> Need more data and more robust learning objectives.
+\end{itemize}
 \end{frame}
 
 \section{K-means Clustering}
