@@ -1,7 +1,6 @@
 %% LyX 2.3.4.2 created this file.  For more info, see http://www.lyx.org/.
 %% Do not edit unless you really know what you are doing.
-% \documentclass[english,dvipsnames,aspectratio=169]{beamer}
-\documentclass[english,dvipsnames,aspectratio=169,handout]{beamer}
+\documentclass[english,dvipsnames,aspectratio=169]{beamer}
 % \documentclass[english,dvipsnames,aspectratio=169,handout]{beamer}
 \usepackage{mathptmx}
 \usepackage{eulervm}
@@ -295,6 +294,7 @@
     \item Larger images require deeper networks (more stages of processing at different resolutions)
     \item Optimizing deeper layers of networks is not trivial.
     \item Loss often stalls or blows up.
+    \pause
     \item Why?
     \pause
     \begin{itemize}
@@ -308,9 +308,9 @@
 
 \begin{frame}{Weight initialization}
 \begin{itemize}
-    \item Even with a few layers (>3), optimization is still hard.
-    \item If weight initialization is bad (too small or too big), then optimization is hard to kick off.
-    \item Consider the distribution of whole dataset in the activation space.
+    \item<+-> Even with a few layers (>3), optimization is still hard.
+    \item<+-> If weight initialization is bad (too small or too big), then optimization is hard to kick off.
+    \item<+-> Consider the distribution of whole dataset in the activation space.
     % \item Pre-activation: $z=Wx$; Post-activation: $h=f(z)$
     \begin{itemize}
         % \item The mean of the pre-activations should be zero.
@@ -360,8 +360,8 @@ ImageNet Classification with Deep Convolutional Neural Networks. NIPS, 2012.}.
     \item In stochastic training, the learning rate also influences the \alert{fluctuations} due to the stochasticity of the gradients.
     \item Typical strategy:
       \begin{itemize}
-        \item Use a large learning rate early in training so you can get close to the optimum
-        \item Gradually decay the learning rate to reduce the fluctuations
+        \item Use a large learning rate early in training so you can get close to the optimum.
+        \item Gradually decay the learning rate to reduce the fluctuations.
       \end{itemize}
   \end{itemize}
 \end{frame}
@@ -383,8 +383,8 @@ ImageNet Classification with Deep Convolutional Neural Networks. NIPS, 2012.}.
 \begin{frame}{RMSprop and Adam}
   \begin{itemize}
   \item Recall: SGD takes large steps in directions of high curvature and small steps in directions of low curvature.
-  \item \alert{RMSprop} is a variant of SGD which rescales each coordinate of the gradient to have norm 1 on average. It does this by keeping an exponential moving average $s_j$ of the squared gradients.
-  \item The following update is applied to each coordinate $j$ independently:
+  \item<+-> \alert{RMSprop} is a variant of SGD which rescales each coordinate of the gradient to have norm 1 on average. It does this by keeping an exponential moving average $s_j$ of the squared gradients.
+  \item<+-> The following update is applied to each coordinate $j$ independently:
     \begin{align*}
       s_j &\gets (1-\gamma) s_j + \gamma [\tfrac{\partial L}{\partial \theta_j}]^2 \\
       \theta_j &\gets \theta_j - \frac{\alpha}{\sqrt{s_j + \epsilon}} \frac{\partial L}{\partial \theta_j}
@@ -403,13 +403,13 @@ ImageNet Classification with Deep Convolutional Neural Networks. NIPS, 2012.}.
 \begin{columns}
 \begin{column}{0.6\textwidth}
 \begin{itemize}
-  \item \alert{Adam} = RMSprop + momentum = Adaptive Momentum estimation
-  \item Smoother estimate of the average gradient and gradient norm.
-  \item $m_t$: exponential moving average of gradient.
-  \item $v_t$: exponential moving average of gradient squared.
-  \item $\hat{m}_t$, $\hat{v}_t$: Bias correction.
-  \item $\theta_t \leftarrow \theta_{t-1} - \alpha \hat{m}_t / (\sqrt{\hat{v_t}} + \epsilon)$
-  \item The ``default'' optimizer for modern networks.
+  \item<+-> \alert{Adam} = RMSprop + momentum = Adaptive Momentum estimation
+  \item<1-> Smoother estimate of the average gradient and gradient norm.
+  \item<+-> $m_t$: exponential moving average of gradient.
+  \item<2-> $v_t$: exponential moving average of gradient squared.
+  \item<2-> $\hat{m}_t$, $\hat{v}_t$: Bias correction.
+  \item<2-> $\theta_t \leftarrow \theta_{t-1} - \alpha \hat{m}_t / (\sqrt{\hat{v_t}} + \epsilon)$
+  \item<2-> The ``default'' optimizer for modern networks.
 \end{itemize}
 \end{column}
 \begin{column}{0.38\textwidth}
@@ -424,10 +424,10 @@ ImageNet Classification with Deep Convolutional Neural Networks. NIPS, 2012.}.
 % \begin{columns}
 % \begin{column}{0.6\textwidth}
 \begin{itemize}
-    \item Weight initialization is tricky, and there is no guarantee that the distribution of activations will stay the same over the learning process.
-    \item What if the weights keep grow bigger and activation may explode?
-    \item We can ``normalize'' the activations.
-    \item The idea is to control the activation within a normal range: zero-mean, uni-variance.
+    \item<+-> Weight initialization is tricky, and there is no guarantee that the distribution of activations will stay the same over the learning process.
+    \item<1-> What if the weights keep grow bigger and activation may explode?
+    \item<+-> We can ``normalize'' the activations.
+    \item<2-> The idea is to control the activation within a normal range: zero-mean, uni-variance.
 \end{itemize}
 % \end{column}
 % \begin{column}{0.38\textwidth}
@@ -444,11 +444,12 @@ ImageNet Classification with Deep Convolutional Neural Networks. NIPS, 2012.}.
 \begin{column}{0.6\textwidth}
 \begin{itemize}
     % \item What is the population to normalize it from?
-    \item Training image distribution -> activation distribution
-    \item In CNNs, neurons across different spatial locations are also samples of the same feature channel.
-    \item Batch norm: Normalize across N H W dimensions, leaving C channels.
-    \item $\tilde{x} = \gamma \frac{x - \mu}{\sigma} + \beta$
-    \item Test time: using the mean and variance from the entire training set.
+    % \item Training image distribution -> activation distribution
+    \item<+-> In CNNs, neurons across different spatial locations are also samples of the same feature channel.
+    \item<+-> Batch norm: Normalize across N H W dimensions, leaving C channels.
+    \item<+-> $\tilde{x} = \gamma \frac{x - \mu}{\sigma} + \beta$
+    \item<3-> $\gamma, \beta$: learnable parameters. $\mu, \sigma$: statistics from the training batch.
+    \item<+-> Test time: using the mean and variance from the entire training set.
 \end{itemize}
 \end{column}
 
@@ -469,7 +470,8 @@ ImageNet Classification with Deep Convolutional Neural Networks. NIPS, 2012.}.
     % \item No longer estimating the distribution from training samples.
 \end{itemize}
 \begin{center}
-\includegraphics[width=0.7\textwidth,trim={10cm 0 0 0},clip]{figures/normalization.png}
+\includegraphics[width=0.6\textwidth,trim={10cm 0 0 0},clip]{figures/normalization.png}
+\footnote{Wu and He. Group normalization. ECCV 2018.}
 \end{center}
 \end{frame}
 
@@ -477,7 +479,7 @@ ImageNet Classification with Deep Convolutional Neural Networks. NIPS, 2012.}.
 \begin{itemize}
     \item The progress of normalization allowed us to train even deeper networks.
     \item The networks are no longer too sensitive with initialization.
-    \item But the best networks were still around 20 layers and deeper results in worse performance.
+    \item<+-> But the best networks were still around 20 layers and deeper results in worse performance.
 \end{itemize}
 \begin{center}
 \includegraphics[width=0.6\textwidth]{figures/googlenet.png}
@@ -505,6 +507,7 @@ ImageNet Classification with Deep Convolutional Neural Networks. NIPS, 2012.}.
     \item Now able to train over 100 layers.
     \item One of the most important network design choices in the past decade.
     \item Prevalent in almost all network architectures, including Transformers.
+    \pause
     \item Loss landscape view: Skip connections makes loss smoother -> easier to optimize \footnote{Li et al. Visualizing the Loss Landscape of Neural Nets. NIPS 2018.}.
 \end{itemize}
 \begin{center}
@@ -604,11 +607,11 @@ ImageNet Classification with Deep Convolutional Neural Networks. NIPS, 2012.}.
 
 \begin{frame}{Convolutional vs. recurrent networks}
 \begin{itemize}
-    \item Recall in images we used the convolution operation.
-    \item We can also use the idea of convolution for temporal signals.
-    \item Another alternative is to use a type of network called recurrent networks.
-    \item Two inputs: $\mathbf{x}_t$ is the current input, and $\mathbf{h}_t$ is the historical hidden state.
-    \item We can unroll the computation graph into a direct acyclic graph (DAG).
+    \item<+-> Recall in images we used the convolution operation.
+    \item<1-> We can also use the idea of convolution for temporal signals.
+    \item<+-> Another alternative is to use a type of network called recurrent networks.
+    \item<2-> Two inputs: $\mathbf{x}_t$ is the current input, and $\mathbf{h}_t$ is the historical hidden state.
+    \item<+-> We can unroll the computation graph into a direct acyclic graph (DAG).
 \end{itemize}
 \begin{center}
 \includegraphics[width=0.7\textwidth]{figures/rnn.png}
@@ -618,8 +621,8 @@ ImageNet Classification with Deep Convolutional Neural Networks. NIPS, 2012.}.
 \begin{frame}{Recurrent neural networks (RNNs)}
 \begin{itemize}
   \item<+-> A simple RNN can be made similar to a standard NN with one hidden layer.
-  \item $h_{t} = \tanh(W h_{t-1} + U x_{t})$.
-  \item $y_{t} = \softmax(V h_t)$.
+  \item<+-> $h_{t} = \tanh(W h_{t-1} + U x_{t})$.
+  \item<+-> $y_{t} = \softmax(V h_t)$.
 \end{itemize}
 \begin{center}
 \includegraphics[width=0.7\textwidth]{figures/rnn.png}
@@ -629,20 +632,21 @@ ImageNet Classification with Deep Convolutional Neural Networks. NIPS, 2012.}.
 
 \begin{frame}{Gradient vanishing}
 \begin{itemize}
-  \item<+-> Every iteration, we multiply the hidden state $h_{t-1}$ from the previous iteration with the same $W$.
+  \item<+-> Every iteration, we multiply the hidden state $h_{t-1}$ from the previous iteration with the same $W$. Recall the definition of Jacobian.
   \item<+-> If the largest singular value of $W$ is less than one then back-propagation will be attenuated.
   \item<+-> Similarly, we apply $\tanh$ activation every iteration -- further reducing gradient flow.
 \end{itemize}
 \begin{center}
 \includegraphics[width=0.7\textwidth]{figures/rnn.png}
+\includegraphics[width=0.25\textwidth]{figures/tanh.png}
 \end{center}
 \end{frame}
 
 \begin{frame}{Gating functions in LSTM}
 \begin{itemize}
-    \item Long short-term memory is a network that addresses the gradient vanishing problem by introducing gating functions.
-    \item Gating functions provide ``shortcuts'', like ResNet.
-    \item Originally proposed by Hochreiter and Schmidhuber in 1997.
+    \item<+-> Long short-term memory is a network that addresses the gradient vanishing problem by introducing gating functions.
+    \item<1-> Gating functions provide ``shortcuts'', like ResNet.
+    \item<+-> Originally proposed by Hochreiter and Schmidhuber in 1997.
 \end{itemize}
 \includegraphics[width=0.49\textwidth]{figures/rnn_cell.png}
 \includegraphics[width=0.49\textwidth]{figures/lstm_cell.png}
@@ -656,7 +660,7 @@ ImageNet Classification with Deep Convolutional Neural Networks. NIPS, 2012.}.
     \item<1-> Forget gate: $f_t = \sigma(W_f [h_{t-1}, x_t] + b_f)$.
     \item<1-> $z_t = \tanh(w_z [h_{t-1} x_t] + b_z)$.
     \item<+-> $c_t = f_t \odot c_{t-1} + i_t \odot z_t$.
-    \item<+-> Output gate: $\sigma(W_o [h_{t-1}, x_t] + b_o)$.
+    \item<+-> Output gate: $o_t = \sigma(W_o [h_{t-1}, x_t] + b_o)$.
     \item<3-> $h_t = o_t \odot \tanh(c_t)$.
 \end{itemize}
 \end{column}
@@ -693,11 +697,11 @@ ImageNet Classification with Deep Convolutional Neural Networks. NIPS, 2012.}.
 \begin{itemize}
     \item Earlier content will decay more.
     \item Hard to refer back to the raw content.
-    \item Reverse order better than forward order [abcde -> a'b'c'd'e' vs. abcde -> e'd'c'b'a'].
-    \item Attending to arbitrary sequence tokens.
-    \item $s_t = f(s_{t-1}, y_{t-1}, c_t)$
-    \item $c_t = \sum_\tau \alpha_{t, \tau} h_\tau$, $\alpha_{t,\tau} = \frac{\exp(a_(s_{t-1},h_k))}{\sum_{k} \exp(a_(s_{t-1},h_k))}$
-    \item $a(s_{t-1}, h_k) = v_a^\top \tanh(W_a [s_{i-1}, h_k])$
+    \item<+-> Reverse order better than forward order [abcde -> a'b'c'd'e' vs. abcde -> e'd'c'b'a'].
+    \item<+-> Attending to arbitrary sequence tokens.
+    \item<+-> $s_t = f(s_{t-1}, y_{t-1}, c_t)$
+    \item<+-> $c_t = \sum_\tau \alpha_{t, \tau} h_\tau$, $\alpha_{t,\tau} = \frac{\exp(a(s_{t-1},h_k))}{\sum_{k} \exp(a(s_{t-1},h_k))}$
+    \item<+-> $a(s_{t-1}, h_k) = v_a^\top \tanh(W_a [s_{i-1}, h_k])$
 \end{itemize}
 \end{column}
 \begin{column}{0.5\textwidth}
@@ -711,7 +715,7 @@ Bahdanau et al., 2014
 
 \begin{frame}{Transformers (``Attention is All You Need'')}
 \begin{itemize}
-    \item The previous architecture is very complicated.
+    \item<+-> The previous architecture is very complicated.
     {\small
     \begin{itemize}
     \item 1 RNN for encoding the tokens.
@@ -719,7 +723,7 @@ Bahdanau et al., 2014
     \item 1 RNN for combining attended tokens.
     \end{itemize}
     }
-    \item RNNs have the ability to incorporate past information, so does attention.
+    \item<+-> RNNs have the ability to incorporate past information, so does attention.
     % \item Just attention is sufficient.
 \end{itemize}
 \begin{center}
@@ -731,8 +735,10 @@ Bahdanau et al., 2014
 \begin{frame}{Positional encoding}
 \begin{itemize}
   \item Attention operation is permuation equivariant.
+  \pause
   % \item We need to encode the sequence order information in the inputs.
   \item Solution: Encode the position of each token.
+  \pause
   \item $PE(pos, 2i) = \sin(p/k^{2i/d}), PE(pos, 2i+1) = \cos(p/k^{2i/d})$.
 \end{itemize}
 \begin{center}
@@ -755,6 +761,7 @@ Bahdanau et al., 2014
 \begin{column}{0.5\textwidth}
 \begin{center}
 \includegraphics[width=0.5\textwidth]{figures/multi_headed_attention.png}
+\includegraphics[width=0.45\textwidth]{figures/attention_nmt.png}
 \end{center}
 \end{column}
 \end{columns}
@@ -774,11 +781,11 @@ Bahdanau et al., 2014
 
 \begin{frame}{Autoregressive modeling}
 \begin{itemize}
-    \item Recall the chain rule on joint distribution:
+    \item<+-> Recall the chain rule on joint distribution:
     \[
     p(x_{1:t}) = p(x_1, \dots, x_t) = p(x_1) p(x_2 | x_1) \dots p(x_t | x_{t-1}) = p(x_1) \prod_i p(x_i|x_{1:i-1}).
     \]
-    \item In Naive Bayes, we treat each variable as independent, but this cannot perform sequence generation.
+    \item<+-> In Naive Bayes, we treat each variable as independent, but this cannot perform sequence generation.
     \item<+-> How do we model a conditional distribution $p(x_i|x_{1:i-1})$ using an RNN or a Transformer?
     \item<+-> RNN is naturally autoregressive: $h_t$ contains all information up to time t.
     \item<+-> For Transformers, $h_t$ contains information about the future.
@@ -827,7 +834,7 @@ Bahdanau et al., 2014
   \item<+-> Optimization: Learning rate, initialization, activation functions, normalization, shortcut skip connection, attention, etc.
   \item<+-> Overfitting: Dropout, Data augmentation, etc.
   \item<+-> Architecture Motifs: MLP, CNN, RNN, Transformers, etc.
-  \item<+-> Why it works? Data, optimization, compute.
+  \item<+-> Why deep learning works? Data, optimization, compute.
   \item<+-> Still many open questions: Interpretability, fairness, uncertainty, data efficiency, energy efficiency, theory, etc.
 \end{itemize}
 \end{frame}
@@ -836,10 +843,10 @@ Bahdanau et al., 2014
 
 \begin{frame}{ML Interpretability}
 \begin{itemize}
-  \item<+-> Linear regression: Weights represent feature selection strength
-  \item<+-> SVMs: Dual weights represent sample selection
-  \item<+-> Bayesian methods: Model the generative process as a probabilistic model, fully transparent
-  \item<+-> Decision trees: If-else decision making process
+  \item<+-> Linear regression: Weights represent feature selection strength.
+  \item<+-> SVMs: Dual weights represent sample selection.
+  \item<+-> Bayesian methods: Model the generative process as a probabilistic model, fully transparent.
+  \item<+-> Decision trees: If-else decision making process.
   \item<+-> Neural networks: ?
 \end{itemize}
 \end{frame}
@@ -903,7 +910,7 @@ Bahdanau et al., 2014
 \begin{itemize}
 \item Layer 4:
   \begin{center}
-    \includegraphics[width=0.4 \textwidth]{figures/layer4.png}
+    \includegraphics[width=0.3 \textwidth]{figures/layer4.png}
   \end{center}
 \end{itemize}
 \begin{flushright}
@@ -915,7 +922,7 @@ Bahdanau et al., 2014
 \begin{itemize}
 \item Layer 5:
   \begin{center}
-    \includegraphics[width=0.7 \textwidth]{figures/layer5.png}
+    \includegraphics[width=0.55 \textwidth]{figures/layer5.png}
   \end{center}
 \end{itemize}
 \begin{flushright}
@@ -972,7 +979,7 @@ Bahdanau et al., 2014
 
 \begin{frame}{Guided Backprop}
 \begin{center}
-  \includegraphics[width=0.85 \textwidth]{figures/guided_backprop_results2.pdf}
+  \includegraphics[width=0.8 \textwidth]{figures/guided_backprop_results2.pdf}
 \end{center}
 \begin{flushright}
 {\tiny Springerberg et al., Striving for simplicity: The all convolutional net, ICLR workshop 2015.}
@@ -1021,9 +1028,8 @@ Bahdanau et al., 2014
 \begin{frame}{GradCAM}
 
 \begin{center}
-\vspace{-0.2in}
-\includegraphics[width=0.7\textwidth]{figures/gradcam.png}
-\includegraphics[width=0.45\textwidth,trim={0 0 16cm 0},clip]{figures/gradcam2.png}
+% \vspace{-0.2in}
+\includegraphics[width=0.9\textwidth]{figures/gradcam.png}
 \end{center}
 
 \begin{flushright}
@@ -1039,6 +1045,14 @@ Bahdanau et al., 2014
 % }
 \end{frame}
 
+\begin{frame}{GradCAM}
+\begin{center}
+\includegraphics[width=0.8\textwidth,trim={0 0 16cm 0},clip]{figures/gradcam2.png}
+\end{center}
+\begin{flushright}
+{\tiny Selvaraju et al. Grad-CAM: Visual explanations from deep networks via gradient-based localization. ICCV 2017.}
+\end{flushright}
+\end{frame}
 
 \begin{frame}{DeepDream\footnote{\href{https://blog.research.google/2015/07/deepdream-code-example-for-visualizing.html?m=1}{Google Research Blog}}}
 \begin{itemize}
@@ -1144,14 +1158,14 @@ Bahdanau et al., 2014
 
 \begin{frame}{Artistic style transfer}
 \begin{itemize}
-\item Activation stores content information
-\item Activation correlation across space stores style information and discards spatial arrangement
+\item Activations store content information
+\item Activation correlation stores style/texture information: $G^{l}_{ij} = \sum_k F^{l}_{ik} F^{l}_{jk}$
 \end{itemize}
 \begin{center}
 \includegraphics[width=0.45\textwidth]{figures/style_transfer.png}
 \end{center}
 \begin{flushright}
-{\tiny Gatys et al., Image style transfer Using convolutional neural networks, CVPR 2016.}
+{\tiny Gatys et al., Image style transfer using convolutional neural networks, CVPR 2016.}
 \end{flushright}
 
 % \notenew{
@@ -1171,16 +1185,16 @@ Bahdanau et al., 2014
 \includegraphics[width=0.65\textwidth]{figures/style_transfer2.png}
 \end{center}
 \begin{flushright}
-{\tiny Gatys et al., Image style transfer Using convolutional neural networks, CVPR 2016.}
+{\tiny Gatys et al., Image style transfer using convolutional neural networks, CVPR 2016.}
 \end{flushright}
 \end{frame}
 
 \begin{frame}{Artistic style transfer}
 \begin{center}
-\includegraphics[width=0.6\textwidth,trim={0 7cm 0 0},clip]{figures/style_transfer3.png}
+\includegraphics[width=0.55\textwidth,trim={0 7cm 0 0},clip]{figures/style_transfer3.png}
 \end{center}
 \begin{flushright}
-{\tiny Gatys et al., Image style transfer Using convolutional neural networks, CVPR 2016.}
+{\tiny Gatys et al., Image style transfer using convolutional neural networks, CVPR 2016.}
 \end{flushright}
 \end{frame}
 
@@ -1272,11 +1286,11 @@ Bahdanau et al., 2014
 
 \begin{frame}{Adversarial Defense}
 \begin{itemize}
-  \item How to defend from adversarial perturbation is still an active research area.
-  \item Blackbox vs. whitebox attacks.
-  \item One common approach is to train with millions of adversarial examples.
-  \item Needs to train much longer, and also suffers a little from normal accuracy.
-  \item Data augmentation and label smoothing also help.
+  \item<+-> How to defend from adversarial perturbation is still an active research area.
+  \item<+-> Blackbox vs. whitebox attacks.
+  \item<+-> One common approach is to train with millions of adversarial examples.
+  \item<3-> Needs to train much longer, and also suffers a drop in accuracy.
+  \item<+-> Data augmentation and label smoothing also help.
 \end{itemize}
 % \notenew{
 %   More to be covered in security \& privacy of deep learning.
@@ -1288,8 +1302,8 @@ Bahdanau et al., 2014
   \item<+-> Interpretability - ways to open up the black box of neural networks
   \item<+-> Knowing what each neuron does is like studying a ``brain'' with perfect observation and measurement.
   \item<+-> Still very open research area.
-  \item<+-> Adversarial examples are safety vulnerabilities of deep learning.
-  \item<+-> Need more data and more robust learning objectives.
+  \item<+-> Adversarial examples are safety vulnerabilities of deep neural networks.
+  \item<+-> Need more data and innovations in more robust learning objectives.
 \end{itemize}
 \end{frame}
 
@@ -1316,7 +1330,9 @@ Bahdanau et al., 2014
 \end{frame}
 
 \begin{frame}{Example: Old Faithful Geyser}
+\begin{center}
 \includegraphics[height=0.6\textheight]{figures/oldfaithful}
+\end{center}
 \begin{itemize}
 \item Looks like two clusters.
 \item How to find these clusters algorithmically?
@@ -1331,7 +1347,9 @@ Bahdanau et al., 2014
 \item Standardize the data.
 \item Choose two cluster centers.
 \end{itemize}
+\begin{center}
 \includegraphics[height=0.55\textheight]{{figures/faithful-9.1a}}
+\end{center}
 
 \let\thefootnote\relax\footnotetext{\tiny{From Bishop's \emph{Pattern recognition and machine learning}, Figure 9.1(a).}}
 \note[item]{We first standardize the data and choose two points randomly. They will be the cluster center.}
@@ -1342,7 +1360,9 @@ Bahdanau et al., 2014
 \begin{itemize}
 \item Assign each point to closest center.
 \end{itemize}
+\begin{center}
 \includegraphics[height=0.55\textheight]{{figures/faithful-9.1b}}
+\end{center}
 
 \let\thefootnote\relax\footnotetext{\tiny{From Bishop's \emph{Pattern recognition and machine learning}, Figure 9.1(b).}}
 \end{frame}
@@ -1352,7 +1372,9 @@ Bahdanau et al., 2014
 \begin{itemize}
 \item Compute new cluster centers.
 \end{itemize}
+\begin{center}
 \includegraphics[height=0.55\textheight]{{figures/faithful-9.1c}}
+\end{center}
 
 \let\thefootnote\relax\footnotetext{\tiny{From Bishop's \emph{Pattern recognition and machine learning}, Figure 9.1(c).}}
 \end{frame}
@@ -1362,7 +1384,9 @@ Bahdanau et al., 2014
 \begin{itemize}
 \item Assign points to closest center.
 \end{itemize}
+\begin{center}
 \includegraphics[height=0.55\textheight]{{figures/faithful-9.1d}}
+\end{center}
 
 \let\thefootnote\relax\footnotetext{\tiny{From Bishop's \emph{Pattern recognition and machine learning}, Figure 9.1(d).}}
 \end{frame}
@@ -1372,7 +1396,9 @@ Bahdanau et al., 2014
 \begin{itemize}
 \item Compute cluster centers.
 \end{itemize}
+\begin{center}
 \includegraphics[height=0.55\textheight]{{figures/faithful-9.1e}}
+\end{center}
 
 \let\thefootnote\relax\footnotetext{\tiny{From Bishop's \emph{Pattern recognition and machine learning}, Figure 9.1(e).}}
 \end{frame}
@@ -1382,7 +1408,9 @@ Bahdanau et al., 2014
 \begin{itemize}
 \item Iterate until convergence.
 \end{itemize}
+\begin{center}
 \includegraphics[height=0.55\textheight]{{figures/faithful-9.1i}}
+\end{center}
 
 \let\thefootnote\relax\footnotetext{\tiny{From Bishop's \emph{Pattern recognition and machine learning}, Figure 9.1(i).}}
 \note[item]{When do we achieve convergence? The cluster assignments no longer change.}
@@ -1395,7 +1423,9 @@ Bahdanau et al., 2014
 \begin{itemize}
 \item The clustering for $k=3$ below is a local minimum, but suboptimal:
 \end{itemize}
+\begin{center}
 \includegraphics[width=0.8\textwidth]{figures/k-means-local-optimum}\let\thefootnote\relax\footnotetext{\tiny{From Sontag's DS-GA 1003, 2014, Lecture 8.}}
+\end{center}
 \note[item]{In this example, we have 3 clusters. But $k$-means found different cluster assignments than what we would do. It's a stationary point even though we can find ``better'' clusters.}
 \note[item]{How do we define ``good'' clusters? Let's formalize $k$-means with an objective function.}
 \end{frame}
