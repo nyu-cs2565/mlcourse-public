@@ -1258,7 +1258,14 @@ q^{*}=\argmin_{q\in\cq}\kl[q(z),p(z\mid x,\theta^{\text{old}})]
 
 \section{Conclusion and Outlook}
 
-\begin{frame}
+\begin{frame}{End of the course}
+\begin{itemize}
+    \item Congrats, you are almost done.
+    \item Originally developed by Prof. David Rosenberg (now at Bloomberg).
+    \item Later adapted by Prof. He He and other colleagues.
+    \item Added my twists on the topics.
+    \item A very challenging course.
+\end{itemize}
 \end{frame}
 
 \begin{frame}{Next Lecture: Project Presentation}
@@ -1266,6 +1273,100 @@ q^{*}=\argmin_{q\in\cq}\kl[q(z),p(z\mid x,\theta^{\text{old}})]
     \item Dec 12.
     \item 24 groups, 120mins.
     \item Aim for 3 mins per group, hard stop at 4 mins, and 1 min Q\&A.
+    \item Send me your slides in PDF with your group number by Dec 14 11:59pm.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+{Models}
+\begin{description}
+\item[Linear] Perceptron, conditional probability models, SVMs
+\item[Non-linear] Kernelized models, trees, basis function models, neural nets
+\end{description}
+
+\onslide<2->{
+\begin{simpleblock}
+{How to choose the model family?}
+\begin{itemize}
+\item Trade-offs:
+\begin{itemize}
+\item approximation error and estimation error (bias and variance),
+\item accuracy and efficiency (during both training and inference).
+\end{itemize}
+\item Start from the task requirements, e.g. amount of data, computation resource
+\end{itemize}
+\end{simpleblock}
+}
+\note[item]{approximation error and estimation error: high capacity models such as neural nets give you lower approximation error, but the estimation error could be high thus you will need more data compared to other simpler models.}
+\note[item]{accuracy and efficiency: you might have time constraints either during training or inference so you might prefer a simpler model even if the accuracy is lower.}
+\note[item]{The suggestion is to start from the task requirements and choose your model accordingly.}
+\end{frame}
+
+\begin{frame}
+{Objectives}
+\begin{description}[Loss functions]
+\item[Loss functions] How far off a prediction is from the target, e.g. 0-1 loss, margin-based loss, squared loss.
+\onslide<2->{
+\item[Risk] Expected loss - but expectation over what?
+\begin{itemize}
+\item Frequentist approach: expectation over data.
+\begin{itemize}
+\item Empirical risk minimization, \ie average loss on the training data.
+\item Regularization: balance estimation error and generalization error.
+\end{itemize}
+\item Bayesian approach: expectation over parameters.
+\begin{itemize}
+\item Posterior: prior belief updated by observed data.
+\item Bayes action minimizes the posterior risk.
+}
+\end{itemize}
+\end{itemize}
+\end{description}
+\note[item]{The next core question in ML is how do we learn the parameters given a model.}
+\note[item]{We covered many loss functions, and you should know when each of them is used.}
+\note[item]{But loss functions depend on the unknown target, thus it's a random variable. We cannot use it to choose model parameters. So we have the notion of risk, or expected loss.}
+\note[item]{If you want a point estimate, you can take the Bayes action which minimizes the posterior risk.}
+\end{frame}
+
+\begin{frame}
+{Algorithms}
+\begin{description}
+\item[Learning] Find model parameters---often an optimization problem.
+\begin{itemize}
+\item (Stocahstic) (sub)gradient descent
+\item Functional gradient descent (gradient boosting)
+\item Convex vs non-convex objectives
+\end{itemize}
+
+\item[Inference] Answer questions given a learned model.
+\begin{itemize}
+\item Bayesian inference: compute various quantities given the posterior.
+\item Dynamic programming: compute $\argmax$ in structured prediction.
+\end{itemize}
+\end{description}
+\note[item]{Given the objective, we still need an algorithm to given us the optimal parameters.}
+\note[item]{We refer to finding model params as ``learning'' and it's often an opt problem.}
+\note[item]{Another topic we didn't discuss much in this course is inference. Once we find the parameters, how do we use the model to answer questions. For most model we covered, inference is trivial, \eg compute the function values. But there are cases where this can be challenging.}
+\end{frame}
+
+\begin{frame}{Do we still need ML?}
+\begin{itemize}
+    \item DL is not necessarily good for all types of data (availability, data quality, data modality etc.).
+    \item Classic methods also have their sweet spots.
+    \item Classic ML lays down foundation when building innvoative DL algorithm.
+    \item Classic ML sheds new insight into understand DL.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Other ML Related Advanced Courses in CS}
+\begin{itemize}
+    \item Computer Vision (Prof. Rob Fergus)
+    \item Deep Learning (Prof. Yann LeCun)
+    \item Deep Reinforcement Learning (Prof. Lerrel Pinto)
+    \item Foundations of Deep Learning Theory (Prof. Matus Telgarsky)
+    \item Learning with Large Language and Vision Models (Prof. Saining Xie)
+    \item Mathematics of Deep Learning (Prof. Joan Bruna)
+    \item Natural Language Processing (Prof. He He)
 \end{itemize}
 \end{frame}
 
