@@ -533,8 +533,8 @@ matrix.
 
 \pause{}
 \end{itemize}
-\item Even then, pure gradient-based methods have trouble.\footnote{See Hosseini and Sra's \href{https://arxiv.org/abs/1506.07677}{Manifold Optimization for Gaussian Mixture Models}
-for discussion and further references.}
+% \item Even then, pure gradient-based methods have trouble.\footnote{See Hosseini and Sra's \href{https://arxiv.org/abs/1506.07677}{Manifold Optimization for Gaussian Mixture Models}
+% for discussion and further references.}
 \end{itemize}
 \end{frame}
 
@@ -545,14 +545,21 @@ for discussion and further references.}
 {Suppose we observe cluster assignments $z$. Then MLE is easy:}
 
 \begin{align}
+\onslide<1->{
 n_{z} &= \sum_{i=1}^{n}\ind{z_{i}=z}
 && \text{\# examples in each cluster}\\
+}
+\onslide<2->{
 \hat{\pi}(z) &= \frac{n_{z}}{n}
 && \text{fraction of examples in each cluster} \\
+}
+\onslide<3->{
 \hat{\mu}_{z} &= \frac{1}{n_{z}}\sum_{i:z_{i}=z}x_{i}
 && \text{empirical cluster mean} \\
+}
+\onslide<4->{
 \hat{\Sigma}_{z} &= \frac{1}{n_{z}}\sum_{i:z_{i}=z}\left(x_{i}-\hat{\mu}_{z}\right)\left(x_{i}-\hat{\mu}_{z}\right)^{T}.
-&& \text{empirical cluster covariance}
+&& \text{empirical cluster covariance}}
 \end{align}
 
 \end{simpleblock}
@@ -803,15 +810,19 @@ p(x)=\sum_{z}p(x,z)
     {Intuition}
     \head{Problem}: marginal log-likelihood $\log p(x;\theta)$ is hard to optimize (observing only $x$)
 
+    \pause
     \head{Observation}: complete data log-likelihood $\log p(x,z;\theta)$ is easy to optimize (observing both $x$ and $z$)
 
+    \pause
     \head{Idea}: guess a distribution of the latent variables $q(z)$ (soft assignments)
 
+    \pause
     Maximize the \textbf{expected complete data log-likelihood}:
     $$
     \max_\theta \sum_{z\in\sZ} q(z) \log p(x,z;\theta)
     $$
 
+    \pause
     \head{EM assumption}: the expected complete data log-likelihood is easy to optimize
 
     Why should this work?
@@ -950,24 +961,23 @@ is a constant, which implies $q=p$ .
 
 \begin{frame}{MLE, EM, and the ELBO}
 \begin{itemize}
-\item The MLE is defined as a maximum over $\theta$:
+\item<+-> The MLE is defined as a maximum over $\theta$:
 \[
 \hat{\theta}_{\text{MLE}}=\argmax_{\theta}\left[\log p(x\mid\theta)\right].
 \]
-\item For any PMF $q(z)$, we have a lower bound on the marginal log-likelihood
+\item<+-> For any PMF $q(z)$, we have a lower bound on the marginal log-likelihood
 \[
 \log p(x\mid\theta)\ge\cl(q,\theta).
 \]
-\item In EM algorithm, we maximize the lower bound (ELBO) over $\theta$
+\item<+-> In EM algorithm, we maximize the lower bound (ELBO) over $\theta$
 and $q$:
 \[
 \hat{\theta}_{\text{EM}}\approx\argmax_{\theta}\left[\max_{q}\cl(q,\theta)\right]
 \]
-\end{itemize}
-
-\pause{}
-\begin{itemize}
-\item In EM algorithm, $q$ ranges over all distributions on $z$.
+% \end{itemize}
+% \pause{}
+% \begin{itemize}
+\item<+-> In EM algorithm, $q$ ranges over all distributions on $z$.
 \end{itemize}
 \end{frame}
 
@@ -1231,72 +1241,161 @@ q^{*}=\argmin_{q\in\cq}\kl[q(z),p(z\mid x,\theta^{\text{old}})]
 \end{frame}
 
 \begin{frame}{Deep Latent Variable Models}
+\begin{columns}
+\begin{column}{0.54\textwidth}
+\begin{itemize}
+  \item<+-> Neural network is a flexible function class to represent transformation between random variables $\eg q(z)$.
+  \item<+-> In neural networks, the hidden activations do not have probabilistic interpretation as they are not random variables.
+  \item<+-> What if we let the hidden represent some learned latent code?
+\end{itemize}
+\end{column}
+\begin{column}{0.45\textwidth}
+\begin{center}
+\includegraphics[width=0.7\textwidth]{figures/deep-latent.pdf}
+\end{center}
+\end{column}
+\end{columns}
 \end{frame}
 
-\begin{frame}{Variational Autoencoders}
+\begin{frame}{Variational Autoencoders (VAE) \footnote{Diederik P Kingma, Max Welling. Auto-Encoding Variational Bayes. ICLR 2014.}}
+\begin{itemize}
+  \item<+-> An autoencoder (AE) is a neural network that reconstructs the same input.
+  \item<+-> The first half is an encoder, from input to latent. The second half is a decoder.
+  \item<+-> How to make $q$ a probability distribution?
+\end{itemize}
+\begin{center}
+\includegraphics[width=0.4\textwidth]{figures/vae.pdf}
+\end{center}
 \end{frame}
 
-\begin{frame}{Vector Quantization (VQ)}
+\begin{frame}{Reparameterization Trick}
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\begin{itemize}
+  \item<+-> Let's assume that $q(z|x)$ is a Gaussian distribution.
+  \item<+-> Instead of letting the neural network to output a stochastic variable, we can let it predict deterministically the distribution parameters $\mu$ and $\sigma$.
+  \item<+-> A stochastic $z$ can be sampled from $\mathcal{N}(\mu, \sigma^2)$: $z = \mu + \sigma \cdot \epsilon$, where $\epsilon \sim \mathcal{N}(0, 1).$
+\end{itemize}
+\end{column}
+\begin{column}{0.5\textwidth}
+\begin{center}
+\includegraphics[width=0.7\textwidth]{figures/vae-reparameterization.pdf}
+\end{center}
+\end{column}
+\end{columns}
 \end{frame}
 
-\begin{frame}{Other Divergence Metrics}
+\begin{frame}{Variational Lower Bound}
+\begin{itemize}
+  \item<+-> Encoder $q$ weights: $\phi$; Decoder $p$ weights: $\theta$.
+  \item<+-> Now maximize ELBO: 
+  \begin{align}
+  \onslide<3->{L(q; \phi, \theta) &= \sum_{z} q(z) \frac{p_\theta(x, z)}{q_\phi(z|x)} \\}
+  \onslide<4->{&= \mathbb{E}_{z \sim q} [-\log q_\phi(z|x) + \log p_\theta(x, z)] \\}
+  \onslide<5->{&= \mathbb{E}_{z \sim q} [-\log q_\phi(z|x) + \log p_\theta(x | z) + \log p_\theta(z)] \\}
+  \onslide<6->{&= \underbrace{-KL(q_\phi(z|x) || p_\theta(z))}_{\text{Divergence between }q\text{ and the prior distribution}} + \underbrace{\mathbb{E}_{z \sim q}(\log p_\theta(x | z))}_{\text{Reconstruction based on }z}}
+  \end{align}
+\end{itemize}
 \end{frame}
 
-\begin{frame}{Diffusion Models}
+\begin{frame}{Stochastic Gradient}
+\begin{itemize}
+  \item<+-> The loss function needs to take expectation over $q$:
+  \[
+   L(q; \phi, \theta) = -KL(q_\phi(z|x) || p_\theta(z)) + \mathbb{E}_{z \sim q}(\log p_\theta(x | z))
+   \]
+  \item<+-> Turns out we just need to have a Monte Carlo sample size of 1: 
+  \begin{itemize}
+    \item For each $x$, sample one $z$ from $q(z|x)$.
+  \end{itemize}
+  \item<+-> Backprop through reparameterization.
+\end{itemize}
+\begin{center}
+\includegraphics[width=0.5\textwidth]{figures/vae-sample.pdf}
+\end{center}
 \end{frame}
+
+
+\begin{frame}{Learned Manifold}
+\begin{center}
+\includegraphics[width=0.45\textwidth]{figures/vae-latent.png}
+\end{center}
+\end{frame}
+
+% \begin{frame}{Remaining Questions}
+% \begin{itemize}
+%   \item How to make the latent code correspond to meaningful properties (e.g. shape, color, rotation, size)?
+%   \item What if the latent is discrete?
+%   \item What if the prior is not Gaussian?
+% \end{itemize}
+% \end{frame}
+
+% \begin{frame}{Vector Quantization (VQ)}
+% \end{frame}
+
+% \begin{frame}{Other Divergence Metrics}
+% \end{frame}
+
+% \begin{frame}{Diffusion Models}
+% \end{frame}
 
 \begin{frame}{Today's Summary}
 \begin{itemize}
-  \item Motivation: Unsupervised learning
-  \item K-means: A simple algorithm for discovering clusters 
-  \item Making k-means probabilistic: Gaussian mixture models
-  \item More generally: Latent variable models
-  \item Learning of latent variable models: EM
-  \item Underlying principle: Maximizing ELBO
+  \item<+-> Motivation: Unsupervised learning
+  \item<+-> K-means: A simple algorithm for discovering clusters 
+  \item<+-> Making k-means probabilistic: Gaussian mixture models
+  \item<+-> More generally: Latent variable models
+  \item<+-> Learning of latent variable models: EM
+  \item<+-> Underlying principle: Maximizing ELBO
+  \item<+-> VAE: Introducing variational inference to neural networks. A classic starting example for deep generative modeling.
 \end{itemize}
 \end{frame}
 
 \section{Conclusion and Outlook}
 
-\begin{frame}{End of the course}
+\begin{frame}{Acknowledgement}
 \begin{itemize}
-    \item Congrats, you are almost done.
-    \item Originally developed by Prof. David Rosenberg (now at Bloomberg).
-    \item Later adapted by Prof. He He and other colleagues.
-    \item Added my twists on the topics.
-    \item A very challenging course.
+    \item<1-> Most content developed by David Rosenberg (now at Bloomberg).
+    \item<1-> Later adapted by He He, Tal Linzan, and others.
+    \item<1-> Added my own twists on the topics.
+    \item<2-> This is a very challenging grad-level course.
+    \item<2-> Congrats, you are almost done.
+    \item<3-> A reminder to fill out course evaluation surveys.
 \end{itemize}
 \end{frame}
 
 \begin{frame}{Next Lecture: Project Presentation}
 \begin{itemize}
-    \item Dec 12.
+    \item Dec 12, in-person presentations.
     \item 24 groups, 120mins.
-    \item Aim for 3 mins per group, hard stop at 4 mins, and 1 min Q\&A.
-    \item Send me your slides in PDF with your group number by Dec 14 11:59pm.
+    \item Aim for \textbf{3 mins} per group, hard stop at 4 mins, and 1 min max for Q\&A.
+    \item Send me your slides in PDF with your group number by Dec 11 11:59pm.
 \end{itemize}
 \end{frame}
 
 \begin{frame}
 {Models}
 \begin{description}
-\item[Linear] Perceptron, conditional probability models, SVMs
-\item[Non-linear] Kernelized models, trees, basis function models, neural nets
+\item<1->[Linear] Perceptron, conditional probability models, SVMs
+\item<2->[Non-linear] Kernelized models, trees, basis function models, neural nets
 \end{description}
 
-\onslide<2->{
 \begin{simpleblock}
-{How to choose the model family?}
+\onslide<3->{How to choose the model family?}
 \begin{itemize}
+\onslide<3->{
 \item Trade-offs:
 \begin{itemize}
 \item approximation error and estimation error (bias and variance),
 \item accuracy and efficiency (during both training and inference).
 \end{itemize}
+}
+\onslide<4->{
 \item Start from the task requirements, e.g. amount of data, computation resource
+\item The best lesson is to practice!
+}
 \end{itemize}
 \end{simpleblock}
-}
 \note[item]{approximation error and estimation error: high capacity models such as neural nets give you lower approximation error, but the estimation error could be high thus you will need more data compared to other simpler models.}
 \note[item]{accuracy and efficiency: you might have time constraints either during training or inference so you might prefer a simpler model even if the accuracy is lower.}
 \note[item]{The suggestion is to start from the task requirements and choose your model accordingly.}
@@ -1305,27 +1404,25 @@ q^{*}=\argmin_{q\in\cq}\kl[q(z),p(z\mid x,\theta^{\text{old}})]
 \begin{frame}
 {Objectives}
 \begin{description}[Loss functions]
-\item[Loss functions] How far off a prediction is from the target, e.g. 0-1 loss, margin-based loss, squared loss.
-\onslide<2->{
-\item[Risk] Expected loss - but expectation over what?
+\item<1->[Loss functions] How far off a prediction is from the target, e.g. 0-1 loss, margin-based loss, squared loss.
+\item<2->[Risk] Expected loss - but expectation over what?
 \begin{itemize}
-\item Frequentist approach: expectation over data.
+\item<3-> Frequentist approach: expectation over data.
 \begin{itemize}
 \item Empirical risk minimization, \ie average loss on the training data.
 \item Regularization: balance estimation error and generalization error.
 \end{itemize}
-\item Bayesian approach: expectation over parameters.
+\item<4-> Bayesian approach: expectation over parameters.
 \begin{itemize}
 \item Posterior: prior belief updated by observed data.
 \item Bayes action minimizes the posterior risk.
-}
 \end{itemize}
 \end{itemize}
 \end{description}
-\note[item]{The next core question in ML is how do we learn the parameters given a model.}
-\note[item]{We covered many loss functions, and you should know when each of them is used.}
-\note[item]{But loss functions depend on the unknown target, thus it's a random variable. We cannot use it to choose model parameters. So we have the notion of risk, or expected loss.}
-\note[item]{If you want a point estimate, you can take the Bayes action which minimizes the posterior risk.}
+% \note[item]{The next core question in ML is how do we learn the parameters given a model.}
+% \note[item]{We covered many loss functions, and you should know when each of them is used.}
+% \note[item]{But loss functions depend on the unknown target, thus it's a random variable. We cannot use it to choose model parameters. So we have the notion of risk, or expected loss.}
+% \note[item]{If you want a point estimate, you can take the Bayes action which minimizes the posterior risk.}
 \end{frame}
 
 \begin{frame}
@@ -1349,12 +1446,13 @@ q^{*}=\argmin_{q\in\cq}\kl[q(z),p(z\mid x,\theta^{\text{old}})]
 \note[item]{Another topic we didn't discuss much in this course is inference. Once we find the parameters, how do we use the model to answer questions. For most model we covered, inference is trivial, \eg compute the function values. But there are cases where this can be challenging.}
 \end{frame}
 
-\begin{frame}{Do we still need ML?}
+\begin{frame}{Do We Still Need ML?}
 \begin{itemize}
-    \item DL is not necessarily good for all types of data (availability, data quality, data modality etc.).
-    \item Classic methods also have their sweet spots.
-    \item Classic ML lays down foundation when building innvoative DL algorithm.
-    \item Classic ML sheds new insight into understand DL.
+  \item<+-> Deep Learning (DL) has been overwhelmingly popular in the past few years.
+  \item<+-> Many ML methods are considered out-dated.
+  \item<+-> However, DL is not necessarily good for all types of data (availability, data quality, data modality etc.). Classic methods may also have their sweet spots.
+  \item<+-> Classic ML sheds new insight into understand DL.
+  \item<+-> Classic ML lays down foundation when we innovate DL algorithms.
 \end{itemize}
 \end{frame}
 
