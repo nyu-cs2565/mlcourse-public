@@ -358,7 +358,7 @@ computed distance squared.
 \item $k$-means:
 \begin{itemize}
 \item Algorithm: alternating between assigning points to clusters and computing cluster centroids.
-\item Objective: minmizing some loss function by cooridinate descent.
+\item Objective: minmizing some loss function by coordinate descent.
 \item Converge to a local minimum.
 \end{itemize}
 \end{itemize}
@@ -1290,7 +1290,7 @@ q^{*}=\argmin_{q\in\cq}\kl[q(z),p(z\mid x,\theta^{\text{old}})]
   \item<+-> Encoder $q$ weights: $\phi$; Decoder $p$ weights: $\theta$.
   \item<+-> Now maximize ELBO: 
   \begin{align}
-  \onslide<3->{L(q; \phi, \theta) &= \sum_{z} q(z) \frac{p_\theta(x, z)}{q_\phi(z|x)} \\}
+  \onslide<3->{L(q; \phi, \theta) &= \sum_{z} q(z) \log \frac{p_\theta(x, z)}{q_\phi(z|x)} \\}
   \onslide<4->{&= \mathbb{E}_{z \sim q} [-\log q_\phi(z|x) + \log p_\theta(x, z)] \\}
   \onslide<5->{&= \mathbb{E}_{z \sim q} [-\log q_\phi(z|x) + \log p_\theta(x | z) + \log p_\theta(z)] \\}
   \onslide<6->{&= \underbrace{-KL(q_\phi(z|x) || p_\theta(z))}_{\text{Divergence between }q\text{ and the prior distribution}} + \underbrace{\mathbb{E}_{z \sim q}(\log p_\theta(x | z))}_{\text{Reconstruction based on }z}}
@@ -1355,8 +1355,8 @@ q^{*}=\argmin_{q\in\cq}\kl[q(z),p(z\mid x,\theta^{\text{old}})]
 
 \begin{frame}{Acknowledgement}
 \begin{itemize}
-    \item<1-> Most content developed by David Rosenberg (now at Bloomberg).
-    \item<1-> Later adapted by He He, Tal Linzen, and others.
+    \item<1-> Most content developed by Prof. David Rosenberg (now at Bloomberg).
+    \item<1-> Later adapted by Prof. He He, Prof. Tal Linzen, and others.
     \item<2-> This is a very challenging grad-level course.
     \item<2-> Congrats, you are almost done.
 \end{itemize}
