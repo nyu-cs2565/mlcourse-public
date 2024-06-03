@@ -13,6 +13,7 @@
 \usepackage{xcolor}
 \usepackage{xspace}
 \usepackage{tikz}
+\usepackage{bbm}
 \usetikzlibrary{tikzmark}
 \usetikzlibrary{calc}
 \usepackage{pgfplots}
@@ -21,6 +22,7 @@
 \usepackage{xpatch}
 \definecolor{ao(english)}{rgb}{0.0, 0.5, 0.0}
 
+% \global\long\def\ind#1{\mathbbm{1}[#1]}%
 \xpatchcmd{\itemize}
   {\def\makelabel}
   {\ifnum\@itemdepth=1\relax
@@ -120,9 +122,9 @@
 \setlength{\parskip}{\medskipamount} 
 
 \input ../macros
+\input ../rosenberg-macros
 
 \begin{document}
-\input ../rosenberg-macros
 
 \title[CSCI-GA 2565]{Gradient Descent and Loss Functions}
 \author{Mengye Ren}
@@ -352,9 +354,12 @@ if we start from $x_{0}$.
 
 \begin{frame}{Gradient Descent Path}
 \begin{center}
-\includegraphics[height=0.8\textheight]{figures/gd_example} 
+% \includegraphics[height=0.8\textheight]{figures/gd_example} 
+\includegraphics[height=0.65\textheight]{figures/gradient_descent} 
 \par\end{center}
-
+\begin{flushright}
+{\tiny Image credit: Amini et al. Spatial Uncertainty Sampling for End-to-End Control. 2018.}
+\end{flushright}
 \end{frame}
 
 \begin{frame}{Gradient Descent: Step Size}
@@ -1008,35 +1013,32 @@ and margin is \textbf{negative}.
 \begin{frame}{Classification Losses: $0-1$ Loss}
 \begin{itemize}
     \item If $\tilde{f}$ is the inference function ($1$ if $f(x) > 0$ and $-1$ otherwise), then
-    \item The \textbf{0-1 loss} for $f:\cx\to\left\{ -1,1\right\} $:
+    \item The \textbf{0-1 loss} for $f:\mathcal{X}\to\left\{ -1,1\right\} $:
     \[
-        \loss\left(f(x),y\right)=\ind{\tilde{f}(x)\neq y}
+        \ell\left(f(x),y\right)=\mathbbm{1}[\tilde{f}(x)\neq y]
     \]
     \pause
 \item Empirical risk for $0-1$ loss:
 \[
-\hat{R}_{n}(f)=\frac{1}{n}\sum_{i=1}^{n}\ind{y_{i}f(x_{i})\leq0}
+\hat{R}_{n}(f)=\frac{1}{n}\sum_{i=1}^{n}\mathbbm{1}[y_{i}f(x_{i})\leq0]
 \]
 \end{itemize}
 
 \pause
 \begin{alertblock}{Minimizing empirical $0-1$ risk not computationally feasible.}
-
 \pause
 $\hat{R}_{n}(f)$ is non-convex, not differentiable, and even discontinuous.
 \end{alertblock}
 \end{frame}
 
 \begin{frame}{Classification Losses}
-
-Zero-One loss: $\loss_{\text{0-1}}=\ind{m\le0}$
+Zero-One loss: $\ell_{\text{0-1}}=\mathbbm{1}[m\le0]$
 \begin{center}
 \includegraphics[height=0.6\textheight]{figures/loss.Zero_One}
 \par\end{center}
 \begin{itemize}
-\item x-axis is \textbf{margin}: $m>0\iff\text{correct classification}$
+\item x-axis is \textbf{margin}: $m>0 \iff \text{correct classification}$
 \end{itemize}
-
 \end{frame}
 
 \begin{frame}{Hinge Loss}
