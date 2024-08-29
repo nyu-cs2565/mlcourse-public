@@ -1,0 +1,123 @@
+\documentclass{article}
+% ready for submission
+\usepackage[preprint]{template}
+\usepackage[utf8]{inputenc} % allow utf-8 input
+\usepackage[T1]{fontenc}    % use 8-bit T1 fonts
+\usepackage{hyperref}       % hyperlinks
+\usepackage{url}            % simple URL typesetting
+\usepackage{booktabs}       % professional-quality tables
+\usepackage{amsfonts}       % blackboard math symbols
+\usepackage{nicefrac}       % compact symbols for 1/2, etc.
+\usepackage{microtype}      % microtypography
+\usepackage{xcolor}         % colors
+
+\title{Instructions for CS-GA 2565 Final Course Project}
+
+\author{
+  Student Name 1 \\
+  Affiliation \\
+  Address \\
+  \texttt{email} \\
+  \And
+  Student Name 2 \\
+  Affiliation \\
+  Address \\
+  \texttt{email} \\
+  \And
+  Student Name 3 \\
+  Affiliation \\
+  Address \\
+  \texttt{email} \\
+}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+  This document outlines the instructions for the final course project of CS-GA 2565 Fall 2023. Your project proposal and final report should use this space for abstract.
+\end{abstract}
+
+\section{Goals}
+The final course project constitutes 30\% of your overall grade. The objective is to apply the machine learning concepts acquired during this course to a real-world problem. Choose a pertinent and applicable issue, identify an appropriate data source for your machine learning solution, and if no suitable data source exists, propose methods to gather the required data efficiently.
+
+\section{Key Dates}
+Please mark your calendars with these key dates:
+\begin{itemize}
+  \item \textbf{Oct 20, 2023}: Form groups comprising a maximum of three students. Email the instructor with group member names (with Net ID, NYU ID). Groups will be assigned a number. Students not part of a group by this deadline will be assumed to be working individually.
+  \item \textbf{Oct 27, 2023}: Submit project proposals on Gradescope by 11:59PM. While this proposal is mandatory, it will not be graded. Its intent is to establish a checkpoint. After submission, book a consultation with the instructor to discuss your topic and proposed methodologies. This consultation can be outside of regular office hours.
+  \item \textbf{Nov 21, 2023}: Complete at least one consultation with the instructor.
+  \item \textbf{Dec 11, 2023}: Submit the project presentation slides on Gradescope by 11:59PM.
+  \item \textbf{Dec 12, 2023}: Course project presentation from 4:55PM to 6:55PM.
+  \item \textbf{Dec 15, 2023}: Final report submission on Gradescope by 11:59PM.
+  \item \textbf{Dec 16, 2023}: Complete the self and peer evaluation via a Google Form link that will be provided. This is crucial to determine your contribution to the project.
+\end{itemize}
+
+\section{Submission Guidelines}
+\paragraph{Page format.} Adhere to the LaTeX template provided with \textbf{this document} (\texttt{template.sty}). Avoid altering font type, size, line spacing, margins, or heading arrangements. Use standard LaTeX structures. For guidance on LaTeX, refer to \url{https://www.latex-project.org/get/} or utilize the online editor Overleaf at \url{https://www.overleaf.com/}. \textcolor{red}{Note: Not using the provided template (including fonts, headings, margins, etc.) will result in an automatic fail on the project.}
+
+\paragraph{Citation format.} Employ BibTeX for citations. An illustrative reference is \cite{vaswani2017attention}. The references for this template reside in \texttt{template.bib}.
+
+For the project proposal:
+\begin{itemize}
+  \item \textbf{Page limit:} 2 pages, excluding references. \textcolor{red}{Note: Exceeding the page limit is not acceptable. Please stay under the page limit.}
+  \item \textbf{References:} No page limit.
+\end{itemize}
+
+For the final project report:
+\begin{itemize}
+  \item \textbf{Page limit:} 8 pages, excluding references, including tables and figures. \textcolor{red}{Note: Exceeding the page limit is not acceptable. Please stay under the page limit. It is ok to have less than 8 pages, but if the report is significantly below the limit, then it may also be graded unfavorably due to a lack of content.}
+  \item \textbf{References:} No page limit.
+  \item \textbf{Code:} Submit your code as a zip file.
+\end{itemize}
+
+\section{Report Structure}
+Your proposal should encompass:
+\begin{itemize}
+  \item \textbf{Abstract:} Brief report summary.
+  \item \textbf{Introduction:} Define the problem, its significance, and relevance.
+  \item \textbf{Related Work:} Summarize previous attempts or similar problems, along with relevant data or approaches.
+  \item \textbf{Proposed Dataset and Approach:} Detail the dataset, data metrics, your proposed solution, and potential alternatives.
+  \item \textbf{Expected Results and Milestones:} Enumerate anticipated outcomes and timelines. If working in a group, specify responsibilities for each member.
+\end{itemize}
+
+The final report should cover:
+\begin{itemize}
+  \item \textbf{Abstract:} Brief report summary.
+  \item \textbf{Introduction:} Define the problem, its importance, historical solutions, dataset origins, whether you gathered your own data. Briefly summarize the experiments and the significance of your findings.
+  \item \textbf{Related Work:} A deeper dive into prior solutions, drawing parallels and differentiating your approach.
+  \item \textbf{Method:} Elucidate your methodology, data collection processes, and the machine learning techniques employed.
+  \item \textbf{Dataset:} Describe your dataset in detail, including its structure, size, and presentation. Incorporate visuals and samples.
+  \item \textbf{Experiments:} Lay out your experimental framework, benchmark comparisons, and hyperparameter settings. Incorporate results and comprehensive analysis.
+  \item \textbf{Discussion/Conclusion:} Reflect on your method's efficacy, its implications, and overarching insights derived.
+\end{itemize}
+
+\section{Presentation}
+Presentations will be held on Dec 12 during the course's final lecture. Prepare a slide deck and submit the slides as a PDF a day prior to the presentation.  Aim for a duration of 5 minutes, followed by a 2-minute Q\&A session. The precise time allocation may vary based on the total number of groups. The exact time allocation will be announced.
+
+\section{Grading}
+Your project will be graded out of 30 points, distributed in Table~\ref{tab:grading}.
+
+\begin{table}[h!]
+\caption{Grading guideline}
+\label{tab:grading}
+\begin{tabular}{llp{3.5in}}
+\toprule
+\textbf{Area} & \textbf{Points} & \textbf{Criteria} \\
+\hline
+Topic Selection & 3 & Relevance to ML, applicability, and novelty. \\
+Literature Review & 3 & Comprehensive survey, proper citation, and insightful connections. \\
+Dataset Selection & 5 & Suitability for ML, quality, preprocessing efforts, and data collection processes. \\
+Modeling & 5 & Appropriateness of the proposed method, clarity of the learning objective and optimization methods, and mathematical correctness. \\
+Experiments & 5 & Thoroughness, clarity of results, and effective analyses. \\
+Writing & 3 & Clarity, structure, and motivation. \\
+Presentation & 4 & Clarity, organization, time management, and content depth. \\
+Participation & 2 & Attendance during presentations and participation during Q\&A.\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\bibliographystyle{unsrt}
+\bibliography{template}
+
+\end{document}
