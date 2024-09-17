@@ -226,6 +226,7 @@ Logistic loss is differentiable. Logistic loss always rewards a larger margin
 Heavily penalizes outliers (e.g. mislabeled examples).
 \end{frame}
 
+\section{Controlling the Complexity through Regularization}
 
 \begin{frame}
     {Complexity of Hypothesis Spaces}
@@ -1671,5 +1672,73 @@ differentiable at $m=1$. \\
 We have a \textbf{``margin error''} when $m<1$.
 \end{frame}
 
+
+\begin{frame}{SVM as an Optimization Problem}
+\begin{itemize}
+\item The SVM optimization problem is equivalent to
+
+\begin{eqnarray*}
+    \textrm{minimize} &  & \frac{1}{2}||w||^{2}+\frac{c}{n}\sum_{i=1}^{n}\xi_{i}\\
+\textrm{subject to} &  & \xi_{i}\ge\left(1-y_{i}\left[w^{T}x_{i}+b\right]\right)\;\mbox{for }i=1,\ldots,n\\
+ &  & \xi_{i}\ge0\;\mbox{for }i=1,\ldots,n
+\end{eqnarray*}
+
+\pause
+which is equivalent to
+\begin{eqnarray*}
+    \textrm{minimize} &  & \frac{1}{2}||w||^{2}+\frac{c}{n}\sum_{i=1}^{n}\xi_{i}\\
+\textrm{subject to} &  & \xi_{i}\ge\max\left(0,1-y_{i}\left[w^{T}x_{i}+b\right]\right) \;\mbox{for }i=1,\ldots,n.
+\end{eqnarray*}
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}{SVM as an Optimization Problem}
+\begin{eqnarray*}
+    \textrm{minimize} &  & \frac{1}{2}||w||^{2}+\frac{c}{n}\sum_{i=1}^{n}\xi_{i}\\
+\textrm{subject to} &  & \xi_{i}\ge\max\left(0,1-y_{i}\left[w^{T}x_{i}+b\right]\right) \;\mbox{for }i=1,\ldots,n.
+\end{eqnarray*}
+
+\pause
+Move the constraint into the objective:
+\[
+\min_{w\in\reals^{d},b\in\reals}\frac{1}{2}||w||^{2}+\frac{c}{n}\sum_{i=1}^{n}\max\left(0,1-y_{i}\left[w^{T}x_{i}+b\right]\right).
+\]
+
+\pause
+\begin{itemize}
+    \item The first term is the L2 regularizer.
+    \item The second term is the Hinge loss.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Support Vector Machine}
+    Using ERM:
+\begin{itemize}
+\item Hypothesis space $\cf=\left\{ f(x)=w^{T}x+b\mid w\in\reals^{d},b\in\reals\right\} $.
+\item $\ell_{2}$ regularization (Tikhonov style)
+\item Hinge loss $\ell(m)=\max\left\{ 1-m,0\right\} =\left(1-m\right)_{+}$
+\item The SVM prediction function is the solution to
+\[
+\min_{w\in\reals^{d},b\in\reals}\frac{1}{2}||w||^{2}+\frac{c}{n}\sum_{i=1}^{n}\max\left(0,1-y_{i}\left[w^{T}x_{i}+b\right]\right).
+\]
+% \item \al{Not differentiable} because of the $\max$
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+    {Summary}
+    Two ways to derive the SVM optimization problem:
+    \begin{itemize}
+    \item Maximize the margin
+    \item Minimize the hinge loss with $\ell_2$ regularization
+    \end{itemize}
+    Both leads to the minimum norm solution satisfying certain margin constraints.
+
+    \begin{itemize}
+        \item \textbf{Hard-margin SVM}: all points must be correctly classified with the margin constraints
+        \item \textbf{Soft-margin SVM}: allow for margin constraint violation with some penalty
+    \end{itemize}
+\end{frame}
 
 \end{document}
