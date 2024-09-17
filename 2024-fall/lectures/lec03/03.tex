@@ -124,11 +124,13 @@
 \begin{document}
 \input ../rosenberg-macros
 
-\title[CSCI-GA 2565]{Controling Complexity: Feature Selection and Regularization}
-\author{Mengye Ren}
+\title[CSCI-GA 2565]{Controling Complexity: Regularization}
+\author[]{Mengye Ren
+\\ \quad\\
+\small (Slides credit to David Rosenberg, He He, et al.)}
 
-\date{September 19, 2023}
-\institute{NYU}
+\date[]{September 17, 2024}
+\institute[]{NYU}
 
 % \begin{frame}
 % \centering
@@ -138,6 +140,91 @@
 
 \makebeamertitle
 \mode<article>{Just in article version}
+
+\begin{frame}{Lecture Slides}
+\begin{itemize}
+    \item For those of you who want to take notes on your tablets.
+    \item Otherwise, slides will be shared on the course website after the lecture.
+\end{itemize}
+\begin{center}
+\includegraphics[width=0.35\textwidth]{figures/qr_code3.png}
+\end{center}
+\end{frame}
+
+
+\begin{frame}{Logistic Regression}
+\begin{itemize}
+    \item If the label is 0 or 1:
+    \item $\hat y = \sigma(z)$, where $\sigma$ is the sigmoid function.
+    \[
+    \sigma(z) = \frac{1}{1+ \exp(-z)}.
+    \]
+    \pause
+    \item The loss is binary cross entropy:
+    \[
+    \loss_{\text{Logistic}} = -y\log(\hat{y}) - (1-y) \log(1-\hat{y}).
+    \]
+    \pause
+    \item Remember the negative sign!
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Logistic Regression}
+\begin{itemize}
+    \item If the label is -1 o 1:
+    \item Note: $1 - \sigma(z) = \sigma(-z)$
+    \pause
+    \item Now we can derive an equivalent loss form:
+    \begin{align*}
+    \loss_{\text{Logistic}} &=
+    \begin{cases} 
+    -\log(\sigma(z)) & \text{if\ \ \ } y = 1 \\
+    -\log(\sigma(-z)) & \text{if\ \ \ } y = -1
+    \\
+    \end{cases}\\
+    &= -\log(\sigma(yz)) \\
+    &= -\log(\frac{1}{1+e^{-yz}}) \\
+    &= \log(1+ e^{-m}).
+    \end{align*}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Logistic Loss}
+
+Logistic/Log loss: $\loss_{\text{Logistic}}=\log\left(1+e^{-m}\right)$
+\begin{center}
+
+\includegraphics[height=0.5\textheight]{figures/loss.Zero_One.Hinge.Logistic}
+\par\end{center}
+
+Logistic loss is differentiable. Logistic loss always rewards a larger margin
+(the loss is never 0).
+\end{frame}
+
+\begin{frame}{What About Square Loss for Classification?}
+\begin{itemize}
+% \item Action space $\ca=\reals\qquad$Output space $\cy=\left\{ -1,1\right\} $
+\item Loss $\ell(f(x),y)=\left(f(x)-y\right)^{2}$.
+\pause
+\item Turns out, can write this in terms of margin $m=f(x)y$:
+\item Using fact that $y^{2}=1$, since $y\in\left\{ -1,1\right\} $.
+\begin{eqnarray*}
+\ell(f(x),y) & = & \left(f(x)-y\right)^{2} \\ \pause
+& = & f^2(x) - 2f(x)y + y^2 \\ \pause
+& = & f^2(x) y^2 - 2f(x)y + 1 \\ \pause
+& = & \left(1-f(x)y\right)^{2}\\ \pause
+& = & \left(1-m\right)^{2}
+\end{eqnarray*}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{What About Square Loss for Classification?}
+\begin{center}
+\includegraphics[height=0.5\textheight]{figures/loss.Zero_One.Hinge.Logistic.Square}
+\par\end{center}
+
+Heavily penalizes outliers (e.g. mislabeled examples).
+\end{frame}
 
 
 \begin{frame}
@@ -439,27 +526,27 @@ of $\hat{f}$.
 \end{itemize}
 \end{frame}
 
-\begin{frame}{Ivanov vs. Tikhonov Regularization}
-\begin{itemize}
-\item Let $L:\cf\to\reals$ be any performance measure of $f$
-\begin{itemize}
-\item e.g. $L(f)$ could be the empirical risk of $f$
-\end{itemize}
-\pause
+% \begin{frame}{Ivanov vs. Tikhonov Regularization}
+% \begin{itemize}
+% \item Let $L:\cf\to\reals$ be any performance measure of $f$
+% \begin{itemize}
+% \item e.g. $L(f)$ could be the empirical risk of $f$
+% \end{itemize}
+% \pause
 
-\item For many $L$ and $\Omega$, Ivanov and Tikhonov are equivalent:
-\begin{itemize}
-\item Any solution $f^{*}$ we can get from Ivanov, we can also get from
-Tikhonov.
-\item Any solution $f^{*}$ we can get from Tikhonov, we can also get from
-Ivanov.
-\end{itemize}
-\pause
-\item The conditions for this equivalence can be derived from the Lagrangian theory.
-\pause
-\item In practice, both approaches are effective: we will use whichever one is more convenient for training or analysis. 
-\end{itemize}
-\end{frame}
+% \item For many $L$ and $\Omega$, Ivanov and Tikhonov are equivalent:
+% \begin{itemize}
+% \item Any solution $f^{*}$ we can get from Ivanov, we can also get from
+% Tikhonov.
+% \item Any solution $f^{*}$ we can get from Tikhonov, we can also get from
+% Ivanov.
+% \end{itemize}
+% \pause
+% \item The conditions for this equivalence can be derived from the Lagrangian theory.
+% \pause
+% \item In practice, both approaches are effective: we will use whichever one is more convenient for training or analysis. 
+% \end{itemize}
+% \end{frame}
 
 
 % \begin{frame}{Ivanov vs Tikhonov Regularization (Details) }
@@ -674,7 +761,7 @@ space)
 \par\end{center}
 \end{frame}
 
-\begin{frame}{Why does $\ell_2$ Encourage Sparsity? Optimization Perspective}
+\begin{frame}{Optimization Perspective}
     For $\ell_2$ regularization,
     \begin{itemize}
         \item As $w_i$ becomes smaller, there is less and less penalty 
@@ -711,264 +798,264 @@ space)
 \end{itemize}
 \end{frame}
 
-\section{Minimizing the lasso objective}
+% \section{Minimizing the lasso objective}
 
-\begin{frame}{Minimizing the lasso objective}
-\begin{itemize}
-    \item The ridge regression objective is differentiable (and there is a closed form solution)
-\item Lasso objective function:
-\[
-\min_{w\in\reals^{d}}\sum_{i=1}^{n}\left(w^{T}x_{i}-y_{i}\right)^{2}+\lambda\|w\|_{1}
-\]
-\item $\|w\|_{1}=\left|w_{1}\right|+\ldots+\left|w_{d}\right|$ is not differentiable!
-\pause
-\item We will briefly review three approaches for finding the minimum:
-    \begin{itemize}
-        \item Quadratic programming
-        \item Projected SGD
-        \item Coordinate descent
-    \end{itemize}
-\end{itemize}
-\end{frame}
+% \begin{frame}{Minimizing the lasso objective}
+% \begin{itemize}
+%     \item The ridge regression objective is differentiable (and there is a closed form solution)
+% \item Lasso objective function:
+% \[
+% \min_{w\in\reals^{d}}\sum_{i=1}^{n}\left(w^{T}x_{i}-y_{i}\right)^{2}+\lambda\|w\|_{1}
+% \]
+% \item $\|w\|_{1}=\left|w_{1}\right|+\ldots+\left|w_{d}\right|$ is not differentiable!
+% \pause
+% \item We will briefly review three approaches for finding the minimum:
+%     \begin{itemize}
+%         \item Quadratic programming
+%         \item Projected SGD
+%         \item Coordinate descent
+%     \end{itemize}
+% \end{itemize}
+% \end{frame}
 
-\begin{frame}{ Rewriting the Absolute Value}
-\begin{itemize}
-\item Consider any number $a\in\reals$.
-\item Let the \textbf{positive part} of $a$ be
-\[
-a^{+}=a \ind{a\ge0}.
-\]
-
-
-\item Let the \textbf{negative part} of $a$ be
-\[
-a^{-}=-a \ind{a\le0}.
-\]
-
-\pause
-\item Is it always the case that $a^{+}\ge0$ and $a^{-}\ge0$?
-
-\pause
-\item How do you write $a$ in terms of $a^{+}$ and $a^{-}$?
-
-\pause
-\item How do you write $\left|a\right|$ in terms of $a^{+}$ and $a^{-}$?
-\end{itemize}
-\end{frame}
-
-\begin{frame}{The Lasso as a Quadratic Program}
-
-Substituting $w=w^{+}-w^{-}$ and $\left|w\right|=w^{+}+w^{-}$
-results in an \hl{equivalent} problem:
-\begin{align*}
-\min_{w^{+},w^{-}}\quad & \sum_{i=1}^{n}\left(\left(w^{+}-w^{-}\right)^{T}x_{i}-y_{i}\right)^{2}+\lambda1^{T}\left(w^{+}+w^{-}\right)\\
-\mbox{subject to}\quad & w_{i}^{+}\ge0\mbox{ for all }i\text{\quad and \quad}w_{i}^{-}\ge0\mbox{ for all }i,
-\end{align*}
+% \begin{frame}{ Rewriting the Absolute Value}
+% \begin{itemize}
+% \item Consider any number $a\in\reals$.
+% \item Let the \textbf{positive part} of $a$ be
+% \[
+% a^{+}=a \ind{a\ge0}.
+% \]
 
 
-\begin{itemize}
-\item This objective is \textbf{differentiable} (in fact, \textbf{convex and
-quadratic})
-\pause
-\item How many variables does the new objective have?
-\pause
-\item This is a \textbf{quadratic program}: a convex quadratic objective with
-linear constraints.
-\pause
-\item Quadratic programming is a very well understood problem; we can plug this into a generic QP solver.
-\end{itemize}
-\end{frame}
+% \item Let the \textbf{negative part} of $a$ be
+% \[
+% a^{-}=-a \ind{a\le0}.
+% \]
 
-\begin{frame}{Are we missing some constraints?}
+% \pause
+% \item Is it always the case that $a^{+}\ge0$ and $a^{-}\ge0$?
 
-We have claimed that the following objective is equivalent to the lasso problem:
-\begin{align*}
-\min_{w^{+},w^{-}}\quad & \sum_{i=1}^{n}\left(\left(w^{+}-w^{-}\right)^{T}x_{i}-y_{i}\right)^{2}+\lambda1^{T}\left(w^{+}+w^{-}\right)\\
-\mbox{subject to}\quad & w_{i}^{+}\ge0\mbox{ for all }i\text{\qquad}w_{i}^{-}\ge0\mbox{ for all }i,
-\end{align*}
+% \pause
+% \item How do you write $a$ in terms of $a^{+}$ and $a^{-}$?
+
+% \pause
+% \item How do you write $\left|a\right|$ in terms of $a^{+}$ and $a^{-}$?
+% \end{itemize}
+% \end{frame}
+
+% \begin{frame}{The Lasso as a Quadratic Program}
+
+% Substituting $w=w^{+}-w^{-}$ and $\left|w\right|=w^{+}+w^{-}$
+% results in an \hl{equivalent} problem:
+% \begin{align*}
+% \min_{w^{+},w^{-}}\quad & \sum_{i=1}^{n}\left(\left(w^{+}-w^{-}\right)^{T}x_{i}-y_{i}\right)^{2}+\lambda1^{T}\left(w^{+}+w^{-}\right)\\
+% \mbox{subject to}\quad & w_{i}^{+}\ge0\mbox{ for all }i\text{\quad and \quad}w_{i}^{-}\ge0\mbox{ for all }i,
+% \end{align*}
 
 
-\begin{itemize}
-\item When we plug this optimization problem into a QP solver,
-\begin{itemize}
-\item it just sees $2d$ variables and $2d$ constraints.
-\item \al{Doesn't know we want $w_{i}^{+}$ and $w_{i}^{-}$ to be positive
-    and negative parts of $w_{i}$}.
-\end{itemize}
-\pause
-\item Turns out that these constraints will be satisfied anyway!
-\pause
-\item To make it clear that the solver isn't aware of the constraints of $w_{i}^{+}$ and $w_{i}^{-}$, let's denote them $a_i$ and $b_{i}$
-\end{itemize}
-\end{frame}
+% \begin{itemize}
+% \item This objective is \textbf{differentiable} (in fact, \textbf{convex and
+% quadratic})
+% \pause
+% \item How many variables does the new objective have?
+% \pause
+% \item This is a \textbf{quadratic program}: a convex quadratic objective with
+% linear constraints.
+% \pause
+% \item Quadratic programming is a very well understood problem; we can plug this into a generic QP solver.
+% \end{itemize}
+% \end{frame}
 
-\begin{frame}{The Lasso as a Quadratic Program}
+% \begin{frame}{Are we missing some constraints?}
 
-    (Trivially) reformulating the lasso problem:
-\begin{align*}
-\min_{w}\;\min_{a,b}\quad & \sum_{i=1}^{n}\left(\left(a-b\right)^{T}x_{i}-y_{i}\right)^{2}+\lambda1^{T}\left(a+b\right)\\
-\mbox{subject to}\quad & a_{i}\ge0\mbox{ for all }i\text{\qquad}b_{i}\ge0\mbox{ for all }i,\\
- & a-b=w\\
- & a+b=|w|
-\end{align*}
+% We have claimed that the following objective is equivalent to the lasso problem:
+% \begin{align*}
+% \min_{w^{+},w^{-}}\quad & \sum_{i=1}^{n}\left(\left(w^{+}-w^{-}\right)^{T}x_{i}-y_{i}\right)^{2}+\lambda1^{T}\left(w^{+}+w^{-}\right)\\
+% \mbox{subject to}\quad & w_{i}^{+}\ge0\mbox{ for all }i\text{\qquad}w_{i}^{-}\ge0\mbox{ for all }i,
+% \end{align*}
 
-\pause
 
-    \head{Claim}: Don't need the constraint $a+b=|w|$. 
-    \pause
+% \begin{itemize}
+% \item When we plug this optimization problem into a QP solver,
+% \begin{itemize}
+% \item it just sees $2d$ variables and $2d$ constraints.
+% \item \al{Doesn't know we want $w_{i}^{+}$ and $w_{i}^{-}$ to be positive
+%     and negative parts of $w_{i}$}.
+% \end{itemize}
+% \pause
+% \item Turns out that these constraints will be satisfied anyway!
+% \pause
+% \item To make it clear that the solver isn't aware of the constraints of $w_{i}^{+}$ and $w_{i}^{-}$, let's denote them $a_i$ and $b_{i}$
+% \end{itemize}
+% \end{frame}
 
-    \head{Exercise}: Prove by showing that the optimal solutions $a^*$ and $b^*$ satisfies $\min(a^*, b^*)=0$, hence $a^*+b^*=|w|$.
-\end{frame}
+% \begin{frame}{The Lasso as a Quadratic Program}
 
-\begin{frame}{The Lasso as a Quadratic Program}
+%     (Trivially) reformulating the lasso problem:
+% \begin{align*}
+% \min_{w}\;\min_{a,b}\quad & \sum_{i=1}^{n}\left(\left(a-b\right)^{T}x_{i}-y_{i}\right)^{2}+\lambda1^{T}\left(a+b\right)\\
+% \mbox{subject to}\quad & a_{i}\ge0\mbox{ for all }i\text{\qquad}b_{i}\ge0\mbox{ for all }i,\\
+%  & a-b=w\\
+%  & a+b=|w|
+% \end{align*}
 
-\begin{align*}
-\min_{w}\;\min_{a,b}\quad & \sum_{i=1}^{n}\left(\left(a-b\right)^{T}x_{i}-y_{i}\right)^{2}+\lambda1^{T}\left(a+b\right)\\
-\mbox{subject to}\quad & a_{i}\ge0\mbox{ for all }i\text{\qquad}b_{i}\ge0\mbox{ for all }i,\\
- & a-b=w
-\end{align*}
+% \pause
 
-    \head{Claim}: Can remove $\min_{w}$ and the constraint $a-b=w$. 
-    \pause
+%     \head{Claim}: Don't need the constraint $a+b=|w|$. 
+%     \pause
+
+%     \head{Exercise}: Prove by showing that the optimal solutions $a^*$ and $b^*$ satisfies $\min(a^*, b^*)=0$, hence $a^*+b^*=|w|$.
+% \end{frame}
+
+% \begin{frame}{The Lasso as a Quadratic Program}
+
+% \begin{align*}
+% \min_{w}\;\min_{a,b}\quad & \sum_{i=1}^{n}\left(\left(a-b\right)^{T}x_{i}-y_{i}\right)^{2}+\lambda1^{T}\left(a+b\right)\\
+% \mbox{subject to}\quad & a_{i}\ge0\mbox{ for all }i\text{\qquad}b_{i}\ge0\mbox{ for all }i,\\
+%  & a-b=w
+% \end{align*}
+
+%     \head{Claim}: Can remove $\min_{w}$ and the constraint $a-b=w$. 
+%     \pause
     
-    \head{Exercise}: Prove by switching the order of the minimization.
-\end{frame}
+%     \head{Exercise}: Prove by switching the order of the minimization.
+% \end{frame}
 
-\begin{frame}{Second Option: Projected SGD}
-\begin{itemize}
-    \item Now that we have a differentiable objective, we could also use gradient descent
-\pause
-\item But how do we handle the \hl{constraints}?
-\end{itemize}
-\begin{align*}
-\min_{w^{+},w^{-}\in\reals^{d}} & \sum_{i=1}^{n}\left(\left(w^{+}-w^{-}\right)^{T}x_{i}-y_{i}\right)^{2}+\lambda1^{T}\left(w^{+}+w^{-}\right)\\
-\mbox{subject to } & w_{i}^{+}\ge0\mbox{ for all }i\\
- & w_{i}^{-}\ge0\mbox{ for all }i
-\end{align*}
+% \begin{frame}{Second Option: Projected SGD}
+% \begin{itemize}
+%     \item Now that we have a differentiable objective, we could also use gradient descent
+% \pause
+% \item But how do we handle the \hl{constraints}?
+% \end{itemize}
+% \begin{align*}
+% \min_{w^{+},w^{-}\in\reals^{d}} & \sum_{i=1}^{n}\left(\left(w^{+}-w^{-}\right)^{T}x_{i}-y_{i}\right)^{2}+\lambda1^{T}\left(w^{+}+w^{-}\right)\\
+% \mbox{subject to } & w_{i}^{+}\ge0\mbox{ for all }i\\
+%  & w_{i}^{-}\ge0\mbox{ for all }i
+% \end{align*}
 
-\pause
-\begin{itemize}
-\item Projected SGD is just like SGD, but after each step
-\begin{itemize}
-\item We project $w^{+}$ and $w^{-}$ into the constraint set.
-\item In other words, if any component of $w^{+}$ or $w^{-}$ becomes negative,
-we set it back to 0.
-\end{itemize}
-\end{itemize}
-\end{frame}
+% \pause
+% \begin{itemize}
+% \item Projected SGD is just like SGD, but after each step
+% \begin{itemize}
+% \item We project $w^{+}$ and $w^{-}$ into the constraint set.
+% \item In other words, if any component of $w^{+}$ or $w^{-}$ becomes negative,
+% we set it back to 0.
+% \end{itemize}
+% \end{itemize}
+% \end{frame}
 
-\begin{frame}{Third Option: Coordinate Descent Method}
+% \begin{frame}{Third Option: Coordinate Descent Method}
 
-\head{Goal}: Minimize $L(w)=L(w_{1},\ldots,w_{d})$ over $w=\left(w_{1},\ldots,w_{d}\right)\in\reals^{d}$.
+% \head{Goal}: Minimize $L(w)=L(w_{1},\ldots,w_{d})$ over $w=\left(w_{1},\ldots,w_{d}\right)\in\reals^{d}$.
 
-\pause
-    \begin{itemize}
-        \item In gradient descent or SGD, 
-    each step potentially changes \hl{all entries} of $w$.
+% \pause
+%     \begin{itemize}
+%         \item In gradient descent or SGD, 
+%     each step potentially changes \hl{all entries} of $w$.
 
-\pause
+% \pause
 
-\item In \textbf{coordinate descent}, 
-    each step adjusts only a \hl{single coordinate} $w_{i}$.
-\end{itemize}
+% \item In \textbf{coordinate descent}, 
+%     each step adjusts only a \hl{single coordinate} $w_{i}$.
+% \end{itemize}
 
-\[
-w_{i}^{\mbox{new}}=\argmin_{w_{i}}L(w_{1},\ldots,w_{i-1},\mathbf{w_{i}},w_{i+1},\ldots,w_{d})
-\]
+% \[
+% w_{i}^{\mbox{new}}=\argmin_{w_{i}}L(w_{1},\ldots,w_{i-1},\mathbf{w_{i}},w_{i+1},\ldots,w_{d})
+% \]
 
-\begin{itemize}
-\item Solving the argmin for a particular coordinate may itself be an iterative process. 
-\item Coordinate descent is an effective method when 
-    it's easy (or easier) to minimize w.r.t. one coordinate at a time 
-\end{itemize}
-\end{frame}
-
-
-\begin{frame}{Coordinate Descent Method}
-
-    \begin{block}{}
-\textbf{Goal: }Minimize $L(w)=L(w_{1},\ldots w_{d})$ over $w=\left(w_{1},\ldots,w_{d}\right)\in\reals^{d}$.
-\begin{itemize}
-\item \textbf{Initialize} $w^{(0)}=0$
-\pause
-\item \textbf{while} not converged:
-\begin{itemize}
-\item Choose a coordinate $j\in\left\{ 1,\ldots,d\right\} $
-\pause
-\item $w_{j}^{\mbox{new}}\gets\argmin_{w_{j}}L(w_{1}^{(t)},\ldots,w_{j-1}^{(t)},\mathbf{w_{j}},w_{j+1}^{(t)},\ldots,w_{d}^{(t)})$
-\item $w^{(t+1)}\gets w^{(t)}$ and $w_{j}^{(t+1)}\gets w_{j}^{\mbox{new}}$
-\item $t\gets t+1$
-\end{itemize}
-\end{itemize}
-\end{block}
-\pause
-\begin{itemize}
-\item Random coordinate choice $\implies$\textbf{stochastic coordinate
-descent}
-\pause
-\item Cyclic coordinate choice $\implies$ \textbf{cyclic coordinate descent}
-\end{itemize}
-\end{frame}
+% \begin{itemize}
+% \item Solving the argmin for a particular coordinate may itself be an iterative process. 
+% \item Coordinate descent is an effective method when 
+%     it's easy (or easier) to minimize w.r.t. one coordinate at a time 
+% \end{itemize}
+% \end{frame}
 
 
-\begin{frame}{Coordinate Descent Method for Lasso}
-\[
-\hat{w}_{j}=\argmin_{w_{j}\in\reals}\sum_{i=1}^{n}\left(w^{T}x_{i}-y_{i}\right)^{2}+\lambda\left|w\right|_{1}
-\]
-\pause
+% \begin{frame}{Coordinate Descent Method}
 
-Set the gradient of $w_j$ to 0. Let $w_{-j}$ denote $w$ without the $j$-th component, and $x_{i,-j}$ denote $x_i$ without the $j$-th component.
-\pause
-\[
-2\sum_i (w^T x_i - y_i) x_{i,j} + \lambda \frac{|\hat{w}_j|}{\hat{w}_j} = 0\]
-\pause
-\[
-2\sum_i (\hat{w}_j x_{i,j} + w_{-j}^T x_{i,-j} - y_i) x_{i,j} + \lambda \frac{|\hat{w}_j|}{\hat{w}_j} = 0 \]
-\pause
-\[\hat{w}_j 2 \sum_i x_{i,j}^2 + 2\sum_i (w_{-j}^T x_{i,-j} - y_i) x_{i,j} + \lambda \frac{|\hat{w}_j|}{\hat{w}_j} = 0 \]
-\end{frame}
+%     \begin{block}{}
+% \textbf{Goal: }Minimize $L(w)=L(w_{1},\ldots w_{d})$ over $w=\left(w_{1},\ldots,w_{d}\right)\in\reals^{d}$.
+% \begin{itemize}
+% \item \textbf{Initialize} $w^{(0)}=0$
+% \pause
+% \item \textbf{while} not converged:
+% \begin{itemize}
+% \item Choose a coordinate $j\in\left\{ 1,\ldots,d\right\} $
+% \pause
+% \item $w_{j}^{\mbox{new}}\gets\argmin_{w_{j}}L(w_{1}^{(t)},\ldots,w_{j-1}^{(t)},\mathbf{w_{j}},w_{j+1}^{(t)},\ldots,w_{d}^{(t)})$
+% \item $w^{(t+1)}\gets w^{(t)}$ and $w_{j}^{(t+1)}\gets w_{j}^{\mbox{new}}$
+% \item $t\gets t+1$
+% \end{itemize}
+% \end{itemize}
+% \end{block}
+% \pause
+% \begin{itemize}
+% \item Random coordinate choice $\implies$\textbf{stochastic coordinate
+% descent}
+% \pause
+% \item Cyclic coordinate choice $\implies$ \textbf{cyclic coordinate descent}
+% \end{itemize}
+% \end{frame}
 
 
-\begin{frame}{Coordinate Descent Method for Lasso}
+% \begin{frame}{Coordinate Descent Method for Lasso}
+% \[
+% \hat{w}_{j}=\argmin_{w_{j}\in\reals}\sum_{i=1}^{n}\left(w^{T}x_{i}-y_{i}\right)^{2}+\lambda\left|w\right|_{1}
+% \]
+% \pause
 
-\[
-\hat{w}_j \textcolor{red}{\underbrace{2 \sum_i x_{i,j}^2}_{a_j}} - \textcolor{blue}{\underbrace{2 \sum_i (y_i - w_{-j}^T x_{i,-j} ) x_{i,j}}_{c_j}} + \lambda \frac{|\hat{w}_j|}{\hat{w}_j} = 0 \]
-\pause
-\[
-\hat{w}_j \textcolor{red}{a_j} - \textcolor{blue}{c_j} + \lambda \text{sgn}(\hat{w_j}) = 0 \]
-\pause
-\[
-\hat{w}_{j}=
-\begin{cases}
-\frac{c_j-\lambda}{a_j} & \mbox{if } \hat{w}_j > 0 \\
-\frac{c_j+\lambda}{a_j} & \mbox{if } \hat{w}_j < 0 \\
-[c_j - \lambda, c_j + \lambda]  & \mbox{if } \hat{w}_j = 0
-\end{cases}
-\]
-\end{frame}
+% Set the gradient of $w_j$ to 0. Let $w_{-j}$ denote $w$ without the $j$-th component, and $x_{i,-j}$ denote $x_i$ without the $j$-th component.
+% \pause
+% \[
+% 2\sum_i (w^T x_i - y_i) x_{i,j} + \lambda \frac{|\hat{w}_j|}{\hat{w}_j} = 0\]
+% \pause
+% \[
+% 2\sum_i (\hat{w}_j x_{i,j} + w_{-j}^T x_{i,-j} - y_i) x_{i,j} + \lambda \frac{|\hat{w}_j|}{\hat{w}_j} = 0 \]
+% \pause
+% \[\hat{w}_j 2 \sum_i x_{i,j}^2 + 2\sum_i (w_{-j}^T x_{i,-j} - y_i) x_{i,j} + \lambda \frac{|\hat{w}_j|}{\hat{w}_j} = 0 \]
+% \end{frame}
 
-\begin{frame}{Coordinate Descent Method for Lasso}
-\[
-\hat{w}_{j}=
-\begin{cases}
-\frac{c_j-\lambda}{a_j} & \mbox{if } \hat{w}_j > 0 \\
-\frac{c_j+\lambda}{a_j} & \mbox{if } \hat{w}_j < 0 \\
-[-c_j - \lambda, -c_j + \lambda]  & \mbox{if } \hat{w}_j = 0
-\end{cases}
-\]
-\pause
-Because $a_j = \sum_i x^2_{i,j} \ge 0$, so 
-\begin{align*}
-\hat{w}_j=
-\begin{cases}
-\frac{c_j-\lambda}{a_j} & \mbox{if } c_j-\lambda > 0 \\
-\frac{c_j+\lambda}{a_j} & \mbox{if } c_j+\lambda < 0 \\
-0  & \mbox{if } -\lambda \le c_j \le \lambda
-\end{cases}
-\end{align*}
 
-The lasso objective coordinate minimization has a closed form.
-\end{frame}
+% \begin{frame}{Coordinate Descent Method for Lasso}
+
+% \[
+% \hat{w}_j \textcolor{red}{\underbrace{2 \sum_i x_{i,j}^2}_{a_j}} - \textcolor{blue}{\underbrace{2 \sum_i (y_i - w_{-j}^T x_{i,-j} ) x_{i,j}}_{c_j}} + \lambda \frac{|\hat{w}_j|}{\hat{w}_j} = 0 \]
+% \pause
+% \[
+% \hat{w}_j \textcolor{red}{a_j} - \textcolor{blue}{c_j} + \lambda \text{sgn}(\hat{w_j}) = 0 \]
+% \pause
+% \[
+% \hat{w}_{j}=
+% \begin{cases}
+% \frac{c_j-\lambda}{a_j} & \mbox{if } \hat{w}_j > 0 \\
+% \frac{c_j+\lambda}{a_j} & \mbox{if } \hat{w}_j < 0 \\
+% [c_j - \lambda, c_j + \lambda]  & \mbox{if } \hat{w}_j = 0
+% \end{cases}
+% \]
+% \end{frame}
+
+% \begin{frame}{Coordinate Descent Method for Lasso}
+% \[
+% \hat{w}_{j}=
+% \begin{cases}
+% \frac{c_j-\lambda}{a_j} & \mbox{if } \hat{w}_j > 0 \\
+% \frac{c_j+\lambda}{a_j} & \mbox{if } \hat{w}_j < 0 \\
+% [-c_j - \lambda, -c_j + \lambda]  & \mbox{if } \hat{w}_j = 0
+% \end{cases}
+% \]
+% \pause
+% Because $a_j = \sum_i x^2_{i,j} \ge 0$, so 
+% \begin{align*}
+% \hat{w}_j=
+% \begin{cases}
+% \frac{c_j-\lambda}{a_j} & \mbox{if } c_j-\lambda > 0 \\
+% \frac{c_j+\lambda}{a_j} & \mbox{if } c_j+\lambda < 0 \\
+% 0  & \mbox{if } -\lambda \le c_j \le \lambda
+% \end{cases}
+% \end{align*}
+
+% The lasso objective coordinate minimization has a closed form.
+% \end{frame}
 
 % \begin{frame}{Coordinate Descent Method for Lasso}
 
@@ -993,31 +1080,31 @@ The lasso objective coordinate minimization has a closed form.
 % where $w_{-j}$ is $w$ without the $j$-th component, and $x_{i,-j}$ is $x_i$ without the $j$-th component.
 % \end{frame}
 
-\begin{frame}
-    {Coordinate Descent in General}
-    \begin{itemize}[<+->]
-        \item In general, coordinate descent is not competitive with gradient descent: its convergence rate is slower and the iteration cost is similar
-        \item But it works very well for certain problems
-        \item Very simple and easy to implement
-        \item Example applications: lasso regression, SVMs
-    \end{itemize}
-\end{frame}
+% \begin{frame}
+%     {Coordinate Descent in General}
+%     \begin{itemize}[<+->]
+%         \item In general, coordinate descent is not competitive with gradient descent: its convergence rate is slower and the iteration cost is similar
+%         \item But it works very well for certain problems
+%         \item Very simple and easy to implement
+%         \item Example applications: lasso regression, SVMs
+%     \end{itemize}
+% \end{frame}
 
-\begin{frame}{Summary}
-\begin{itemize}
-    \item Controlling the complexity of the hypothesis space
-    \pause
-    \item Feature selection
-    \pause
-    \item Regularization
-    \pause
-    \item L2 vs. L1 regularization (ridge and lasso)
-    \pause
-    \item Tikhonov vs. Ivanov (soft penalty vs. hard constraint)
-    \pause
-    \item Three ways of optimizing lasso regression: QP, Project SGD, Coordinate Descent
-\end{itemize}
-\end{frame}
+% \begin{frame}{Summary}
+% \begin{itemize}
+%     \item Controlling the complexity of the hypothesis space
+%     \pause
+%     \item Feature selection
+%     \pause
+%     \item Regularization
+%     \pause
+%     \item L2 vs. L1 regularization (ridge and lasso)
+%     \pause
+%     \item Tikhonov vs. Ivanov (soft penalty vs. hard constraint)
+%     \pause
+%     \item Three ways of optimizing lasso regression: QP, Project SGD, Coordinate Descent
+% \end{itemize}
+% \end{frame}
 
 
 % \section{Maximum Margin Classifier}
@@ -1330,6 +1417,259 @@ The lasso objective coordinate minimization has a closed form.
 %         \item \textbf{Soft-margin SVM}: allow for margin constraint violation with some penalty
 %     \end{itemize}
 % \end{frame}
+
+
+\section{Maximum Margin Classifier}
+
+\begin{frame}
+    {Linearly Separable Data}
+    Consider a linearly separable dataset $\sD$:
+    \begin{figure}
+        \includegraphics[height=0.5\textheight]{figures/lin-sep-data}
+    \end{figure}
+    Find a separating hyperplane such that
+    \begin{itemize}
+        \item $w^Tx_i > 0$ for all $x_i$ where $y_i=+1$
+        \item $w^Tx_i < 0$ for all $x_i$ where $y_i=-1$
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+    {Linearly Separable Data}
+    Consider a linearly separable dataset $\sD$:
+    \begin{figure}
+        \includegraphics[height=0.5\textheight]{figures/lin-sep-data}
+    \end{figure}
+    Now let's design a learning algorithm: If there is a misclassified example, change the hyperplane according to the example.
+\end{frame}
+
+\begin{frame}
+    {The Perceptron Algorithm}
+    \begin{itemize}
+        \setlength\itemsep{1ex}
+        \item Initialize $w \leftarrow 0$
+        \item While not converged (exists misclassified examples)
+            \begin{itemize}
+                \item For $(x_i, y_i)\in\sD$
+                    \begin{itemize}
+                        \item If $y_i w^Tx_i < 0$ (wrong prediction)
+                        \item Update $w \leftarrow w + y_ix_i$
+                    \end{itemize}
+            \end{itemize}
+    \end{itemize}
+    \pause
+    \begin{itemize}
+        \item Intuition: move towards misclassified positive examples and away from negative examples
+        \pause
+        \item Guarantees to find a zero-error classifier (if one exists) in finite steps
+        \pause
+        \item What is the loss function if we consider this as a SGD algorithm?
+    \end{itemize}
+\end{frame}
+
+\section{Minimize the Hinge Loss}
+\begin{frame}
+    {Perceptron Loss}
+    $$
+    \ell(x,y,w) = \max(0, -yw^Tx)
+    $$
+    \begin{figure}
+        \includegraphics[height=0.5\textheight]{figures/perceptron-loss}
+    \end{figure}
+\end{frame}
+
+\begin{frame}
+    {Maximum-Margin Separating Hyperplane}
+    For separable data, there are infinitely many zero-error classifiers.
+
+    Which one do we pick?
+    \begin{figure}
+        \includegraphics[height=0.5\textheight]{figures/perceptron-hyperplane}
+    \end{figure}
+
+    (Perceptron does not return a unique solution.)
+\end{frame}
+
+\begin{frame}
+    {Maximum-Margin Separating Hyperplane}
+    We prefer the classifier that is farthest from both classes of points
+    \begin{figure}
+        \includegraphics[height=0.5\textheight]{figures/margin}
+    \end{figure}
+    \begin{itemize}
+        \item Geometric margin: smallest distance between the hyperplane and the points 
+        \item Maximum margin: \emph{largest} distance to the closest points
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+    {Geometric Margin}
+    We want to maximize the distance between the \hl{separating hyperplane} and the \hl{closest} points.
+
+    Let's formalize the problem.
+    \begin{definition}[separating hyperplane]
+    We say $(x_i,y_i)$ for $i=1,\ldots,n$ are \textbf{linearly separable} if there
+    is a $w\in\BR^d$ and $b\in\BR$ such that $y_i(w^Tx_i+b)>0$ for all
+    $i$. The set $\{v\in\BR^d\mid w^Tv+b=0\}$ is called a \textbf{separating hyperplane}.    
+  \end{definition}
+  \pause
+
+    \begin{definition}[geometric margin]
+        Let $H$ be a hyperplane that separates the data $(x_i,y_i)$ for $i = 1,\ldots,n$. The \textbf{geometric margin} of this hyperplane is
+        $$
+        \min_i d(x_i, H),
+        $$
+    the distance from the hyperplane to the closest data point.
+    \end{definition}
+\end{frame}
+
+\begin{frame}
+    {Distance between a Point and a Hyperplane}
+    \begin{columns}
+        \begin{column}{0.5\linewidth}
+          \begin{center}
+            \includegraphics[width=\linewidth]{"figures/Distance_to_Line"} 
+          \end{center}
+        \end{column}
+        \begin{column}{0.5\linewidth}
+            \begin{itemize}
+                % \item Projection of $v\in\BR^d$ onto $w\in\BR^d$:
+                %     $\frac{v\cdot w}{\|w\|_2}$
+                \item Any point on the plane $p$, and normal vector $w/\|w\|_2$
+                \pause
+                \item Projection of x onto the normal: $\frac{(x'-p)^T w}{\|w\|_2}$
+                \pause
+                \item $(x'-p)^Tw = x'^Tw - p^Tw = x'^Tw + b \ \ (\text{since } p^Tw+b = 0)$
+                \pause
+                % \item Distance between $x'$ and $H$:
+                %     $$
+                %     d(x', H) = \left |\frac{w^Tx' + b}{\|w\|_2}\right |
+                %     $$
+                \item Signed distance between $x'$ and Hyperplane $H$:
+                $\frac{w^Tx' + b}{\|w\|_2}$
+                \pause
+                \item Taking into account of the label $y$:
+                    $d(x', H) = \frac{y(w^Tx' + b)}{\|w\|_2}$
+            \end{itemize}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}
+    {Maximize the Margin}
+    We want to maximize the geometric margin:
+    $$
+    \text{maximize} \; \min_{i} d(x_i, H) .
+    $$
+    \pause
+    Given separating hyperplane $H=\pc{v\mid w^Tv + b = 0}$, we have
+    $$
+    \text{maximize} \; \min_{i} \frac{y_i(w^Tx_i + b)}{\|w\|_2} .
+    $$
+    \pause
+    Let's remove the inner minimization problem by
+      $$\begin{array}{ll}
+      \text{maximize} & M\\
+          \text{subject to} & \frac{y_i(w^Tx_i+b)}{\|w\|_2} \geq M \quad\text{for all
+        $i$}
+    \end{array}$$
+    \pause
+    Note that the solution is not unique (why?).
+\end{frame}
+
+\begin{frame}
+    {Maximize the Margin}
+    Let's fix the norm $\|w\|_2$ to $1/M$ to obtain:
+      $$\begin{array}{ll}
+          \text{maximize} & \frac{1}{\|w\|_2}\\
+      \text{subject to} & y_i(w^Tx_i+b) \geq 1 \quad\text{for all
+        $i$}
+    \end{array}$$
+    \pause
+    It's equivalent to solving the minimization problem
+      $$\begin{array}{ll}
+          \text{minimize} & {\frac{1}{2}\|w\|_2^2}\\
+      \text{subject to} & y_i(w^Tx_i+b) \geq 1 \quad\text{for all
+        $i$}
+    \end{array}$$
+
+    Note that $y_i(w^Tx_i+b)$ is the (functional) margin.
+    The optimization finds the minimum norm solution which has a margin of at least 1 on all examples.
+\end{frame}
+
+\begin{frame}{Not linearly separable}
+    What if the data is \textit{not} linearly separable?
+
+    For any $w$, there will be points with a negative margin.
+    \begin{center}
+    \includegraphics[width=0.7\linewidth]{figures/non_separable.pdf}
+    \end{center}
+\end{frame}
+
+\begin{frame}{Soft Margin SVM}
+    % What if the data is \textit{not} linearly separable?
+    % \pause
+    % For any $w$, there will be points with a negative margin.
+    % \pause
+    Introduce \textbf{slack variables} $\xi$'s to penalize small margin:
+      $$\begin{array}{ll}
+          \text{minimize} & {\frac{1}{2}\|w\|_2^2}
+           + \frac{C}{n}\sum_{i=1}^n \xi_i \\
+      \text{subject to} & y_i(w^Tx_i+b) \geq 1 - \xi_i \quad\text{for all
+        $i$}\\
+          & \xi_i \geq 0 \quad\text{for all $i$}
+    \end{array}$$
+    \begin{itemize}
+        \setlength\itemsep{1ex}
+        \item If $\xi_i = 0 \;\forall i$, it's reduced to hard SVM.
+        \item What does $\xi_i > 0$ mean?
+        \item What does $C$ control?
+    \end{itemize}
+\end{frame}
+
+
+\begin{frame}
+    {Slack Variables}
+    $d(x_i, H) = \frac{y_i(w^Tx_i+b)}{\|w\|_2} \ge \frac{1-\xi_i}{\|w\|_2}$,
+    thus $\xi_i$ measures the violation by multiples of the geometric margin:
+    \begin{itemize}
+        \setlength\itemsep{1ex}
+        \item $\xi_i=1$: $x_i$ lies on the hyperplane
+        \item $\xi_i=3$: $x_i$ is past 2 margin width beyond the decision hyperplane 
+    \end{itemize}
+    \begin{figure}
+        \includegraphics[height=0.6\textheight]{figures/SoftMargin}
+    \end{figure}
+\end{frame}
+
+\section{Minimize the Hinge Loss}
+\begin{frame}
+    {Perceptron Loss}
+    $$
+    \ell(x,y,w) = \max(0, -yw^Tx)
+    $$
+    \begin{figure}
+        \includegraphics[height=0.5\textheight]{figures/perceptron-loss}
+    \end{figure}
+    If we do ERM with this loss function, what happens?
+    %\pdfnote{
+    %    Perceptron algorithm. Degenerate solution with w=0.
+    %}
+\end{frame}
+
+\begin{frame}{Hinge Loss}
+\begin{itemize}
+\item SVM/Hinge loss: $\loss_{\text{Hinge}}=\max\left\{ 1-m,0\right\} =\left(1-m\right)_{+}$
+\item Margin $m=yf(x)$; ``Positive part'' $(x)_{+}=x\ind{x\ge0}$.
+\end{itemize}
+\begin{center}
+\includegraphics[height=0.5\textheight]{figures/loss_Zero_One_Hinge}
+\par\end{center}
+
+Hinge is a \textbf{convex}, \textbf{upper bound} on $0-1$ loss. Not
+differentiable at $m=1$. \\
+We have a \textbf{``margin error''} when $m<1$.
+\end{frame}
 
 
 \end{document}
