@@ -1,6 +1,6 @@
 %% LyX 2.3.4.2 created this file.  For more info, see http://www.lyx.org/.
 %% Do not edit unless you really know what you are doing.
-\documentclass[english,dvipsnames,aspectratio=169,handout]{beamer}
+\documentclass[english,dvipsnames,aspectratio=169]{beamer}
 \usepackage{mathptmx}
 \usepackage{eulervm}
 \usepackage[T1]{fontenc}
@@ -126,7 +126,9 @@
 \input ../rosenberg-macros
 
 \title[CSCI-GA 2565]{Support Vector Machine}
-\author[]{Mengye Ren}
+\author[]{Mengye Ren
+\\ \quad\\
+\small (Slides credit to David Rosenberg, He He, et al.)}
 
 \date[]{September 24, 2024}
 \institute[]{NYU}
@@ -185,6 +187,12 @@
 %     \end{figure}
 % \end{frame}
 
+\begin{frame}{Slides}
+\begin{center}
+\includegraphics[width=0.3\textwidth]{figures/qr04.png}
+\end{center}
+\end{frame}
+
 \begin{frame}
     {Maximum-Margin Separating Hyperplane}
     For separable data, there are infinitely many zero-error classifiers.
@@ -238,27 +246,28 @@
             \includegraphics[width=\linewidth]{"figures/Distance_to_Line"} 
           \end{center}
         \end{column}
-        \begin{column}{0.5\linewidth}
-            \begin{itemize}
-                % \item Projection of $v\in\BR^d$ onto $w\in\BR^d$:
-                %     $\frac{v\cdot w}{\|w\|_2}$
-                \item Any point on the plane $p$, and normal vector $w/\|w\|_2$
-                \pause
-                \item Projection of x onto the normal: $\frac{(x'-p)^T w}{\|w\|_2}$
-                \pause
-                \item $(x'-p)^Tw = x'^Tw - p^Tw = x'^Tw + b \ \ (\text{since } p^Tw+b = 0)$
-                \pause
-                % \item Distance between $x'$ and $H$:
-                %     $$
-                %     d(x', H) = \left |\frac{w^Tx' + b}{\|w\|_2}\right |
-                %     $$
-                \item Signed distance between $x'$ and Hyperplane $H$:
-                $\frac{w^Tx' + b}{\|w\|_2}$
-                \pause
-                \item Taking into account of the label $y$:
-                    $d(x', H) = \frac{y(w^Tx' + b)}{\|w\|_2}$
-            \end{itemize}
-        \end{column}
+
+        % \begin{column}{0.5\linewidth}
+        %     \begin{itemize}
+        %         % \item Projection of $v\in\BR^d$ onto $w\in\BR^d$:
+        %         %     $\frac{v\cdot w}{\|w\|_2}$
+        %         \item Any point on the plane $p$, and normal vector $w/\|w\|_2$
+        %         \pause
+        %         \item Projection of x onto the normal: $\frac{(x'-p)^T w}{\|w\|_2}$
+        %         \pause
+        %         \item $(x'-p)^Tw = x'^Tw - p^Tw = x'^Tw + b \ \ (\text{since } p^Tw+b = 0)$
+        %         \pause
+        %         % \item Distance between $x'$ and $H$:
+        %         %     $$
+        %         %     d(x', H) = \left |\frac{w^Tx' + b}{\|w\|_2}\right |
+        %         %     $$
+        %         \item Signed distance between $x'$ and Hyperplane $H$:
+        %         $\frac{w^Tx' + b}{\|w\|_2}$
+        %         \pause
+        %         \item Taking into account of the label $y$:
+        %             $d(x', H) = \frac{y(w^Tx' + b)}{\|w\|_2}$
+        %     \end{itemize}
+        % \end{column}
     \end{columns}
 \end{frame}
 
@@ -308,9 +317,9 @@
     What if the data is \textit{not} linearly separable?
 
     For any $w$, there will be points with a negative margin.
-    \begin{center}
-    \includegraphics[width=0.7\linewidth]{figures/non_separable.pdf}
-    \end{center}
+    % \begin{center}
+    % \includegraphics[width=0.7\linewidth]{figures/non_separable.pdf}
+    % \end{center}
 \end{frame}
 
 \begin{frame}{Soft Margin SVM}
@@ -974,9 +983,9 @@ $\alpha_{i}$ & $\left(1-y_{i}\left[w^{T}x_{i}+b\right]\right)-\xi_{i}\le0$\tabul
 L(w,b,\xi,\alpha,\lambda)=\frac{1}{2}||w||^{2}+\frac{c}{n}\sum_{i=1}^{n}\xi_{i}+\sum_{i=1}^{n}\alpha_{i}\left(1-y_{i}\left[w^{T}x_{i}+b\right]-\xi_{i}\right)+\sum_{i=1}^{n}\lambda_{i}\left(-\xi_{i}\right)
 \]
 
-    \head{Dual optimum value}:
-    $d^* = \sup_{\alpha,\lambda\succeq0}\inf_{w,b,\xi}L(w,b,\xi,\alpha,\lambda)$
-    \note[item]{What are the primal and dual variables?}
+    % \head{Dual optimum value}:
+    % $d^* = \sup_{\alpha,\lambda\succeq0}\inf_{w,b,\xi}L(w,b,\xi,\alpha,\lambda)$
+    % \note[item]{What are the primal and dual variables?}
 \end{frame}
 
 \begin{frame}
@@ -1010,9 +1019,14 @@ Lagrange dual function is the inf over primal variables of $L$:
 
     \vspace{-2em}
 \begin{eqnarray*}
-\partial_{w}L=0 & \iff & w-\sum_{i=1}^{n}\alpha_{i}y_{i}x_{i}=0\;\iff\;\boxed{w=\sum_{i=1}^{n}\alpha_{i}y_{i}x_{i}}\\
-\partial_{b}L=0 & \iff & -\sum_{i=1}^{n}\alpha_{i}y_{i}=0\;\iff\;\boxed{\sum_{i=1}^{n}\alpha_{i}y_{i}=0}\\
-\partial_{\xi_{i}}L=0 & \iff & \frac{c}{n}-\alpha_{i}-\lambda_{i}=0\;\iff\;\boxed{\alpha_{i}+\lambda_{i}=\frac{c}{n}}
+\partial_{w}L=0 & \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad & \\
+\\
+% & \iff & w-\sum_{i=1}^{n}\alpha_{i}y_{i}x_{i}=0\;\iff\;\boxed{w=\sum_{i=1}^{n}\alpha_{i}y_{i}x_{i}}\\
+\partial_{b}L=0  & &\\
+\\
+% & \iff & -\sum_{i=1}^{n}\alpha_{i}y_{i}=0\;\iff\;\boxed{\sum_{i=1}^{n}\alpha_{i}y_{i}=0}\\
+\partial_{\xi_{i}}L=0  & &\\
+% & \iff & \frac{c}{n}-\alpha_{i}-\lambda_{i}=0\;\iff\;\boxed{\alpha_{i}+\lambda_{i}=\frac{c}{n}}
 \end{eqnarray*}
 \end{frame}
 
@@ -1021,23 +1035,25 @@ Lagrange dual function is the inf over primal variables of $L$:
     \setlength\itemsep{1ex}
 \item Substituting these conditions back into $L$, the second term disappears.
 \item First and third terms become 
-\begin{eqnarray*}
-\frac{1}{2}w^{T}w & = & \frac{1}{2}\sum_{i,j=1}^{n}\alpha_{i}\alpha_{j}y_{i}y_{j}x_{i}^{T}x_{j}\\
-\sum_{i=1}^{n}\alpha_{i}(1-y_{i}\left[w^{T}x_{i}+b\right]) & = & \sum_{i=1}^{n}\alpha_{i}-\sum_{i,j=1}^{n}\alpha_{i}\alpha_{j}y_{i}y_{j}x_{j}^{T}x_{i}-b\underbrace{\sum_{i=1}^{n}\alpha_{i}y_{i}}_{=0}.
-\end{eqnarray*}
+\vspace{0.9in}
+% \begin{eqnarray*}
+% \frac{1}{2}w^{T}w & = & \frac{1}{2}\sum_{i,j=1}^{n}\alpha_{i}\alpha_{j}y_{i}y_{j}x_{i}^{T}x_{j}\\
+% \sum_{i=1}^{n}\alpha_{i}(1-y_{i}\left[w^{T}x_{i}+b\right]) & = & \sum_{i=1}^{n}\alpha_{i}-\sum_{i,j=1}^{n}\alpha_{i}\alpha_{j}y_{i}y_{j}x_{j}^{T}x_{i}-b\underbrace{\sum_{i=1}^{n}\alpha_{i}y_{i}}_{=0}.
+% \end{eqnarray*}
 
         \vspace{-2ex}
 \item Putting it together, the dual function is 
-\[
-g(\alpha,\lambda)=\begin{cases}
-\sum_{i=1}^{n}\alpha_{i}-\frac{1}{2}\sum_{i,j=1}^{n}\alpha_{i}\alpha_{j}y_{i}y_{j}x_{j}^{T}x_{i} & \substack{\substack{\sum_{i=1}^{n}\alpha_{i}y_{i}=0\\
-\alpha_{i}+\lambda_{i}=\frac{c}{n}\mbox{, all }i
-}
-}
-\\
--\infty & \mbox{otherwise.}
-\end{cases}
-\]
+\vspace{0.5in}
+% \[
+% g(\alpha,\lambda)=\begin{cases}
+% \sum_{i=1}^{n}\alpha_{i}-\frac{1}{2}\sum_{i,j=1}^{n}\alpha_{i}\alpha_{j}y_{i}y_{j}x_{j}^{T}x_{i} & \substack{\substack{\sum_{i=1}^{n}\alpha_{i}y_{i}=0\\
+% \alpha_{i}+\lambda_{i}=\frac{c}{n}\mbox{, all }i
+% }
+% }
+% \\
+% -\infty & \mbox{otherwise.}
+% \end{cases}
+% \]
 \end{itemize}
 \end{frame}
 
