@@ -126,64 +126,64 @@
 \input ../rosenberg-macros
 
 \title[CSCI-GA 2565]{Support Vector Machine}
-\author{Mengye Ren}
+\author[]{Mengye Ren}
 
-\date{September 26, 2023}
-\institute{NYU}
+\date[]{September 24, 2024}
+\institute[]{NYU}
 
 \makebeamertitle
 \mode<article>{Just in article version}
 
 
-\section{Maximum Margin Classifier}
+% \section{Maximum Margin Classifier}
 
-\begin{frame}
-    {Linearly Separable Data}
-    Consider a linearly separable dataset $\sD$:
-    \begin{figure}
-        \includegraphics[height=0.5\textheight]{figures/lin-sep-data}
-    \end{figure}
-    Find a separating hyperplane such that
-    \begin{itemize}
-        \item $w^Tx_i > 0$ for all $x_i$ where $y_i=+1$
-        \item $w^Tx_i < 0$ for all $x_i$ where $y_i=-1$
-    \end{itemize}
-\end{frame}
+% \begin{frame}
+%     {Linearly Separable Data}
+%     Consider a linearly separable dataset $\sD$:
+%     \begin{figure}
+%         \includegraphics[height=0.5\textheight]{figures/lin-sep-data}
+%     \end{figure}
+%     Find a separating hyperplane such that
+%     \begin{itemize}
+%         \item $w^Tx_i > 0$ for all $x_i$ where $y_i=+1$
+%         \item $w^Tx_i < 0$ for all $x_i$ where $y_i=-1$
+%     \end{itemize}
+% \end{frame}
 
-\begin{frame}
-    {The Perceptron Algorithm}
-    \begin{itemize}
-        \setlength\itemsep{1ex}
-        \item Initialize $w \leftarrow 0$
-        \item While not converged (exists misclassified examples)
-            \begin{itemize}
-                \item For $(x_i, y_i)\in\sD$
-                    \begin{itemize}
-                        \item If $y_i w^Tx_i < 0$ (wrong prediction)
-                        \item Update $w \leftarrow w + y_ix_i$
-                    \end{itemize}
-            \end{itemize}
-    \end{itemize}
-    \pause
-    \begin{itemize}
-        \item Intuition: move towards misclassified positive examples and away from negative examples
-        \pause
-        \item Guarantees to find a zero-error classifier (if one exists) in finite steps
-        \pause
-        \item What is the loss function if we consider this as a SGD algorithm?
-    \end{itemize}
-\end{frame}
+% \begin{frame}
+%     {The Perceptron Algorithm}
+%     \begin{itemize}
+%         \setlength\itemsep{1ex}
+%         \item Initialize $w \leftarrow 0$
+%         \item While not converged (exists misclassified examples)
+%             \begin{itemize}
+%                 \item For $(x_i, y_i)\in\sD$
+%                     \begin{itemize}
+%                         \item If $y_i w^Tx_i < 0$ (wrong prediction)
+%                         \item Update $w \leftarrow w + y_ix_i$
+%                     \end{itemize}
+%             \end{itemize}
+%     \end{itemize}
+%     \pause
+%     \begin{itemize}
+%         \item Intuition: move towards misclassified positive examples and away from negative examples
+%         \pause
+%         \item Guarantees to find a zero-error classifier (if one exists) in finite steps
+%         \pause
+%         \item What is the loss function if we consider this as a SGD algorithm?
+%     \end{itemize}
+% \end{frame}
 
-\section{Minimize the Hinge Loss}
-\begin{frame}
-    {Perceptron Loss}
-    $$
-    \ell(x,y,w) = \max(0, -yw^Tx)
-    $$
-    \begin{figure}
-        \includegraphics[height=0.5\textheight]{figures/perceptron-loss}
-    \end{figure}
-\end{frame}
+% \section{Minimize the Hinge Loss}
+% \begin{frame}
+%     {Perceptron Loss}
+%     $$
+%     \ell(x,y,w) = \max(0, -yw^Tx)
+%     $$
+%     \begin{figure}
+%         \includegraphics[height=0.5\textheight]{figures/perceptron-loss}
+%     \end{figure}
+% \end{frame}
 
 \begin{frame}
     {Maximum-Margin Separating Hyperplane}
@@ -427,7 +427,7 @@ Move the constraint into the objective:
 \[
 \min_{w\in\reals^{d},b\in\reals}\frac{1}{2}||w||^{2}+\frac{c}{n}\sum_{i=1}^{n}\max\left(0,1-y_{i}\left[w^{T}x_{i}+b\right]\right).
 \]
-\item \al{Not differentiable} because of the $\max$
+% \item Not always differentiable because of the $\max$, but usually ok.
 \end{itemize}
 \end{frame}
 
@@ -456,13 +456,13 @@ Move the constraint into the objective:
 % \end{itemize}
 % \end{frame}
 
-\begin{frame}{Subgradient Descent}
-    Now that we have the objective, can we do SGD on it?
+% \begin{frame}{Subgradient Descent}
+%     Now that we have the objective, can we do SGD on it?
 
-    Subgradient: generalize gradient for non-differentiable convex functions
-\end{frame}
+%     Subgradient: generalize gradient for non-differentiable convex functions
+% \end{frame}
 
-\begin{frame}{SVM Optimization Problem (no intercept)}
+\begin{frame}{SVM Optimization Problem}
 \begin{itemize}
 \item SVM objective function:
 \[
@@ -583,63 +583,63 @@ if $\del f(x)=0$ then $x$ is a global minimizer of $f$.
 \let\thefootnote\relax\footnotetext{\tiny{Figure from Boyd \& Vandenberghe Fig. 3.2; Proof in Section 3.1.3 }}
 \end{frame}
 
-% \begin{frame}{Subgradients}
-% \begin{definition}
-%     A vector $g\in\reals^{d}$ is a \textbf{subgradient} of a \emph{convex} function $f:\reals^{d}\to\reals$
-% at $x$ if for all $z$, 
-% $$
-% f(z)\ge f(x)+g^{T}(z-x).
-% $$
-% \end{definition}
+\begin{frame}{Subgradients}
+\begin{definition}
+    A vector $g\in\reals^{d}$ is a \textbf{subgradient} of a \emph{convex} function $f:\reals^{d}\to\reals$
+at $x$ if for all $z$, 
+$$
+f(z)\ge f(x)+g^{T}(z-x).
+$$
+\end{definition}
 
-% \begin{center}
-% \includegraphics[height=0.4\textheight]{figures/Subderivative_illustration}
-% \par\end{center}
+\begin{center}
+\includegraphics[height=0.4\textheight]{figures/Subderivative_illustration}
+\par\end{center}
 
-% Blue is a graph of $f(x)$. \\
-% Each red line $x\mapsto f(x_{0})+g^{T}\left(x-x_{0}\right)$ is a
-%     \hl{global lower bound} on $f(x)$.
-% \end{frame}
+Blue is a graph of $f(x)$. \\
+Each red line $x\mapsto f(x_{0})+g^{T}\left(x-x_{0}\right)$ is a
+    \hl{global lower bound} on $f(x)$.
+\end{frame}
 
-% \begin{frame}
-%     {Properties}
-% \begin{definitions}
-% \begin{itemize}
-% \item The set of all subgradients at $x$ is called the \textbf{subdifferential}:
-% $\partial f(x)$ 
-% \item $f$ is \textbf{subdifferentiable} at $x$ if $\exists$ at least
-% one subgradient at $x$. 
-% \end{itemize}
-% \end{definitions}
+\begin{frame}
+    {Properties}
+\begin{definitions}
+\begin{itemize}
+\item The set of all subgradients at $x$ is called the \textbf{subdifferential}:
+$\partial f(x)$ 
+\item $f$ is \textbf{subdifferentiable} at $x$ if $\exists$ at least
+one subgradient at $x$. 
+\end{itemize}
+\end{definitions}
 
-% For convex functions:\\
-%     \begin{itemize}
-%         \setlength\itemsep{1ex}
-% \item $f$ is differentiable at $x$ iff $\partial f(x)=\left\{ \del f(x)\right\}$.
-% \item Subdifferential is always non-empty ($\partial f(x)=\emptyset \implies f$ is not convex)
-% \item $x$ is the global optimum iff $0\in\partial f(x)$.
-%     \end{itemize}
+For convex functions:\\
+    \begin{itemize}
+        \setlength\itemsep{1ex}
+\item $f$ is differentiable at $x$ iff $\partial f(x)=\left\{ \del f(x)\right\}$.
+\item Subdifferential is always non-empty ($\partial f(x)=\emptyset \implies f$ is not convex)
+\item $x$ is the global optimum iff $0\in\partial f(x)$.
+    \end{itemize}
 
-%     For non-convex functions:\\
-%     \begin{itemize}
-%         \item The subdifferential may be an empty set (no global underestimator).
-%     \end{itemize}
-% \end{frame}
+    For non-convex functions:\\
+    \begin{itemize}
+        \item The subdifferential may be an empty set (no global underestimator).
+    \end{itemize}
+\end{frame}
 
-% \begin{frame}{Subdifferential of Absolute Value}
-% \begin{itemize}
-% \item Consider $f(x)=\left|x\right|$
+\begin{frame}{Subdifferential of Absolute Value}
+\begin{itemize}
+\item Consider $f(x)=\left|x\right|$
 
-% \end{itemize}
-% \let\thefootnote\relax\footnotetext{\tiny{Boyd EE364b: Subgradients Slides}}
+\end{itemize}
+\let\thefootnote\relax\footnotetext{\tiny{Boyd EE364b: Subgradients Slides}}
 
-% \begin{center}
-% \includegraphics[width=0.8\columnwidth]{figures/subgradient-absolute-value}
-% \par\end{center}
-% \begin{itemize}
-% \item Plot on right shows $\left\{ (x,g)\mid x\in\reals,\;g\in\partial f(x)\right\} $ 
-% \end{itemize}
-% \end{frame}
+\begin{center}
+\includegraphics[width=0.8\columnwidth]{figures/subgradient-absolute-value}
+\par\end{center}
+\begin{itemize}
+\item Plot on right shows $\left\{ (x,g)\mid x\in\reals,\;g\in\partial f(x)\right\} $ 
+\end{itemize}
+\end{frame}
 
 % \begin{frame}{Subgradients of $f(x_{1},x_{2})=\left|x_{1}\right|+2\left|x_{2}\right|$}
 %     \begin{columns}
@@ -811,26 +811,26 @@ SVM objective function:
 
 \begin{frame}{The Dual Problem}
 \begin{itemize}
-\item In addition to subgradient descent, we can directly solve the optimization problem using a QP solver.
+\item In addition to subgradient descent, we can directly solve the optimization problem using a Quadratic Programming (QP) solver.
 \item For convex optimization problem, we can also look into its \textbf{dual problem}.
 \end{itemize}
 \end{frame}
 
-% \begin{frame}{SVM as a Quadratic Program}
-% \begin{itemize}
-% \item The SVM optimization problem is equivalent to
-% \begin{eqnarray*}
-%     \textrm{minimize} &  & \frac{1}{2}||w||^{2}+\frac{c}{n}\sum_{i=1}^{n}\xi_{i}\\
-% \textrm{subject to} &  & -\xi_{i}\le0\quad\mbox{for }i=1,\ldots,n\\
-%  &  & \left(1-y_{i}\left[w^{T}x_{i}+b\right]\right)-\xi_{i}\le0\quad\mbox{for }i=1,\ldots,n
-% \end{eqnarray*}
+\begin{frame}{SVM as a Quadratic Program}
+\begin{itemize}
+\item The SVM optimization problem is equivalent to
+\begin{eqnarray*}
+    \textrm{minimize} &  & \frac{1}{2}||w||^{2}+\frac{c}{n}\sum_{i=1}^{n}\xi_{i}\\
+\textrm{subject to} &  & -\xi_{i}\le0\quad\mbox{for }i=1,\ldots,n\\
+ &  & \left(1-y_{i}\left[w^{T}x_{i}+b\right]\right)-\xi_{i}\le0\quad\mbox{for }i=1,\ldots,n
+\end{eqnarray*}
 
-% \item Differentiable objective function
-% \item $n+d+1$ unknowns and $2n$ affine constraints.
-% \item A \textbf{quadratic program} that can be solved by any off-the-shelf QP solver. 
-% \item Let's learn more by examining the dual.
-% \end{itemize}
-% \end{frame}
+\item Differentiable objective function
+\item $n+d+1$ unknowns and $2n$ affine constraints.
+\item A \textbf{quadratic program} that can be solved by any off-the-shelf QP solver. 
+\item Let's get more insights by examining the dual.
+\end{itemize}
+\end{frame}
 
 \begin{frame}{The Lagrangian}
 
@@ -1189,6 +1189,407 @@ vectors.}
 
 \item Few margin errors or ``on the margin'' examples $\implies$ \hl{sparsity
 in input examples}.
+\end{itemize}
+\end{frame}
+
+
+% \section{Kernelization}
+
+\begin{frame}{Dual Problem: Dependence on $x$ through inner products}
+\begin{itemize}
+\item SVM Dual Problem:
+\begin{eqnarray*}
+\sup_{\alpha} &  & \sum_{i=1}^{n}\alpha_{i}-\frac{1}{2}\sum_{i,j=1}^{n}\alpha_{i}\alpha_{j}y_{i}y_{j}x_{j}^{T}x_{i}\\
+\mbox{s.t.} &  & \sum_{i=1}^{n}\alpha_{i}y_{i}=0\\
+ & \quad & \alpha_{i}\in\left[0,\frac{c}{n}\right]\;i=1,\ldots,n.
+\end{eqnarray*}
+
+
+\item Note that all dependence on inputs $x_{i}$ and $x_{j}$ is through
+their inner product: $\left\langle x_{j},x_{i}\right\rangle =x_{j}^{T}x_{i}$.
+
+\item We can replace $x_{j}^{T}x_{i}$ by other products... 
+
+\item This is a ``kernelized'' objective function. 
+\end{itemize}
+\end{frame}
+
+
+\section{Feature Maps}
+
+\begin{frame}{The Input Space $\cx$}
+\begin{itemize}
+\item Our general learning theory setup: no assumptions about $\cx$
+
+\item But $\cx=\reals^{d}$ for the specific methods we've developed: 
+\begin{itemize}
+\item Ridge regression
+\item Lasso regression
+\item Support Vector Machines 
+\end{itemize}
+\pause
+\item Our hypothesis space for these was all affine functions on $\reals^{d}$:
+\[
+\cf=\left\{ x\mapsto w^{T}x+b\mid w\in\reals^{d},b\in\reals\right\} .
+\]
+\pause
+\item What if we want to do prediction on inputs not natively in $\reals^{d}$?
+\end{itemize}
+\end{frame}
+%
+
+\begin{frame}{The Input Space $\cx$}
+\begin{itemize}
+\item Often want to use inputs not natively in $\reals^{d}$:
+\begin{itemize}
+\item Text documents
+\item Image files
+\item Sound recordings
+\item DNA sequences
+\end{itemize}
+\pause
+\item They may be represented in numbers, but... 
+\item The $i$th entry of each sequence should have the same ``meaning''
+\item All the sequences should have the same length
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Feature Extraction}
+\begin{definition}
+Mapping an input from $\cx$ to a vector in $\reals^{d}$ is called
+\textbf{feature extraction} or \textbf{featurization}. 
+\end{definition}
+
+\begin{center}
+\includegraphics[width=0.9\textwidth]{figures/feature-extraction}
+\par\end{center}
+
+\end{frame}
+
+\begin{frame}{Linear Models with Explicit Feature Map}
+\begin{itemize}
+\item Input space: $\cx$ (no assumptions)
+\item Introduce \textbf{feature map} $\phi:\cx\to\reals^{d}$
+\item The feature map maps into the \textbf{feature space} $\reals^{d}$.
+\pause
+\item Hypothesis space of affine functions on feature space:
+\[
+    \cf=\left\{ x\mapsto w^{T}{\color{blue}\phi(x)}+b\mid w\in\reals^{d},b\in\reals\right\} .
+\]
+\end{itemize}
+\end{frame}
+%
+\begin{frame}{Geometric Example: Two class problem, nonlinear boundary}
+\begin{center}
+\includegraphics[height=0.6\textheight]{figures/feature-map-3d}
+\par\end{center}
+    \vspace{-1em}
+\begin{itemize}
+\item With identity feature map $\phi(x)=\left(x_{1},x_{2}\right)$ and
+linear models, can't separate regions
+
+\item With appropriate featurization $\phi(x)=\left(x_{1},x_{2},x_{1}^{2}+x_{2}^{2}\right)$,
+becomes linearly separable . 
+
+\item Video: \url{http://youtu.be/3liCbRZPrZA} 
+\end{itemize}
+    % \let\thefootnote\relax\footnotetext{\tiny{\url{https://math.stackexchange.com/questions/353607/how-do-inner-product-space-determine-half-planes}}}
+\end{frame}
+%
+\begin{frame}{Expressivity of Hypothesis Space}
+\begin{itemize}
+\item For linear models, to grow the hypothesis spaces, we must add features.
+
+\item Sometimes we say a larger hypothesis is \hl{more expressive}. 
+\begin{itemize}
+\item (can fit more relationships between input and action)
+\end{itemize}
+
+\item Many ways to create new features.
+\end{itemize}
+\end{frame}
+%
+
+\section{Handling Nonlinearity with Linear Methods}
+\begin{frame}{Example Task: Predicting Health}
+\begin{itemize}
+\item General Philosophy: Extract every feature that might be relevant
+
+\item Features for medical diagnosis
+\begin{itemize}
+\item height
+\item weight
+\item body temperature
+\item blood pressure
+\item etc...
+\end{itemize}
+\end{itemize}
+\let\thefootnote\relax\footnotetext{\tiny{From Percy Liang's "Lecture 3" slides from Stanford's CS221, Autumn 2014. }}
+\end{frame}
+
+\begin{frame}{Feature Issues for Linear Predictors}
+\begin{itemize}
+\item For linear predictors, it's important \textbf{how} features are added
+    \begin{itemize}
+        \item The relation between a feature and the label may not be linear
+        \item There may be complex dependence among features
+    \end{itemize}
+
+\pause
+\item Three types of nonlinearities can cause problems:
+
+\begin{itemize}
+\item Non-monotonicity
+\item Saturation
+\item Interactions between features
+\end{itemize}
+\end{itemize}
+\let\thefootnote\relax\footnotetext{\tiny{From Percy Liang's "Lecture 3" slides from Stanford's CS221, Autumn 2014. }}
+\end{frame}
+
+\begin{frame}{Non-monotonicity: The Issue}
+\begin{itemize}
+\item Feature Map: $\phi(x)=\left[1,\text{temperature}(x)\right]$
+
+\item Action: Predict health score $y\in\reals$ (positive is good)
+
+\item Hypothesis Space $\cf{=}\left\{ \mbox{affine functions of temperature}\right\} $
+
+\pause
+\item Issue: 
+
+\begin{itemize}
+\item Health is not an affine function of temperature.
+
+\pause
+\item Affine function can either say
+\begin{itemize}
+\item Very high is bad and very low is good, or
+\item Very low is bad and very high is good,
+\item But here, both extremes are bad.
+\end{itemize}
+\end{itemize}
+\end{itemize}
+\let\thefootnote\relax\footnotetext{\tiny{From Percy Liang's "Lecture 3" slides from Stanford's CS221, Autumn 2014. }}
+\end{frame}
+
+\begin{frame}{Non-monotonicity: Solution 1}
+\begin{itemize}
+\item Transform the input:
+\[
+\phi(x)=\left[1,\left\{ \text{temperature(x)-37}\right\} ^{2}\right],
+\]
+where $37$ is ``normal'' temperature in Celsius.
+\pause
+
+\item Ok, but requires manually-specified domain knowledge
+\begin{itemize}
+\item Do we really need that?
+\item What does $w^T\phi(x)$ look like?
+\end{itemize}
+\end{itemize}
+\let\thefootnote\relax\footnotetext{\tiny{From Percy Liang's "Lecture 3" slides from Stanford's CS221, Autumn 2014. }}
+\end{frame}
+
+\begin{frame}{Non-monotonicity: Solution 2}
+\begin{itemize}
+\item Think less, put in more:
+\[
+\phi(x)=\left[1,\text{temperature}(x),\left\{ \text{temperature}(x)\right\} ^{2}\right].
+\]
+
+
+\item \hl{More expressive} than Solution 1.
+
+\end{itemize}
+\begin{block}{General Rule}
+
+Features should be simple building blocks that can be pieced together.
+\end{block}
+\let\thefootnote\relax\footnotetext{\tiny{From Percy Liang's "Lecture 3" slides from Stanford's CS221, Autumn 2014. }}
+\end{frame}
+
+\begin{frame}{Saturation: The Issue}
+\begin{itemize}
+\item Setting: Find products relevant to user's query
+
+\pause
+\item Input: Product $x$
+\item Output: Score the relevance of $x$ to user's query
+
+\pause
+\item Feature Map:
+\[
+\phi(x)=\left[1,N(x)\right],
+\]
+where $N(x)=\text{number of people who bought }x$.
+
+\pause
+\item We expect a monotonic relationship between $N(x)$ and relevance,
+    but also expect \hl{diminishing return}.
+\end{itemize}
+\let\thefootnote\relax\footnotetext{\tiny{From Percy Liang's "Lecture 3" slides from Stanford's CS221, Autumn 2014. }}
+\end{frame}
+
+\begin{frame}{Saturation: Solve with nonlinear transform}
+\begin{itemize}
+\item Smooth nonlinear transformation:
+\[
+\phi(x)=\left[1,\log\left\{ 1+N(x)\right\} \right]
+\]
+
+\begin{itemize}
+    \item $\log\left(\cdot\right)$ good for values with large dynamic ranges
+\end{itemize}
+\pause
+\item Discretization (a discontinuous transformation):
+\[
+\phi(x)=\left(\ind{0\le N(x)<10},\ind{10\le N(x)<100},\ldots\right)
+\]
+
+        \begin{itemize}
+\item Small buckets allow quite flexible relationship
+\end{itemize}
+
+\end{itemize}
+
+\let\thefootnote\relax\footnotetext{\tiny{From Percy Liang's "Lecture 3" slides from Stanford's CS221, Autumn 2014. }}
+\end{frame}
+
+
+\begin{frame}{Interactions: The Issue}
+\begin{itemize}
+\item Input: Patient information $x$
+\item Action: Health score $y\in\reals$ (higher is better)
+\item Feature Map
+\[
+\phi(x)=\left[\mbox{height}(x),\mbox{weight}(x)\right]
+\]
+
+\pause
+\item Issue: It's the weight \textit{relative} to the height that's important.
+
+\pause
+\item Impossible to get with these features and a linear classifier.
+\item Need some \textbf{interaction} between height and weight.
+
+\let\thefootnote\relax\footnotetext{\tiny{From Percy Liang's "Lecture 3" slides from Stanford's CS221, Autumn 2014. }}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Interactions: Approach 1}
+\begin{itemize}
+\item Google ``ideal weight from height''
+
+\item J. D. Robinson's ``ideal weight'' formula:
+ % (for a male):
+\[
+\mbox{weight}\mbox{(kg)}=52+1.9\left[\mbox{height(in)}-60\right]
+\]
+
+\pause
+\item Make score square deviation between height($h$) and ideal weight($w$)
+\[
+f(x)=\left(52+1.9\left[h(x)-60\right]-w(x)\right)^{2}
+\]
+
+\pause
+\item WolframAlpha for complicated Mathematics:
+\[
+f(x)=3.61h(x)^{2}-3.8h(x)w(x)-235.6h(x)+w(x)^{2}+124w(x)+3844
+\]
+\end{itemize}
+\let\thefootnote\relax\footnotetext{\tiny{From Percy Liang's "Lecture 3" slides from Stanford's CS221, Autumn 2014. }}
+\end{frame}
+
+\begin{frame}{Interactions: Approach 2}
+\begin{itemize}
+\item Just include all second order features:
+\[
+\phi(x)=\left[1,h(x),w(x),h(x)^{2},w(x)^{2},\underbrace{h(x)w(x)}_{\mbox{cross term}}\right]
+\]
+
+\item More flexible, no Google, no WolframAlpha.
+\end{itemize}
+\begin{block}{General Principle}
+
+Simpler building blocks replace a single ``smart'' feature.
+\end{block}
+\let\thefootnote\relax\footnotetext{\tiny{From Percy Liang's "Lecture 3" slides from Stanford's CS221, Autumn 2014. }}
+\end{frame}
+
+%\begin{frame}{Predicate Features and Interaction Terms}
+%\begin{definition}
+%A \textbf{predicate} on the input space $\cx$ is a function $P:\cx\to\left\{ \mbox{True},\mbox{False}\right\} $.
+%
+%\pause{}
+%\end{definition}
+%
+%\begin{itemize}
+%\item Many features take this form:
+%\begin{itemize}
+%\item $x\mapsto s(x)=\ind{\mbox{subject is sleeping}}$
+%\item $x\mapsto d(x)=\ind{\mbox{subject is driving}}$
+%
+%\pause{}
+%\end{itemize}
+%\item For predicates, interaction terms correspond to \textbf{AND} conjunctions:
+%\begin{itemize}
+%\item $x\mapsto s(x)d(x)=\ind{\mbox{subject is sleeping AND subject is driving}}$
+%\end{itemize}
+%\end{itemize}
+%\let\thefootnote\relax\footnotetext{\tiny{From Percy Liang's "Lecture 3" slides from Stanford's CS221, Autumn 2014. }}
+%\end{frame}
+
+\begin{frame}{Monomial Interaction Terms}
+    \textbf{Interaction terms} are useful building blocks to model non-linearities in features.
+\begin{itemize}
+\item Suppose we start with $x=\left(1,x_{1},\ldots,x_{d}\right)\in\reals^{d+1}=\cx$.
+
+\pause
+\item Consider adding all \textbf{monomials} of degree $M$: $x_{1}^{p_{1}}\cdots x_{d}^{p_{d}}$,
+with $p_{1}+\cdots+p_{d}=M$.
+
+        \begin{itemize}
+            \item Monomials with degree 2 in 2D space: $x_1^2$, $x_2^2$, $x_1x_2$
+        \end{itemize}
+
+% \pause
+% \item How many features will we end up with? 
+% \pause
+% \begin{center}
+% \includegraphics[width=0.2\textwidth]{figures/star-and-bar.png}
+% \end{center}
+% \pause
+% ${M+d-1 \choose M}$
+% (``stars and bars'')
+    % \pdfnote{Distribute M degrees/objects to d boxes. Place (n-1) bars among M indistinguishable objects.}
+% \item This leads to extremely \al{large data matrices}
+% \begin{itemize}
+% \item For $d=40$ and $M=8$, we get $314457495$ features.
+% \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Big Feature Spaces}
+This leads to extremely \al{large data matrices}
+\begin{itemize}
+\item For $d=40$ and $M=8$, we get $314457495$ features.
+\end{itemize}
+
+\pause
+Very large feature spaces have two potential issues:\\
+\begin{itemize}
+\item Overfitting
+\item Memory and computational costs 
+\end{itemize}
+
+\pause
+    Solutions:\\
+\begin{itemize}
+\item Overfitting we handle with regularization.
+\item \textbf{Kernel methods} can help with memory and
+    computational costs when we go to high (or infinite) dimensional spaces.
 \end{itemize}
 \end{frame}
 
