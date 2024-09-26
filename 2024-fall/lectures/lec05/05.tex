@@ -111,9 +111,11 @@
 \input ../rosenberg-macros
 
 \title[CSCI-GA 2565]{Kernels \& Probabilistic Modeling}
-\author{Mengye Ren}
-\date{October 3, 2023}
-\institute{NYU}
+\author[]{Mengye Ren
+\\ \quad\\
+\small (Slides credit to David Rosenberg, He He, et al.)}
+\date[]{October 1, 2023}
+\institute[]{NYU}
 
 \makebeamertitle
 \mode<article>{Just in article version}
@@ -121,430 +123,9 @@
 
 \begin{frame}{Logistics}
 \begin{itemize}
-    \item Oct 10 (next week): Legislative Day No Class
-    \item Oct 17: Homework 2 Due
-    \item Oct 24: Midterm, in class, covers everything up until Oct 17
-\end{itemize}
-\end{frame}
-
-
-\begin{frame}
-    {Last Lecture}
-    Two ways to derive the SVM optimization problem:
-    \begin{itemize}
-    \item Maximize the margin
-    \item Minimize the hinge loss with $\ell_2$ regularization
-    \end{itemize}
-    Both leads to the minimum norm solution satisfying certain margin constraints.
-
-    \begin{itemize}
-        \item \textbf{Hard-margin SVM}: all points must be correctly classified with the margin constraints
-        \item \textbf{Soft-margin SVM}: allow for margin constraint violation with some penalty
-    \end{itemize}
-
-    Subgradient: generalize gradient for non-differentiable convex functions
-
-    Dual problem: Lagrange multiplier $\alpha_i$ for each example.
-
-    Strong duality: For some convex problems, the primal and dual have the same solution.
-\end{frame}
-
-% \section{Kernelization}
-
-\begin{frame}{Dual Problem: Dependence on $x$ through inner products}
-\begin{itemize}
-\item SVM Dual Problem:
-\begin{eqnarray*}
-\sup_{\alpha} &  & \sum_{i=1}^{n}\alpha_{i}-\frac{1}{2}\sum_{i,j=1}^{n}\alpha_{i}\alpha_{j}y_{i}y_{j}x_{j}^{T}x_{i}\\
-\mbox{s.t.} &  & \sum_{i=1}^{n}\alpha_{i}y_{i}=0\\
- & \quad & \alpha_{i}\in\left[0,\frac{c}{n}\right]\;i=1,\ldots,n.
-\end{eqnarray*}
-
-
-\item Note that all dependence on inputs $x_{i}$ and $x_{j}$ is through
-their inner product: $\left\langle x_{j},x_{i}\right\rangle =x_{j}^{T}x_{i}$.
-
-\item We can replace $x_{j}^{T}x_{i}$ by other products... 
-
-\item This is a ``kernelized'' objective function. 
-\end{itemize}
-\end{frame}
-
-
-\section{Feature Maps}
-
-\begin{frame}{The Input Space $\cx$}
-\begin{itemize}
-\item Our general learning theory setup: no assumptions about $\cx$
-
-\item But $\cx=\reals^{d}$ for the specific methods we've developed: 
-\begin{itemize}
-\item Ridge regression
-\item Lasso regression
-\item Support Vector Machines 
-\end{itemize}
-\pause
-\item Our hypothesis space for these was all affine functions on $\reals^{d}$:
-\[
-\cf=\left\{ x\mapsto w^{T}x+b\mid w\in\reals^{d},b\in\reals\right\} .
-\]
-\pause
-\item What if we want to do prediction on inputs not natively in $\reals^{d}$?
-\end{itemize}
-\end{frame}
-%
-
-\begin{frame}{The Input Space $\cx$}
-\begin{itemize}
-\item Often want to use inputs not natively in $\reals^{d}$:
-\begin{itemize}
-\item Text documents
-\item Image files
-\item Sound recordings
-\item DNA sequences
-\end{itemize}
-\pause
-\item They may be represented in numbers, but... 
-\item The $i$th entry of each sequence should have the same ``meaning''
-\item All the sequences should have the same length
-\end{itemize}
-\end{frame}
-
-\begin{frame}{Feature Extraction}
-\begin{definition}
-Mapping an input from $\cx$ to a vector in $\reals^{d}$ is called
-\textbf{feature extraction} or \textbf{featurization}. 
-\end{definition}
-
-\begin{center}
-\includegraphics[width=0.9\textwidth]{figures/feature-extraction}
-\par\end{center}
-
-\end{frame}
-
-\begin{frame}{Linear Models with Explicit Feature Map}
-\begin{itemize}
-\item Input space: $\cx$ (no assumptions)
-\item Introduce \textbf{feature map} $\phi:\cx\to\reals^{d}$
-\item The feature map maps into the \textbf{feature space} $\reals^{d}$.
-\pause
-\item Hypothesis space of affine functions on feature space:
-\[
-    \cf=\left\{ x\mapsto w^{T}{\color{blue}\phi(x)}+b\mid w\in\reals^{d},b\in\reals\right\} .
-\]
-\end{itemize}
-\end{frame}
-%
-\begin{frame}{Geometric Example: Two class problem, nonlinear boundary}
-\begin{center}
-\includegraphics[height=0.6\textheight]{figures/feature-map-3d}
-\par\end{center}
-    \vspace{-1em}
-\begin{itemize}
-\item With identity feature map $\phi(x)=\left(x_{1},x_{2}\right)$ and
-linear models, can't separate regions
-
-\item With appropriate featurization $\phi(x)=\left(x_{1},x_{2},x_{1}^{2}+x_{2}^{2}\right)$,
-becomes linearly separable . 
-
-\item Video: \url{http://youtu.be/3liCbRZPrZA} 
-\end{itemize}
-    % \let\thefootnote\relax\footnotetext{\tiny{\url{https://math.stackexchange.com/questions/353607/how-do-inner-product-space-determine-half-planes}}}
-\end{frame}
-%
-\begin{frame}{Expressivity of Hypothesis Space}
-\begin{itemize}
-\item For linear models, to grow the hypothesis spaces, we must add features.
-
-\item Sometimes we say a larger hypothesis is \hl{more expressive}. 
-\begin{itemize}
-\item (can fit more relationships between input and action)
-\end{itemize}
-
-\item Many ways to create new features.
-\end{itemize}
-\end{frame}
-%
-
-\section{Handling Nonlinearity with Linear Methods}
-\begin{frame}{Example Task: Predicting Health}
-\begin{itemize}
-\item General Philosophy: Extract every feature that might be relevant
-
-\item Features for medical diagnosis
-\begin{itemize}
-\item height
-\item weight
-\item body temperature
-\item blood pressure
-\item etc...
-\end{itemize}
-\end{itemize}
-\let\thefootnote\relax\footnotetext{\tiny{From Percy Liang's "Lecture 3" slides from Stanford's CS221, Autumn 2014. }}
-\end{frame}
-
-\begin{frame}{Feature Issues for Linear Predictors}
-\begin{itemize}
-\item For linear predictors, it's important \textbf{how} features are added
-    \begin{itemize}
-        \item The relation between a feature and the label may not be linear
-        \item There may be complex dependence among features
-    \end{itemize}
-
-\pause
-\item Three types of nonlinearities can cause problems:
-
-\begin{itemize}
-\item Non-monotonicity
-\item Saturation
-\item Interactions between features
-\end{itemize}
-\end{itemize}
-\let\thefootnote\relax\footnotetext{\tiny{From Percy Liang's "Lecture 3" slides from Stanford's CS221, Autumn 2014. }}
-\end{frame}
-
-\begin{frame}{Non-monotonicity: The Issue}
-\begin{itemize}
-\item Feature Map: $\phi(x)=\left[1,\text{temperature}(x)\right]$
-
-\item Action: Predict health score $y\in\reals$ (positive is good)
-
-\item Hypothesis Space $\cf{=}\left\{ \mbox{affine functions of temperature}\right\} $
-
-\pause
-\item Issue: 
-
-\begin{itemize}
-\item Health is not an affine function of temperature.
-
-\pause
-\item Affine function can either say
-\begin{itemize}
-\item Very high is bad and very low is good, or
-\item Very low is bad and very high is good,
-\item But here, both extremes are bad.
-\end{itemize}
-\end{itemize}
-\end{itemize}
-\let\thefootnote\relax\footnotetext{\tiny{From Percy Liang's "Lecture 3" slides from Stanford's CS221, Autumn 2014. }}
-\end{frame}
-
-\begin{frame}{Non-monotonicity: Solution 1}
-\begin{itemize}
-\item Transform the input:
-\[
-\phi(x)=\left[1,\left\{ \text{temperature(x)-37}\right\} ^{2}\right],
-\]
-where $37$ is ``normal'' temperature in Celsius.
-\pause
-
-\item Ok, but requires manually-specified domain knowledge
-\begin{itemize}
-\item Do we really need that?
-\item What does $w^T\phi(x)$ look like?
-\end{itemize}
-\end{itemize}
-\let\thefootnote\relax\footnotetext{\tiny{From Percy Liang's "Lecture 3" slides from Stanford's CS221, Autumn 2014. }}
-\end{frame}
-
-\begin{frame}{Non-monotonicity: Solution 2}
-\begin{itemize}
-\item Think less, put in more:
-\[
-\phi(x)=\left[1,\text{temperature}(x),\left\{ \text{temperature}(x)\right\} ^{2}\right].
-\]
-
-
-\item \hl{More expressive} than Solution 1.
-
-\end{itemize}
-\begin{block}{General Rule}
-
-Features should be simple building blocks that can be pieced together.
-\end{block}
-\let\thefootnote\relax\footnotetext{\tiny{From Percy Liang's "Lecture 3" slides from Stanford's CS221, Autumn 2014. }}
-\end{frame}
-
-\begin{frame}{Saturation: The Issue}
-\begin{itemize}
-\item Setting: Find products relevant to user's query
-
-\pause
-\item Input: Product $x$
-\item Output: Score the relevance of $x$ to user's query
-
-\pause
-\item Feature Map:
-\[
-\phi(x)=\left[1,N(x)\right],
-\]
-where $N(x)=\text{number of people who bought }x$.
-
-\pause
-\item We expect a monotonic relationship between $N(x)$ and relevance,
-    but also expect \hl{diminishing return}.
-\end{itemize}
-\let\thefootnote\relax\footnotetext{\tiny{From Percy Liang's "Lecture 3" slides from Stanford's CS221, Autumn 2014. }}
-\end{frame}
-
-\begin{frame}{Saturation: Solve with nonlinear transform}
-\begin{itemize}
-\item Smooth nonlinear transformation:
-\[
-\phi(x)=\left[1,\log\left\{ 1+N(x)\right\} \right]
-\]
-
-\begin{itemize}
-    \item $\log\left(\cdot\right)$ good for values with large dynamic ranges
-\end{itemize}
-\pause
-\item Discretization (a discontinuous transformation):
-\[
-\phi(x)=\left(\ind{0\le N(x)<10},\ind{10\le N(x)<100},\ldots\right)
-\]
-
-        \begin{itemize}
-\item Small buckets allow quite flexible relationship
-\end{itemize}
-
-\end{itemize}
-
-\let\thefootnote\relax\footnotetext{\tiny{From Percy Liang's "Lecture 3" slides from Stanford's CS221, Autumn 2014. }}
-\end{frame}
-
-\begin{frame}{Interactions: The Issue}
-\begin{itemize}
-\item Input: Patient information $x$
-\item Action: Health score $y\in\reals$ (higher is better)
-\item Feature Map
-\[
-\phi(x)=\left[\mbox{height}(x),\mbox{weight}(x)\right]
-\]
-
-\pause
-\item Issue: It's the weight \textit{relative} to the height that's important.
-
-\pause
-\item Impossible to get with these features and a linear classifier.
-\item Need some \textbf{interaction} between height and weight.
-
-\let\thefootnote\relax\footnotetext{\tiny{From Percy Liang's "Lecture 3" slides from Stanford's CS221, Autumn 2014. }}
-\end{itemize}
-\end{frame}
-
-\begin{frame}{Interactions: Approach 1}
-\begin{itemize}
-\item Google ``ideal weight from height''
-
-\item J. D. Robinson's ``ideal weight'' formula:
- % (for a male):
-\[
-\mbox{weight}\mbox{(kg)}=52+1.9\left[\mbox{height(in)}-60\right]
-\]
-
-\pause
-\item Make score square deviation between height($h$) and ideal weight($w$)
-\[
-f(x)=\left(52+1.9\left[h(x)-60\right]-w(x)\right)^{2}
-\]
-
-\pause
-\item WolframAlpha for complicated Mathematics:
-\[
-f(x)=3.61h(x)^{2}-3.8h(x)w(x)-235.6h(x)+w(x)^{2}+124w(x)+3844
-\]
-\end{itemize}
-\let\thefootnote\relax\footnotetext{\tiny{From Percy Liang's "Lecture 3" slides from Stanford's CS221, Autumn 2014. }}
-\end{frame}
-
-\begin{frame}{Interactions: Approach 2}
-\begin{itemize}
-\item Just include all second order features:
-\[
-\phi(x)=\left[1,h(x),w(x),h(x)^{2},w(x)^{2},\underbrace{h(x)w(x)}_{\mbox{cross term}}\right]
-\]
-
-\item More flexible, no Google, no WolframAlpha.
-\end{itemize}
-\begin{block}{General Principle}
-
-Simpler building blocks replace a single ``smart'' feature.
-\end{block}
-\let\thefootnote\relax\footnotetext{\tiny{From Percy Liang's "Lecture 3" slides from Stanford's CS221, Autumn 2014. }}
-\end{frame}
-
-%\begin{frame}{Predicate Features and Interaction Terms}
-%\begin{definition}
-%A \textbf{predicate} on the input space $\cx$ is a function $P:\cx\to\left\{ \mbox{True},\mbox{False}\right\} $.
-%
-%\pause{}
-%\end{definition}
-%
-%\begin{itemize}
-%\item Many features take this form:
-%\begin{itemize}
-%\item $x\mapsto s(x)=\ind{\mbox{subject is sleeping}}$
-%\item $x\mapsto d(x)=\ind{\mbox{subject is driving}}$
-%
-%\pause{}
-%\end{itemize}
-%\item For predicates, interaction terms correspond to \textbf{AND} conjunctions:
-%\begin{itemize}
-%\item $x\mapsto s(x)d(x)=\ind{\mbox{subject is sleeping AND subject is driving}}$
-%\end{itemize}
-%\end{itemize}
-%\let\thefootnote\relax\footnotetext{\tiny{From Percy Liang's "Lecture 3" slides from Stanford's CS221, Autumn 2014. }}
-%\end{frame}
-
-\begin{frame}{Monomial Interaction Terms}
-    \textbf{Interaction terms} are useful building blocks to model non-linearities in features.
-\begin{itemize}
-\item Suppose we start with $x=\left(1,x_{1},\ldots,x_{d}\right)\in\reals^{d+1}=\cx$.
-
-\pause
-\item Consider adding all \textbf{monomials} of degree $M$: $x_{1}^{p_{1}}\cdots x_{d}^{p_{d}}$,
-with $p_{1}+\cdots+p_{d}=M$.
-
-        \begin{itemize}
-            \item Monomials with degree 2 in 2D space: $x_1^2$, $x_2^2$, $x_1x_2$
-        \end{itemize}
-
-\pause
-\item How many features will we end up with? 
-\pause
-\begin{center}
-\includegraphics[width=0.2\textwidth]{figures/star-and-bar.png}
-\end{center}
-\pause
-${M+d-1 \choose M}$
-% (``stars and bars'')
-    % \pdfnote{Distribute M degrees/objects to d boxes. Place (n-1) bars among M indistinguishable objects.}
-% \item This leads to extremely \al{large data matrices}
-% \begin{itemize}
-% \item For $d=40$ and $M=8$, we get $314457495$ features.
-% \end{itemize}
-\end{itemize}
-\end{frame}
-
-\begin{frame}{Big Feature Spaces}
-This leads to extremely \al{large data matrices}
-\begin{itemize}
-\item For $d=40$ and $M=8$, we get $314457495$ features.
-\end{itemize}
-
-\pause
-Very large feature spaces have two potential issues:\\
-\begin{itemize}
-\item Overfitting
-\item Memory and computational costs 
-\end{itemize}
-
-\pause
-    Solutions:\\
-\begin{itemize}
-\item Overfitting we handle with regularization.
-\item \textbf{Kernel methods} can help with memory and
-    computational costs when we go to high (or infinite) dimensional spaces.
+    \item Oct 15: Legislative Day No Class
+    \item Oct 15: Homework 2 Due
+    \item Oct 22: Midterm, in class, covers everything including next week's content (Oct 8)
 \end{itemize}
 \end{frame}
 
@@ -1113,7 +694,7 @@ representer theorem.
 % \end{frame}
 
 
-\section{Overview}
+\section{Probabilistic Modeling: Overview}
 \begin{frame}
 {Why probabilistic modeling?}
 \begin{itemize}
@@ -1310,6 +891,7 @@ or equivalently, minimize the negative log likelihood (NLL).
 Let's find the MLE solution for our model.
 Recall that $Y\mid X=x \sim  \mathcal{N}(\theta^Tx, \sigma^2)$.
 }
+\mode<handout>{
 \begin{align}
 \onslide<2->{
 \ell(\theta) &\eqdef \log L(\theta) \\
@@ -1328,6 +910,8 @@ Recall that $Y\mid X=x \sim  \mathcal{N}(\theta^Tx, \sigma^2)$.
                          \tikzmark{sum} {\color<6->{red} \sum_{n=1}^{N}  \left( y^{(n)} - \theta^Tx^{(n)} \right)^2 }
 }
 \end{align}
+}
+\mode<presentation>{\vspace{2.0in}}
 
 %\onslide<5->{
 %\begin{commentbox}[blue]
@@ -1348,4 +932,930 @@ Recall that $Y\mid X=x \sim  \mathcal{N}(\theta^Tx, \sigma^2)$.
 %}
 \end{frame}
 
+\begin{frame}
+{Gradient of the likelihood}
+Recall that we obtained the normal equation by setting the derivative of the squared loss to zero. Now let's compute the derivative of the likelihood w.r.t. the parameters.
+
+\mode<handout>{
+\begin{align}
+\onslide<1->{
+\ell(\theta) &= N\log\frac{1}{\sqrt{2\pi}\sigma} 
+                      - 
+                       \frac{1}{2\sigma^2}
+                       \sum_{n=1}^{N}  \left( y^{(n)} - \theta^Tx^{(n)} \right)^2 \\
+}
+\onslide<2->{
+\frac{\partial \ell}{\partial \theta_i} &= -\frac{1}{\sigma^2}
+               \sum_{n=1}^N (y^{(n)} - \tikzmark{linear-term}{ \color<3->{blue} \theta^T x^{(n)} }) x^{(n)}_i  .
+               }
+\end{align}
+}
+\mode<presentation>{\vspace{2.0in}}
+% \onslide<3->{
+% \begin{commentbox}[blue]
+% \node[expl,text width=3cm] (linear-mean) at(11,-0cm) {
+% $\mathbb{E} [Y\mid X=x^{(n)}] $
+% };
+% \draw[arrow] (linear-mean) to [in=270,out=180] ([xshift=2ex,yshift=-1ex]{pic cs:linear-term});
+% \end{commentbox}
+
+% (Spoiler: we will see this form again.)
+% }
+\end{frame}
+
+\begin{frame}
+{Review}
+We've seen
+\begin{itemize}
+\item Linear regression assumes that $Y\mid X=x$ follows a Gaussian distribution
+\item MLE of linear regression is equivalent to the least square method
+\end{itemize}
+\pause{}
+
+However,
+\begin{itemize}
+\item Sometimes Gaussian distribution is not a reasonable assumption, \eg classification
+\item Can we use the same modeling approach for other prediction tasks?
+\end{itemize}
+\pause{}
+
+Next,
+\begin{itemize}
+\item Derive \textcolor{blue}{logistic regression} for classification.
+\end{itemize}
+\end{frame}
+
+
+\subsection{Logistic regression}
+\begin{frame}
+{Assumptions in logistic regression}
+\onslide<1->{
+Consider binary classification where $Y \in \{0, 1\}$.
+What should be the distribution $Y\mid X=x$?
+}
+
+\onslide<2->{
+We model $p(y\mid x)$ as a \textcolor{blue}{Bernoulli} distribution:
+\begin{align}
+p(y\mid x) = h(x)^y (1-h(x))^{1-y} .
+\end{align}
+}
+
+\onslide<3->{
+How should we parameterize $h(x)$?
+}
+\begin{itemize}
+\onslide<4->{
+\item What is $p(y=1\mid x)$ and $p(y=0\mid x)$?
+}
+\onslide<5->{ $h(x) \in (0,1)$. }
+\onslide<6->{
+\item What is the mean of $Y\mid X=x$?
+}
+\onslide<7->{ $h(x)$. (Think how we parameterize the mean in linear regression) }
+\onslide<8->{
+\item Need a function $f$ to map the linear predictor $\theta^Tx$ in $\mathbb{R}$ to $(0,1)$:
+\begin{align}
+f(\eta) = \frac{1}{1 + e^{-\eta}} && \text{\color{blue}logistic function}
+\end{align}
+}
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+{Logistic regression}
+\begin{columns}
+\begin{column}{0.5\textwidth}  %%<--- here
+\begin{center}
+    \begin{tikzpicture}
+    \begin{axis}[
+        title={$f(\eta) = \frac{1}{1+e^{-\eta}}$}, xlabel={$\eta$}, ylabel={$f(\eta)$},
+        width=\textwidth
+    ]
+    \addplot [
+        blue, thick,
+        domain=-10:10,
+        samples=500,
+    ]
+    { 1 / (1 + exp(-x)) };
+    \end{axis}
+    \end{tikzpicture}
+\end{center}
+\end{column}
+
+\begin{column}{0.5\textwidth}
+\begin{itemize}
+\item $p(y\mid x) = \text{Bernoulli}(f(\theta^T x))$.
+\pause
+\item When do we have $p(y=1\mid x) = 1$ and $p(y=0\mid x) = 1$?
+\pause
+\item \textcolor{green}{Exercise}: show that the \textbf{log odds} is
+\begin{align}
+\log \frac{p(y=1\mid x)}{p(y=0\mid x)}=\theta^Tx . \\
+\implies \text{linear decision boundary}
+\end{align}
+\pause
+\item How do we extend it to multiclass classification? (more on this later)
+\end{itemize}
+\end{column}
+\end{columns}
+\end{frame}
+
+
+\begin{frame}
+{MLE for logistic regression}
+\onslide<1->{
+Similar to linear regression, let's estimate $\theta$ by maximizing the conditional log likelihood.
+}
+\mode<handout>{
+\begin{align}
+% \onslide<2->{\ell(\theta) &= \sum_{n=1}^N \log p(y^{(n)} \mid x^{(n)}; \theta) \\}
+% \onslide<3->{&= \sum_{n=1}^N y^{(n)}\log f(\theta^T x^{(n)}) + (1-y^{(n)})\log (1 - f(\theta^T x^{(n)}))}
+\ell(\theta) &= \sum_{n=1}^N \log p(y^{(n)} \mid x^{(n)}; \theta) \\
+&= \sum_{n=1}^N y^{(n)}\log f(\theta^T x^{(n)}) + (1-y^{(n)})\log (1 - f(\theta^T x^{(n)}))
+\end{align}
+}
+
+\onslide<2->{
+\begin{itemize}
+\item Closed-form solutions are not available.
+\item But, the likelihood is concave---\textcolor{blue}{gradient ascent} gives us the unique optimal solution.
+\begin{align}
+\theta := \theta + \alpha \nabla_\theta \ell(\theta) .
+\end{align}
+\end{itemize}
+}
+\end{frame}
+
+\begin{frame}
+{Gradient descent for logistic regression}
+\onslide<1->{
+\begin{block}{Math review: Chain rule}
+If $z$ depends on $y$ which itself depends on $x$, \eg $z=\p{y(x)}^2$,
+then
+$
+\frac{dz}{dx} = \frac{dz}{dy} \frac{dy}{dx}
+$.
+\end{block}
+}
+\onslide<2->{
+Likelihood for a single example: $\ell^n=y^{(n)}\log f(\theta^T x^{(n)}) + (1-y^{(n)})\log (1 - f(\theta^T x^{(n)}))$.
+}
+
+\mode<handout>{
+\begin{align}
+\onslide<3->{
+\frac{\partial \ell^n}{\partial \theta_i}  &= \frac{\partial \ell^n}{\partial f^n}\frac{\partial f^n}{\partial \theta_i} \\
+}
+\onslide<4->{
+&= \left( \frac{y^{(n)}}{f^n} - \frac{1-y^{(n)}}{1-f^n} \right) 
+      \frac{\partial f^n}{\partial \theta_i}  & \frac{d}{dx}\ln x = \frac{1}{x} \\
+}
+\onslide<5->{
+&= \left( \frac{y^{(n)}}{f^n} - \frac{1-y^{(n)}}{1-f^n} \right)
+      \left( f^n (1 - f^n) x^{(n)}_i \right) & \text{\textcolor{green}{Exercise}: apply chain rule to $\frac{\partial f^n}{\partial \theta_i}$} \\
+&= (y^{(n)} - f^n) x^{(n)}_i & \text{simplify by algebra}
+}
+\end{align}
+\onslide<6->{
+The full gradient is thus $\frac{\partial \ell}{\partial \theta_i} = \sum_{n=1}^N (y^{(n)} - f(\theta^T x^{(n)})) x^{(n)}_i$.
+}
+}
+\mode<presentation>{\vspace{2.0in}}
+\end{frame}
+
+\begin{frame}
+{A closer look at the gradient}
+\onslide<1->{
+\begin{align}
+\frac{\partial \ell}{\partial \theta_i} = \sum_{n=1}^N (y^{(n)} - \tikzmark{f}{ \color<2->{blue} f(\theta^T x^{(n)}) } ) x^{(n)}_i
+\end{align}
+}
+% \onslide<2->{
+% \begin{commentbox}[blue]
+% \node[expl,text width=3cm] (mean) at(11,2cm) {
+% $\mathbb{E} [Y\mid X=x^{(n)}] $
+% };
+% \draw[arrow] (mean) to [in=90,out=180] ([xshift=2ex,yshift=2ex]{pic cs:f});
+% \end{commentbox}
+% }
+\onslide<2->{
+\begin{itemize}
+\item Does this look familiar?
+\item Our derivation for linear regression and logistic regression are quite similar...
+\item Next, a more general family of models.
+\end{itemize}
+}
+\end{frame}
+
+
+\subsection{Generalized Linear Models}
+\begin{frame}
+{Compare linear regression and logistic regression}
+\begin{table}
+\begin{tabular}{lll}
+\toprule
+ & linear regression & logistic regression \\ 
+ \midrule \pause
+Combine the inputs & $\theta^T x$ (linear) & $\theta^T x$ (linear) \\ \pause
+\textcolor{blue}{Output} & real & categorical \\
+\textcolor{blue}{Conditional distribution} & Gaussian & Bernoulli \\ \pause
+\textcolor{blue}{Transfer function} $f( \theta^T x )$ & identity & logistic \\ \pause
+Mean $\mathbb{E}(Y\mid X=x; \theta)$ & $f( \theta^T x )$ & $f( \theta^T x )$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+\pause
+\begin{itemize}
+\item $x$ enters through a linear function.
+\item The main \textcolor{blue}{difference} between the formulations is due to different conditional distributions.
+\item Can we generalize the idea to handle other output types, \eg positive integers?
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}
+{Construct a generalized regression model}
+\textbf{Task}: %build a model $h(x)$ to estimate $T(y)$ given some inputs $x$ ($T(y)=y$ in most examples).
+    Given $x$, predict $p(y\mid x)$
+
+%\textbf{Assumption}: an exponential family distribution is a good model for $Y\mid X$.
+%\pause
+\textbf{Modeling}:
+\begin{itemize}
+    \item Choose a parametric family of distributions $p(y;\theta)$ with parameters $\theta\in\Theta$
+%\begin{align}
+%Y\mid X=x; \theta \sim \text{ExponentialFamily}(\eta) \;\;\text{where}\;\; \eta = \theta^Tx.
+%\end{align}
+%\pause
+\item Choose a transfer function that maps a linear predictor in $\BR$ to $\Theta$ 
+\begin{align}
+  \underbrace{x}_{\in\reals^{d}}\mapsto\underbrace{w^{T}x}_{\in\reals}\mapsto\pause\underbrace{f(w^{T}x)}_{\in\Theta}=\theta,
+\end{align}
+%\begin{itemize}
+%\item An available choice is $\psi^{-1}$, which is the canonical link function.
+%\end{itemize}
+%\pause
+\end{itemize}
+{\bf Learning}: 
+        MLE: $\hat{\theta}  \in \argmax_{\theta}\log p(\cd;\hat{\theta})$
+
+{\bf Inference}:
+ For prediction, use $x \to f(w^Tx)$  %= \mathbb{E}(Y\mid X=x) $.
+\end{frame}
+
+\begin{frame}
+{Example: Construct Poisson regression}
+Say we want to predict the number of people entering a restaurant in New York during lunch time.
+\begin{itemize}
+\item What features would be useful?
+\item What's a good model for number of visitors (the \textcolor{blue}{output distribution})?
+\end{itemize}
+\pause
+
+\begin{block}{Math review: Poisson distribution}
+Given a random variable $Y \in {0, 1, 2, \ldots}$ following $\text{Poisson}(\lambda)$, we have
+\begin{align}
+p(Y=k; \lambda) = \frac{\lambda^ke^{-\lambda}}{k!} ,
+\end{align}
+where $\lambda > 0$ and $\mathbb{E}[Y] = \lambda$.
+\end{block}
+The Poisson distribution is usually used to model the number of events occurring during a fixed period of time. 
+\end{frame}
+
+\begin{frame}
+{Example: Construct Poisson regression}
+
+We've decided that $Y\mid X=x \sim \text{Poisson}(\tikzmark{poi-eta}\eta)$,
+what should be the transfer function $f$?
+
+$x$ enters {linearly:}
+    $$
+    x\mapsto\underbrace{w^{T}x}_{\reals}\mapsto\lambda=\underbrace{f(w^{T}x)}_{(0,\infty)}
+    $$
+
+Standard approach is to take
+\[
+f(w^{T}x)=\exp\left(w^{T}x\right).
+\]
+
+Likelihood of the full dataset $\cd=\left\{ (x_{1},y_{1}),\ldots,(x_{n},y_{n})\right\} $:
+    \begin{align}
+\log p(y_{i};\lambda_{i}) &= \left[y_{i}\log\lambda_{i}-\lambda_{i}-\log\left(y_{i}!\right)\right] \\
+\log p(\cd;w) &= \sum_{i=1}^{n}\left[y_{i}\log\left[\exp\left(w^{T}x_{i}\right)\right]-\exp\left(w^{T}x_{i}\right)-\log\left(y_{i}!\right)\right]\\
+ &= \sum_{i=1}^{n}\left[y_{i}w^{T}x_{i}-\exp\left(w^{T}x_{i}\right)-\log\left(y_{i}!\right)\right]
+    \end{align}
+
+\end{frame}
+
+% \begin{frame}
+% {Example: multinomial logistic regression}
+% How to extend logistic regression to multiclass classification?
+
+% \pause
+% Output: Bernoulli distribution $\rightarrow$ \textcolor{blue}{categorical distribution}
+% \begin{itemize}
+% \item Parametrized by a probability vector $\theta=\left(\theta_{1},\ldots,\theta_{k}\right)\in\BR^{k}$:
+% \begin{itemize}
+% \item $\sum_{i=1}^{k}\theta_{i}=1$ and $\theta_{i}\ge0$ for $i=1,\ldots,k$
+% %\item i.e. $\theta$ represents a \textbf{discrete distribution}) 
+% \item So $\forall y\in\left\{ 1,\ldots,k\right\} $, $p(y)=\theta_{y}$.
+% \end{itemize}
+% \end{itemize}
+
+% \item From each $x$, we compute a linear score function for each class:
+% \[
+% x\mapsto\left(\left\langle w_{1},x\right\rangle ,\ldots,\left\langle w_{k},x\right\rangle \right)\in\BR^{k},
+% \]
+
+% What's the transfer function that maps this $\BR^{k}$ vector into a probability?
+
+%     The \textbf{softmax function}:
+% \[
+% \left(s_{1},\ldots,s_{k}\right)\mapsto\theta=\left(\frac{e^{s_{1}}}{\sum_{i=1}^{k}e^{s_{i}}},\ldots,\frac{e^{s_{k}}}{\sum_{i=1}^{k}e^{s_{i}}}\right).
+% \]
+% \end{frame}
+
+
+\begin{frame}{Example: multinomial logistic regression}
+How to extend logistic regression to multiclass classification?
+\pause
+Output: Bernoulli distribution $\rightarrow$ \textcolor{blue}{categorical distribution}
+\begin{itemize}
+\item Parametrized by a probability vector $\theta=\left(\theta_{1},\ldots,\theta_{k}\right)\in\BR^{k}$:
+\begin{itemize}
+\item $\sum_{i=1}^{k}\theta_{i}=1$ and $\theta_{i}\ge0$ for $i=1,\ldots,k$
+%\item i.e. $\theta$ represents a \textbf{discrete distribution}) 
+\item So $\forall y\in\left\{ 1,\ldots,k\right\} $, $p(y)=\theta_{y}$.
+\end{itemize}
+\item From each $x$, we compute a linear score function for each class:
+\[
+x\mapsto\left(\left\langle w_{1},x\right\rangle ,\ldots,\left\langle w_{k},x\right\rangle \right)\in\BR^{k},
+\]
+
+\item What's the transfer function that maps this $\BR^{k}$ vector into a probability?
+
+    The \textbf{softmax function}:
+\[
+\left(s_{1},\ldots,s_{k}\right)\mapsto\theta=\left(\frac{e^{s_{1}}}{\sum_{i=1}^{k}e^{s_{i}}},\ldots,\frac{e^{s_{k}}}{\sum_{i=1}^{k}e^{s_{i}}}\right).
+\]
+\end{itemize}
+
+\end{frame}
+
+% \begin{frame}{Multinomial Logistic Regression}
+% \begin{itemize}
+% \item Say we want to get the predicted categorical distribution for a given
+% $x\in\reals^{d}$. 
+% \item First compute the scores $(\in\reals^{k})$ and then their softmax:
+% \textbf{
+% \[
+% x\mapsto\left(\left\langle w_{1},x\right\rangle ,\ldots,\left\langle w_{k},x\right\rangle \right)\mapsto\theta=\left(\frac{\exp\left(w_{1}^{T}x\right)}{\sum_{i=1}^{k}\exp\left(w_{i}^{T}x\right)},\ldots,\frac{\exp\left(w_{k}^{T}x\right)}{\sum_{i=1}^{k}\exp\left(w_{i}^{T}x\right)}\right)
+% \]
+% }
+% \end{itemize}
+
+% \pause{}
+% \begin{itemize}
+% \item We can write the conditional probability for any $y\in\left\{ 1,\ldots,k\right\} $
+% as
+% \[
+% p(y\mid x;w)=\frac{\exp\left(w_{y}^{T}x\right)}{\sum_{i=1}^{k}\exp\left(w_{i}^{T}x\right)}.
+% \]
+% \end{itemize}
+% \end{frame}
+
+\begin{frame}
+{Review}
+Recipe for contructing a conditional distribution for prediction:
+\begin{enumerate}
+\item Define input and output space (as for any other model).
+\item Choose the output distribution $p(y\mid x; \theta)$ based on the task %that belongs to the exponential family.
+\item Choose the transfer function that maps $w^Tx$ to a $\Theta$.
+\item (The formal family is called ``generalized linear models''.)
+\end{enumerate}
+
+Learning:\\
+\begin{itemize}
+\item Fit the model by maximum likelihood estimation.
+\item Closed solutions do not exist in general, so we use gradient ascent.
+\end{itemize}
+\end{frame}
+
+
+\section{Generative models}
+\begin{frame}
+{Review}
+We've seen
+\begin{itemize}
+\item Model the conditional distribution $p(y\mid x; \theta)$ using generalized linear models.
+\item (Previously) Directly map $x$ to $y$, \eg perceptron.
+\end{itemize}
+
+Next,
+\begin{itemize}
+\item Model the \textcolor{blue}{joint distribution} $p(x, y; \theta)$.
+\item Predict the label for $x$ as $\argmax_{y\in \mathcal{Y}} p(x, y; \theta)$.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+{Generative modeling through the Bayes rule}
+\onslide<1->{
+Training:
+}
+\onslide<3->{
+%\begin{commentbox}[blue]
+% \node[expl,text width=3cm] (gen-expl) at(3,0cm) {
+%to be parametrized
+% };
+% \draw[arrow] (gen-expl) to [in=90,out=0] ([xshift=1ex,yshift=2ex]{pic cs:gen});
+%
+% \node[expl,text width=3cm,draw=red,fill=red!20] (y-expl) at(10, 0cm) {
+%class priors
+%};
+% \draw[arrow,red] (y-expl) to [in=90,out=180] ([xshift=1ex,yshift=2ex]{pic cs:y});
+%\end{commentbox}
+}
+\begin{align}
+\onslide<1->{
+p(x,y)
+}
+\onslide<2->{
+= {\tikzmark{gen}{\color<3->{blue}p(x\mid y)}\tikzmark{y}{\color<3->{red}p(y)}}
+}
+\end{align}
+
+\onslide<4->{
+Testing:
+}
+\begin{align}
+\onslide<4->{
+p(y\mid x)
+}
+\onslide<5->{
+ &= \frac{p(x\mid y) p(y)}{p(x)} & \text{Bayes rule} \\
+}
+\onslide<6->{
+\argmax_y p(y\mid x) &= \argmax_y p(x\mid y) p(y)
+}
+\end{align}
+\end{frame}
+
+\subsection{Naive Bayes models}
+\subsubsection{Bernoulli Naive Bayes Models}
+\begin{frame}
+{Naive Bayes (NB) models}
+Let's consider binary text classification (\eg fake vs genuine review) as a motivating example.
+\pause
+
+\textbf{Bag-of-words} representation of a document
+\begin{itemize}
+\item \text{[``machine'', ``learning'', ``is'', ``fun'', ``.'']}
+\item $x_i \in \{0, 1\}$: whether the $i$-th word in our vocabulary exists in the input
+\begin{align}
+x = [x_1, x_2, \ldots, x_d] \;\; \text{ where } d = \text{vocabulary size}
+\end{align}
+\end{itemize}
+\pause
+
+What's the probability of a document $x$?
+\pause
+\begin{align}
+p(x\mid y) &= p(x_1, \ldots, x_d \mid y) \\
+&= p(x_1\mid y) p(x_2\mid y, x_1) p(x_3\mid y, x_2, x_1) \dots p(x_d\mid y, x_{d-1}, \ldots, x_1) & \text{chain rule} \\
+&= \prod_{i=1}^d p(x_i\mid y, x_{<i})
+\end{align}
+\end{frame}
+
+\begin{frame}
+{Naive Bayes assumption}
+\textbf{Challenge}: $p(x_i\mid y, x_{<i})$ is hard to model (and estimate), especially for large $i$.
+\pause
+
+Solution:
+\begin{block}
+{Naive Bayes assumption}
+Features are \textbf{conditionally independent} given the label:
+\begin{align}
+p(x\mid y) = \prod_{i=1}^d p(x_i\mid y) .
+\end{align}
+\end{block}
+
+A strong assumption in general, but works well in practice.
+\end{frame}
+
+\begin{frame}
+{Parametrize $p(x_i\mid y)$ and $p(y)$}
+For binary $x_i$, assume $p(x_i\mid y)$ follows Bernoulli distributions.
+\begin{align}
+p(x_i=1 \mid y=1) &= \theta_{i,1}, \;\; p(x_i=1 \mid y=0) = \theta_{i,0}  .
+\end{align}
+\pause
+Similarly,
+\begin{align}
+p(y=1) = \theta_0 .
+\end{align}
+\pause
+Thus,
+\begin{align}
+p(x,y) &= p(x\mid y) p(y) \\
+&= p(y)\prod_{i=1}^d p(x_i\mid y) && \text{NB assumption} \\
+&= p(y)\prod_{i=1}^d \theta_{i,y} \1\pc{x_i=1} + \p{1- \theta_{i,y}}\1\pc{x_i=0} 
+\end{align}
+Indicator function $\1\pc{\text{condition}}$ evaluates to 1 if ``condition'' is true and 0 otherwise. 
+\end{frame}
+
+
+\begin{frame}
+{MLE for our NB model}
+\onslide<1->{
+We maximize the likelihood of the data $\prod_{n=1}^N p_\theta(\xn, \yn)$ (as opposed to the \emph{conditional} likelihood we've seen before).
+}
+\mode<handout>{
+\begin{align}
+\onslide<2->{
+    \frac{\partial}{\partial \theta_{j,1}}\ell &= \frac{\partial}{\partial \theta_{j,1}}
+    \sum_{n=1}^N \sum_{i=1}^d \log \p{ \theta_{i,\yn} \1\pc{\xn_i=1} + \p{1- \theta_{i,\yn}}\1\pc{\xn_i=0} } 
++ \log p_{\theta_0}(\yn) \\
+}
+\onslide<3->{
+&= \frac{\partial}{\partial \theta_{j,1}}
+    \sum_{n=1}^N \log \p{ \theta_{j,\yn} \1\pc{\xn_j=1} + \p{1- \theta_{j,\yn}}\1\pc{\xn_j=0} } \qquad \text{ignore } i \neq j \\
+}
+\onslide<4->{
+&= \sum_{n=1}^N \1\pc{ \yn=1 \wedge \xn_j=1 } \frac{1}{\theta_{j,1}} +
+                            \1\pc{ \yn=1 \wedge \xn_j=0 } \frac{1}{1 - \theta_{j,1}}
+\qquad \text{ignore } \yn=0
+}
+\end{align}
+}
+% \end{frame}
+
+% \begin{frame}
+% {MLE solution for our NB model}
+Set $\frac{\partial}{\partial \theta_{j,1}}\ell$ to zero:
+\begin{align}
+\theta_{j,1} = \frac{\sum_{n=1}^N \1\pc{\yn=1 \wedge \xn_j=1}}{\sum_{n=1}^N \1\pc{\yn=1}}
+\end{align}
+\pause
+In practice, count words:
+\begin{align*}
+\frac{\text{number of fake reviews containing ``absolutely''}}{\text{number of fake reviews}}
+\end{align*}
+\textcolor{green}{Exercise}: show that
+\begin{align}
+\theta_{j,0} &= \frac{\sum_{n=1}^N \1\pc{\yn=0 \wedge \xn_j=1}}{\sum_{n=1}^N \1\pc{\yn=0}}, 
+\theta_0 = \frac{\sum_{n=1}^N \1\pc{ \yn=1 }}{N} 
+\end{align}
+\end{frame}
+
+\begin{frame}
+{Review}
+NB assumption: \textcolor{blue}{conditionally independent} features given the label
+
+Recipe for learning a NB model:
+\begin{enumerate}
+\item Choose $p(x_i\mid y)$, \eg Bernoulli distribution for binary $x_i$.
+\item Choose $p(y)$, often a categorical distribution.
+\item Estimate parameters by MLE (same as the strategy for conditional models) .
+\end{enumerate}
+
+Next, NB with continuous features.
+\end{frame}
+
+\subsubsection{Gaussian Naive Bayes Models}
+\begin{frame}
+{NB with continuous inputs}
+Let's consider a multiclass classification task with continuous inputs.
+\begin{align}
+p(x_i\mid y) &\sim \mathcal{N}(\mu_{i,y}, \sigma_{i,y}^2) \\
+p(y=k) &= \theta_k
+\end{align}
+\pause
+Likelihood of the data:
+\begin{align}
+p(\mathcal{D}) &= \prod_{n=1}^N p(\yn) \prod_{i=1}^d p(\xn_i\mid \yn) \\
+&= \prod_{n=1}^N \theta_{\yn} \prod_{i=1}^d 
+    \frac{1}{\sqrt{2\pi}\sigma_{i,\yn}}
+    \exp\p{ -\frac{1}{2\sigma_{i,\yn}^2}{\p{ \xn_i - \mu_{i,\yn} }^2} }
+\end{align}
+\end{frame}
+
+\begin{frame}
+{MLE for Gaussian NB}
+\onslide<1->{
+Log likelihood:
+}
+\begin{align}
+\onslide<1->{
+\ell &= \sum_{n=1}^N \log \theta_{\yn} +
+        \sum_{n=1}^N \sum_{i=1}^d \log \frac{1}{\sqrt{2\pi}\sigma_{i,\yn}}
+                - \frac{1}{2\sigma_{i,\yn}^2}{\p{ \xn_i - \mu_{i,\yn} }^2}    \\
+}
+\end{align}
+\mode<handout>{
+\begin{align}
+% \onslide<2->{
+\frac{\partial}{\partial \mu_{{\color{red}j},{\color{blue}k}}}\ell
+&= \frac{\partial}{\partial \mu_{j,k}}
+        \sum_{n:{\color{blue}\yn=k}}  - \frac{1}{2\sigma_{{\color{red}j},{\color{blue}k}}^2}{\p{ \xn_{\color{red}j} - \mu_{{\color{red}j},{\color{blue}k}} }^2}
+        \hspace{3em} \text{ignore irrelevant terms} \\
+% }
+% \onslide<3->{
+&=  \sum_{n:\yn=k}
+        \frac{1}{\sigma_{j,k}^2} \p{ \xn_j - \mu_{j,k} }
+% }
+\end{align}
+}
+\onslide<2->{
+Set $\frac{\partial}{\partial \mu_{j,k}}\ell$ to zero:
+}
+\begin{align}
+\onslide<3->{
+\mu_{j,k} = \frac{\sum_{n:\yn=k} \xn_j}{\sum_{n:\yn=k} 1}
+}
+\onslide<4->{
+= \text{sample mean of $x_j$ in class $k$}
+}
+\end{align}
+
+\end{frame}
+
+\begin{frame}
+{MLE for Gaussian NB}
+Show that
+\begin{align}
+\sigma_{j,k}^2 &= \frac{\sum_{n:\yn=k} \p{ \xn_j - \mu_{j,k} }^2}{\sum_{n:\yn=k} 1}
+= \text{sample variance of $x_j$ in class $k$}  \\
+\theta_{k} &= \frac{\sum_{n:\yn=k}1}{N} \hspace{3em} \text{(class prior)}
+\end{align}
+\end{frame}
+
+\begin{frame}
+{Decision boundary of the Gaussian NB model}
+\onslide<1->{
+Is the Gaussian NB model a linear classifier?
+}
+%On the decision boundary, we have $p(y=1\mid x) = p(y=0\mid x)$.
+\begin{align}
+\onslide<2->{
+\log \frac{p(y=1\mid x)}{p(y=0\mid x)} &= \log \frac{p(x\mid y=1)p(y=1)}{p(x\mid y=0)p(y=0)} \\
+}
+\onslide<3->{
+&= \log\frac{\theta_0}{1-\theta_0} + \sum_{i=1}^d \p{
+    \log\sqrt{\frac{\sigma_{i,0}^2}{\sigma_{i,1}^2}} + 
+    \p{ \frac{\p{x_i - \mu_{i,0}}^2}{2\sigma_{i,0}^2} -  \frac{\p{x_i - \mu_{i,1}}^2}{2\sigma_{i,1}^2}}
+    }
+    } 
+    \onslide<4->{
+    & \text{\textcolor{blue}{quadratic}} \\
+}
+\onslide<5->{
+&\text{assume that } \sigma_{i,0} = \sigma_{i,1} = \sigma_i, \;\; (\theta_0 = 0.5)\\
+&= \sum_{i=1}^d
+    \frac{1}{2\sigma_i^2} \p{ \p{x_i - \mu_{i,0}}^2 - \p{x_i - \mu_{i,1}}^2 } \\
+&= \sum_{i=1}^d \frac{\mu_{i,1}-\mu_{i,0}}{\sigma_i^2} x_i
+    + \frac{\mu_{i,0}^2-\mu_{i,1}^2}{2\sigma_i^2}
+    & \text{\textcolor{blue}{linear}}
+}
+\end{align}
+\end{frame}
+
+\begin{frame}
+{Decision boundary of the Gaussian NB model}
+Assuming the variance of each feature is the same for both classes, we have
+\begin{align}
+\log \frac{p(y=1\mid x)}{p(y=0\mid x)} &=  \sum_{i=1}^d \frac{\mu_{i,1}-\mu_{i,0}}{\sigma_i^2} x_i
+    + \frac{\mu_{i,0}^2-\mu_{i,1}^2}{2\sigma_i^2} \\
+&= \theta^Tx & \text{where else have we seen it?} \\
+\end{align}
+\pause
+\begin{align}
+\theta_i &= \frac{\mu_{i,1}-\mu_{i,0}}{\sigma_i^2} & \text{ for } i\in\pb{1,d} \\
+\theta_0 &= \sum_{i=1}^d \frac{\mu_{i,0}^2-\mu_{i,1}^2}{2\sigma_i^2} & \text{bias term}
+\end{align}
+\end{frame}
+
+
+\begin{frame}
+{Naive Bayes vs logistic regression}
+\begin{table}
+\begin{tabular}{lcc}
+\toprule
+& logistic regression & Gaussian naive Bayes \\ 
+\midrule
+model type & conditional/discriminative & generative \\ 
+parametrization & $p(y\mid x)$ & $p(x\mid y)$, $p(y)$ \\ 
+assumptions on $Y$ & Bernoulli & Bernoulli \\ 
+assumptions on $X$ & --- & Gaussian \\ 
+decision boundary & $\theta_{\text{LR}}^Tx$ & $\theta_{\text{GNB}}^Tx$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+\pause
+\centering
+Given the same training data, is $\theta_\text{LR} = \theta_\text{GNB}?$
+\end{frame}
+
+
+\begin{frame}
+{Generative vs discriminative classifiers}
+Ng, A. and Jordan, M. (2002). \href{https://ai.stanford.edu/~ang/papers/nips01-discriminativegenerative.pdf}{On discriminative versus generative classifiers: A comparison of logistic regression and naive Bayes}. In Advances in Neural Information Processing Systems 14.
+
+\begin{tikzpicture}
+            \node[anchor=south west,inner sep=0] at (5,0) {\includegraphics[scale=0.5]{figures/gen-disc}};
+            \node[fill=white,inner sep=1pt] (t1) at (2.5,3) {faster convergence};
+         \draw[ultra thick,red,->] (t1) -- (7,2.5);
+         \node[fill=white,inner sep=1pt] (t2) at (13,4.5) {higher asymptotic error};
+         \draw[ultra thick,red,->] (t2) -- (10.5,2);
+\end{tikzpicture}
+
+Solid line: naive Bayes; dashed line: logistic regression.
+\end{frame}
+
+\begin{frame}
+{Naive Bayes vs logistic regression}
+% \begin{table}
+% \begin{tabular}{lccl}
+% \toprule
+% & logistic regression & GNB & \\
+% \midrule
+% optimization error \onslide<2->{& 0 (convex) & 0 (closed-form) &} \\
+% estimation error \onslide<3->{& 0 & 0 & infinite data} \\
+% approximation error \onslide<4->{& 0 & 0 & GNB assumption holds} \\
+% \bottomrule
+% \end{tabular}
+% \end{table}
+% \onslide<5->{
+Logistic regression and Gaussian naive Bayes converge to the same classifier asymptotically, assuming the GNB assumption holds.
+
+\begin{itemize}
+    \item Data points are generated from Gaussian distributions for each class
+    \item Each dimension is independently generated
+    \item Shared variance
+\end{itemize}
+
+What if the GNB assumption is not true?
+
+% }
+% https://www.cs.princeton.edu/courses/archive/spring07/cos424/scribe_notes/0410.pdf
+\end{frame}
+
+
+\begin{frame}{Multivariate Gaussian Distribution}
+\begin{itemize}
+\item $\bx \sim {\cal N} (\mu, \Sigma)$, a Gaussian (or normal) distribution defined as
+\[
+p(\bx) = \frac{1}{(2 \pi)^{d/2} |\Sigma|^{1/2}} \exp \left[ -\frac{1}{2} (\bx - \mu)^T \Sigma^{-1} (\bx - \mu) \right] \
+\]
+% \vspace{-0.5cm}
+\begin{figure}
+\includegraphics[width=0.3\linewidth]{figures/gaussian2d}
+\end{figure}
+\onslide<2->\item Mahalanobis distance $(\bx - \mu_k)^T \Sigma^{-1} (\bx - \mu_k)$ measures the distance from $\bx$ to $\mu$ in terms of $\Sigma$
+\onslide<3->\item It normalizes for difference in variances and correlations
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Bivariate Normal}\small
+\vspace{-0.1cm}
+\begin{figure}
+\addtolength{\tabcolsep}{15pt}
+\begin{tabular}{ccc}
+$\quad$$\Sigma = \begin{pmatrix}1 & 0\\0 & 1\end{pmatrix}$ & $\ \ $ $\Sigma = 0.5\begin{pmatrix}1 & 0\\0 & 1\end{pmatrix}$ & $\Sigma = 2\begin{pmatrix}1 & 0\\0 & 1\end{pmatrix}$\\
+\end{tabular}
+
+\vspace{2.0mm}
+
+\includegraphics[width=0.8\linewidth]{figures/gauss_diag1}\\[-2.5mm]
+% \caption{Probability density function}
+\end{figure}
+\vspace{-2.5mm}
+\begin{figure}
+\includegraphics[width=0.8\linewidth]{figures/gauss_diag_cntr}\\[-2.5mm]
+% \caption{Contour plot of the pdf}
+\end{figure}
+\end{frame}
+
+\begin{frame}{Bivariate Normal}
+\vspace{-0.1cm}
+\begin{figure}
+\addtolength{\tabcolsep}{12pt}
+\begin{tabular}{ccc}
+$\quad$$var(x_1)=var(x_2)$ & $var(x_1)>var(x_2)$  & $var(x_1)<var(x_2)$ \\
+\end{tabular}
+
+
+\vspace{2.0mm}
+
+\includegraphics[width=0.8\linewidth]{figures/gauss_elongated}\\[-2.5mm]
+% \caption{Probability density function}
+\end{figure}
+\vspace{-2.5mm}
+\begin{figure}
+\includegraphics[width=0.8\linewidth]{figures/gauss_elongated_cntr}\\[-2.5mm]
+% \caption{Contour plot of the pdf}
+\end{figure}
+\vspace{-0.3cm}
+%\raquel{this looks wrong!}
+\end{frame}
+
+\begin{frame}{Bivariate Normal}
+\vspace{-0.4cm}
+\begin{figure}
+\addtolength{\tabcolsep}{15pt}
+\begin{tabular}{ccc}
+$\quad$$\Sigma = \begin{pmatrix}1 & 0\\0 & 1\end{pmatrix}$ & $\ \ $ $\Sigma = \begin{pmatrix}1 & 0.5\\0.5 & 1\end{pmatrix}$ & $\Sigma = \begin{pmatrix}1 & 0.8\\0.8 & 1\end{pmatrix}$\\
+\end{tabular}
+
+\vspace{2.0mm}
+
+\includegraphics[width=0.8\linewidth]{figures/gauss_covpos}\\[-2.5mm]
+% \caption{Probability density function}
+\end{figure}
+\vspace{-2.5mm}
+\begin{figure}
+\includegraphics[width=0.8\linewidth]{figures/gauss_covpos_cntr}\\[-2.5mm]
+% \caption{Contour plot of the pdf}
+\end{figure}
+\end{frame}
+
+\begin{frame}{Bivariate Normal}
+\vspace{-0cm}
+\begin{figure}
+\addtolength{\tabcolsep}{15pt}
+\begin{tabular}{ccc}
+$\quad$$Cov(x_1,x_2)=0$ & $Cov(x_1,x_2)>0$  & $Cov(x_1,x_2)<0$ \\
+\end{tabular}
+
+\vspace{2.0mm}
+
+\includegraphics[width=0.8\linewidth]{figures/gauss_covneg}\\[-2.5mm]
+% \caption{Probability density function}
+\end{figure}
+\vspace{-2.5mm}
+\begin{figure}
+\includegraphics[width=0.8\linewidth]{figures/gauss_covneg_cntr}\\[-2.5mm]
+% \caption{Contour plot of the pdf}
+\end{figure}
+\end{frame}
+
+\begin{frame}{Gaussian Bayes Classifier}
+\begin{itemize}
+\item Gaussian Bayes Classifier in its general form assumes that $p(\bx|y)$ is distributed according to a multivariate normal (Gaussian) distribution
+\item Multivariate Gaussian distribution:
+\[
+p(\bx|t=k) = \frac{1}{(2 \pi)^{d/2} |\Sigma_k|^{1/2}} \exp \left[ -\frac{1}{2} (\bx - \boldsymbol{\mu}_k)^T \Sigma_k^{-1} (\bx - \boldsymbol\mu_k) \right] \
+\]
+where $|\Sigma_k|$ denotes the determinant of the matrix, and $d$ is dimension of $\bx$
+\onslide<2->\item Each class $k$ has associated mean vector $\boldsymbol{\mu}_k$ and covariance matrix $\Sigma_k$
+\onslide<3->\item $\Sigma_k$ has $\mathcal{O}(d^2)$ parameters - could be hard to estimate
+% (more on that later).
+\end{itemize}
+%\vspace{-0.5cm}
+%\begin{figure}
+%\includegraphics[width=0.45\linewidth]{imgs/gaussian2d}
+%\end{figure}
+\end{frame}
+
+
+\begin{frame}{Example}
+\vspace{-0.3cm}
+\begin{figure}
+    \includegraphics[width=0.8\linewidth,trim={5cm 1cm 5cm 1cm},clip]{figures/gbc_example}
+\end{figure}
+\end{frame}
+
+
+
+\begin{frame}{Gaussian Bayes Binary Classifier Cases}
+
+Different cases on the covariance matrix:
+\begin{itemize}
+  \item Full covariance: Quadratic decision boundary
+  \item Shared covariance: Linear decision boundary
+  \item Naive Bayes: Diagonal covariance matrix, quadratic decision boundary
+\end{itemize}
+\pause
+
+\vspace{0.2in}
+
+GBC vs. Logistic Regression:
+\begin{itemize}
+    \item If data is truly Gaussian distributed, then shared covariance = logistic regression.
+    \item But logistic regression can learn other distributions.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Summary}
+\begin{itemize}
+    \item Probabilistic framework of using maximum likelihood as a more principled way to derive loss functions.
+    \item Conditional vs. generative
+    \item Generative models the joint distribution, and may lead to more assumption on the data.
+    \pause
+    \item When there is very few data point, it may be hard to model the distribution.
+    \item Is there an equivalent ``regularization'' in a probabilistic framework?
+\end{itemize}
+\end{frame}
 \end{document}
