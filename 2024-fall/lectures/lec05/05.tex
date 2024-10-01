@@ -1,6 +1,6 @@
 %% LyX 2.3.4.2 created this file.  For more info, see http://www.lyx.org/.
 %% Do not edit unless you really know what you are doing.
-\documentclass[english,dvipsnames,aspectratio=169]{beamer}
+\documentclass[english,dvipsnames,aspectratio=169,handout]{beamer}
 \usepackage{mathptmx}
 \usepackage{eulervm}
 \usepackage[T1]{fontenc}
@@ -114,11 +114,17 @@
 \author[]{Mengye Ren
 \\ \quad\\
 \small (Slides credit to David Rosenberg, He He, et al.)}
-\date[]{October 1, 2023}
+\date[]{October 1, 2024}
 \institute[]{NYU}
 
 \makebeamertitle
 \mode<article>{Just in article version}
+
+\begin{frame}{Slides}
+\begin{center}
+\includegraphics[width=0.3\textwidth]{figures/qrcode_05.png}
+\end{center}
+\end{frame}
 
 \begin{frame}{Logistics}
 \begin{itemize}
@@ -573,18 +579,22 @@ duality.
 \begin{itemize}
 \item By Lagrangian duality, it is equivalent to solve the following dual problem:
 \end{itemize}
+\mode<handout>{
 \begin{eqnarray*}
     \text{maximize} &  & \sum_{i=1}^{n}\alpha_{i}-\frac{1}{2}\sum_{i,j=1}^{n}\alpha_{i}\alpha_{j}y_{i}y_{j}
     {\color{blue}\psi\left(x_{j}\right)^{T}\psi(x_{i})}\\
 \mbox{s.t.} &  & \sum_{i=1}^{n}\alpha_{i}y_{i}=0\qquad\text{and}\qquad\alpha_{i}\in\left[0,\frac{c}{n}\right]\quad\forall i.
 \end{eqnarray*}
+}
 
 \begin{itemize}
 \item If $\alpha^{*}$ is an optimal value, then
+\mode<handout>{
 \[
 w^{*}=\sum_{i=1}^{n}\alpha_{i}^{*}y_{i}\psi(x_{i})\qquad\text{and}\qquad\hat{f}(x)=\sum_{i=1}^{n}\alpha_{i}^{*}y_{i}
         {\color{blue}\psi(x_{i})^{T}\psi(x)}.
 \]
+}
 \end{itemize}
 
 \pause
@@ -601,6 +611,7 @@ w^{*}=\sum_{i=1}^{n}\alpha_{i}^{*}y_{i}\psi(x_{i})\qquad\text{and}\qquad\hat{f}(
     (x_1, x_2) \mapsto (x_1^2, \sqrt{2}x_1x_2, x_2^2) .
     $$
     The inner product is
+    \mode<handout>{
     \begin{align*}
         \psi(x)^T\psi(x') &= x_{1}^2 {x'_{1}}^2 +
         (\sqrt{2}x_{1}x_{2})(\sqrt{2}x'_{1}x'_{2}) +
@@ -609,11 +620,11 @@ w^{*}=\sum_{i=1}^{n}\alpha_{i}^{*}y_{i}\psi(x_{i})\qquad\text{and}\qquad\hat{f}(
         &= (x_{1}x'_{1} + x_{2}x'_{2})^2 \\
         &= (x^Tx')^2
     \end{align*}
+    }
     We can calculate the inner product $\psi(x)^T\psi(x')$ in the original input space without accessing the features $\psi(x)$!
 \end{frame}
 %
-\begin{frame}
-    {Compute the Inner Products}
+\begin{frame}{Compute the Inner Products}
     Now, consider \hl{monomials up to degree-2}:
     $$
     (x_1, x_2) \mapsto (1, \sqrt{2}x_1, \sqrt{2}x_2, x_1^2, \sqrt{2}x_1x_2, x_2^2) .
@@ -622,12 +633,23 @@ w^{*}=\sum_{i=1}^{n}\alpha_{i}^{*}y_{i}\psi(x_{i})\qquad\text{and}\qquad\hat{f}(
     $$
     \psi(x)^T\psi(x') = (1 + x^Tx')^2 \quad \text{(check)}.
     $$
+    \mode<handout>{
+    \begin{eqnarray*}
+    \psi(x)^T\psi(x') & = & 1 + 2x_1x'_1 + 2 x_2 x'_2 + x_1^2 x^{\prime 2}_1 + 2 x_1 x_2 x'_1 x'_2 + x_2^2 x^{\prime 2}_2 \\
+    & = & 1 + 2 (x_1 x'_1 + x_2 x'_2) + (x_1 x'_1 + x_2 x'_2)^2 \\
+    & = & (1 + x^\top x')^2
+    \end{eqnarray*}
+    }
+    \pause
     More generally, for features maps producing monomials up to degree-$p$, we have
     $$
     \psi(x)^T\psi(x') = (1 + x^Tx')^p . 
     $$
     (Note that the coefficients of each monomial in $\psi$ may not be 1)
 
+\end{frame}
+
+\begin{frame}{Kernel Trick}
     \textbf{Kernel trick}: we do not need explicit features to calculate inner products.
     \begin{itemize}
         \setlength\itemsep{1ex}
@@ -890,6 +912,7 @@ k(x,x') & = & \left\langle \psi(x),\psi(x')\right\rangle \\
 \end{itemize}
 \end{frame}
 
+\mode<handout>{
 \begin{frame}{Quadratic Kernel}
 \begin{eqnarray*}
 k(x,x') & = & \left\langle \psi(x),\psi(x')\right\rangle \\
@@ -900,6 +923,7 @@ k(x,x') & = & \left\langle \psi(x),\psi(x')\right\rangle \\
 % \left\langle x,x'\right\rangle +\left\langle x,x'\right\rangle ^{2}
 \end{eqnarray*}
 \end{frame}
+}
 %
 \begin{frame}{Polynomial Kernel in $\reals^{d}$}
  
@@ -1001,6 +1025,7 @@ where $X$ is the design matrix, with $x_{1},\ldots,x_{n}$ as rows.
 \begin{itemize}
 \item Rearranging $w^{*}=\left(X^{T}X+\lambda I\right)^{-1}X^{T}y,$ we
 can show that:
+\pause
 \begin{eqnarray*}
 w^{*} & = & X^{T}\underbrace{\left(\frac{1}{\lambda}y-\frac{1}{\lambda}Xw^{*}\right)}_{\alpha^{*}}\\
  & = & X^{T}\alpha^{*}=\sum_{i=1}^{n}\alpha_{i}^{*}x_{i}.
@@ -1014,6 +1039,37 @@ w^{*} & = & X^{T}\underbrace{\left(\frac{1}{\lambda}y-\frac{1}{\lambda}Xw^{*}\ri
 \end{itemize}
 \end{itemize}
 \end{frame}
+
+\mode<handout>{
+\begin{frame}{Derivation}
+Ridge regression solution: $w^{*}=\left(X^{T}X+\lambda I\right)^{-1}X^{T}y$.\\
+Lemma: If $A$ and $A+B$ are non-singular, then $(A+B)^{-1} = A^{-1} - A^{-1} B (A+B)^{-1}.$
+
+Let $\lambda I = A$, $X^T X = B$,
+\begin{eqnarray*}
+w^{*} & = & \left(X^{T}X+\lambda I\right)^{-1}X^{T}y\\
+& = & (\lambda^{-1} - \lambda^{-1} X^TX (X^TX + \lambda I)^{-1}) X^T y \\
+& = & X^T \lambda^{-1} y - \lambda^{-1} X^TX (X^TX + \lambda I)^{-1} X^T y \\
+& = & X^T \lambda^{-1} y - \lambda^{-1} X^TX w^* \\
+& = & X^{T}\underbrace{\left(\frac{1}{\lambda}y-\frac{1}{\lambda}Xw^{*}\right)}_{\alpha^{*}}\\
+ & = & X^{T}\alpha^{*}=\sum_{i=1}^{n}\alpha_{i}^{*}x_{i}.
+\end{eqnarray*}
+\end{frame}
+}
+
+\mode<handout>{
+\begin{frame}{Matrix Sum Inverse Lemma Derivation}
+Woodbury identity: $(A + UCV)^{-1} = A^{-1} - A^{-1} U (C^{-1} + V A^{-1} U)^{-1} V A^{-1}$
+
+Let $C, V = I$, $U = B$,
+\begin{eqnarray*}
+(A + B)^{-1} & = & A^{-1} - A^{-1} B (I + A^{-1} B)^{-1} A^{-1} \\
+& = & A^{-1} - A^{-1} B (A (I + A^{-1} B))^{-1} \\
+& = & A^{-1} - A^{-1} B (A + B)^{-1}.
+\end{eqnarray*}
+\end{frame}
+}
+
 %
 \begin{frame}{If solution is in the span of the data, we can reparameterize}
 \begin{itemize}
@@ -1764,9 +1820,9 @@ x\mapsto\left(\left\langle w_{1},x\right\rangle ,\ldots,\left\langle w_{k},x\rig
 Recipe for contructing a conditional distribution for prediction:
 \begin{enumerate}
 \item Define input and output space (as for any other model).
-\item Choose the output distribution $p(y\mid x; \theta)$ based on the task %that belongs to the exponential family.
+\item Choose the output distribution $p(y\mid x; \theta)$ based on the task that belongs to the exponential family.
 \item Choose the transfer function that maps $w^Tx$ to a $\Theta$.
-\item (The formal family is called ``generalized linear models''.)
+\item The formal family is called ``generalized linear models''.
 \end{enumerate}
 
 Learning:\\
@@ -1775,7 +1831,6 @@ Learning:\\
 \item Closed solutions do not exist in general, so we use gradient ascent.
 \end{itemize}
 \end{frame}
-
 
 \section{Generative models}
 \begin{frame}
@@ -1906,43 +1961,45 @@ Indicator function $\1\pc{\text{condition}}$ evaluates to 1 if ``condition'' is 
 \onslide<1->{
 We maximize the likelihood of the data $\prod_{n=1}^N p_\theta(\xn, \yn)$ (as opposed to the \emph{conditional} likelihood we've seen before).
 }
-\mode<handout>{
-\begin{align}
-\onslide<2->{
-    \frac{\partial}{\partial \theta_{j,1}}\ell &= \frac{\partial}{\partial \theta_{j,1}}
-    \sum_{n=1}^N \sum_{i=1}^d \log \p{ \theta_{i,\yn} \1\pc{\xn_i=1} + \p{1- \theta_{i,\yn}}\1\pc{\xn_i=0} } 
-+ \log p_{\theta_0}(\yn) \\
-}
-\onslide<3->{
-&= \frac{\partial}{\partial \theta_{j,1}}
-    \sum_{n=1}^N \log \p{ \theta_{j,\yn} \1\pc{\xn_j=1} + \p{1- \theta_{j,\yn}}\1\pc{\xn_j=0} } \qquad \text{ignore } i \neq j \\
-}
-\onslide<4->{
-&= \sum_{n=1}^N \1\pc{ \yn=1 \wedge \xn_j=1 } \frac{1}{\theta_{j,1}} +
-                            \1\pc{ \yn=1 \wedge \xn_j=0 } \frac{1}{1 - \theta_{j,1}}
-\qquad \text{ignore } \yn=0
-}
-\end{align}
-}
-% \end{frame}
 
-% \begin{frame}
-% {MLE solution for our NB model}
-Set $\frac{\partial}{\partial \theta_{j,1}}\ell$ to zero:
-\begin{align}
-\theta_{j,1} = \frac{\sum_{n=1}^N \1\pc{\yn=1 \wedge \xn_j=1}}{\sum_{n=1}^N \1\pc{\yn=1}}
-\end{align}
+\mode<presentation>{
+\textcolor{green}{Exercise}:} Set $\frac{\partial}{\partial \theta_{j,1}}\ell$ to zero, show that
+$
+\theta_{j,1} = \frac{\sum_{n=1}^N \1\pc{\yn=1 \wedge \xn_j=1}}{\sum_{n=1}^N \1\pc{\yn=1}}.$
+
 \pause
+
 In practice, count words:
 \begin{align*}
 \frac{\text{number of fake reviews containing ``absolutely''}}{\text{number of fake reviews}}
 \end{align*}
-\textcolor{green}{Exercise}: show that
-\begin{align}
-\theta_{j,0} &= \frac{\sum_{n=1}^N \1\pc{\yn=0 \wedge \xn_j=1}}{\sum_{n=1}^N \1\pc{\yn=0}}, 
-\theta_0 = \frac{\sum_{n=1}^N \1\pc{ \yn=1 }}{N} 
-\end{align}
+Similarly,
+$
+\theta_{j,0} = \frac{\sum_{n=1}^N \1\pc{\yn=0 \wedge \xn_j=1}}{\sum_{n=1}^N \1\pc{\yn=0}}, 
+\theta_0 = \frac{\sum_{n=1}^N \1\pc{ \yn=1 }}{N}.
+$
 \end{frame}
+
+% \mode<handout>{
+% \begin{frame}{Derivation}
+% \begin{align}
+% \onslide<2->{
+%     \frac{\partial}{\partial \theta_{j,1}}\ell &= \frac{\partial}{\partial \theta_{j,1}}
+%     \sum_{n=1}^N \sum_{i=1}^d \log \p{ \theta_{i,\yn} \1\pc{\xn_i=1} + \p{1- \theta_{i,\yn}}\1\pc{\xn_i=0} } 
+% + \log p_{\theta_0}(\yn) \\
+% }
+% \onslide<3->{
+% &= \frac{\partial}{\partial \theta_{j,1}}
+%     \sum_{n=1}^N \log \p{ \theta_{j,\yn} \1\pc{\xn_j=1} + \p{1- \theta_{j,\yn}}\1\pc{\xn_j=0} } \qquad \text{ignore } i \neq j \\
+% }
+% \onslide<4->{
+% &= \sum_{n=1}^N \1\pc{ \yn=1 \wedge \xn_j=1 } \frac{1}{\theta_{j,1}} +
+%                             \1\pc{ \yn=1 \wedge \xn_j=0 } \frac{1}{1 - \theta_{j,1}}
+% \qquad \text{ignore } \yn=0
+% }
+% \end{align}
+% \end{frame}
+% }
 
 \begin{frame}
 {Review}
@@ -1963,8 +2020,8 @@ Next, NB with continuous features.
 {NB with continuous inputs}
 Let's consider a multiclass classification task with continuous inputs.
 \begin{align}
-p(x_i\mid y) &\sim \mathcal{N}(\mu_{i,y}, \sigma_{i,y}^2) \\
-p(y=k) &= \theta_k
+p(x_i\mid y) &\sim \mathcal{N}(\mu_{i,y}, \sigma_{i,y}^2).\\
+p(y=k) &= \theta_k.
 \end{align}
 \pause
 Likelihood of the data:
@@ -1972,7 +2029,7 @@ Likelihood of the data:
 p(\mathcal{D}) &= \prod_{n=1}^N p(\yn) \prod_{i=1}^d p(\xn_i\mid \yn) \\
 &= \prod_{n=1}^N \theta_{\yn} \prod_{i=1}^d 
     \frac{1}{\sqrt{2\pi}\sigma_{i,\yn}}
-    \exp\p{ -\frac{1}{2\sigma_{i,\yn}^2}{\p{ \xn_i - \mu_{i,\yn} }^2} }
+    \exp\p{ -\frac{1}{2\sigma_{i,\yn}^2}{\p{ \xn_i - \mu_{i,\yn} }^2}}.
 \end{align}
 \end{frame}
 
@@ -1982,11 +2039,11 @@ p(\mathcal{D}) &= \prod_{n=1}^N p(\yn) \prod_{i=1}^d p(\xn_i\mid \yn) \\
 Log likelihood:
 }
 \begin{align}
-\onslide<1->{
+% \onslide<1->{
 \ell &= \sum_{n=1}^N \log \theta_{\yn} +
         \sum_{n=1}^N \sum_{i=1}^d \log \frac{1}{\sqrt{2\pi}\sigma_{i,\yn}}
-                - \frac{1}{2\sigma_{i,\yn}^2}{\p{ \xn_i - \mu_{i,\yn} }^2}    \\
-}
+                - \frac{1}{2\sigma_{i,\yn}^2}{\p{ \xn_i - \mu_{i,\yn} }^2}.
+% }
 \end{align}
 \mode<handout>{
 \begin{align}
@@ -1998,20 +2055,20 @@ Log likelihood:
 % }
 % \onslide<3->{
 &=  \sum_{n:\yn=k}
-        \frac{1}{\sigma_{j,k}^2} \p{ \xn_j - \mu_{j,k} }
+        \frac{1}{\sigma_{j,k}^2} \p{ \xn_j - \mu_{j,k}}.
 % }
 \end{align}
 }
-\onslide<2->{
+% \onslide<2->{
 Set $\frac{\partial}{\partial \mu_{j,k}}\ell$ to zero:
-}
+% }
 \begin{align}
-\onslide<3->{
+% \onslide<3->{
 \mu_{j,k} = \frac{\sum_{n:\yn=k} \xn_j}{\sum_{n:\yn=k} 1}
-}
-\onslide<4->{
-= \text{sample mean of $x_j$ in class $k$}
-}
+% }
+% \onslide<4->{
+= \text{sample mean of $x_j$ in class $k$}.
+% }
 \end{align}
 
 \end{frame}
@@ -2021,8 +2078,8 @@ Set $\frac{\partial}{\partial \mu_{j,k}}\ell$ to zero:
 Show that
 \begin{align}
 \sigma_{j,k}^2 &= \frac{\sum_{n:\yn=k} \p{ \xn_j - \mu_{j,k} }^2}{\sum_{n:\yn=k} 1}
-= \text{sample variance of $x_j$ in class $k$}  \\
-\theta_{k} &= \frac{\sum_{n:\yn=k}1}{N} \hspace{3em} \text{(class prior)}
+= \text{sample variance of $x_j$ in class $k$}.  \\
+\theta_{k} &= \frac{\sum_{n:\yn=k}1}{N}. \hspace{3em} \text{(class prior)}
 \end{align}
 \end{frame}
 
@@ -2093,20 +2150,6 @@ Given the same training data, is $\theta_\text{LR} = \theta_\text{GNB}?$
 \end{frame}
 
 
-\begin{frame}
-{Generative vs discriminative classifiers}
-Ng, A. and Jordan, M. (2002). \href{https://ai.stanford.edu/~ang/papers/nips01-discriminativegenerative.pdf}{On discriminative versus generative classifiers: A comparison of logistic regression and naive Bayes}. In Advances in Neural Information Processing Systems 14.
-
-\begin{tikzpicture}
-            \node[anchor=south west,inner sep=0] at (5,0) {\includegraphics[scale=0.5]{figures/gen-disc}};
-            \node[fill=white,inner sep=1pt] (t1) at (2.5,3) {faster convergence};
-         \draw[ultra thick,red,->] (t1) -- (7,2.5);
-         \node[fill=white,inner sep=1pt] (t2) at (13,4.5) {higher asymptotic error};
-         \draw[ultra thick,red,->] (t2) -- (10.5,2);
-\end{tikzpicture}
-
-Solid line: naive Bayes; dashed line: logistic regression.
-\end{frame}
 
 \begin{frame}
 {Naive Bayes vs logistic regression}
@@ -2130,15 +2173,28 @@ Logistic regression and Gaussian naive Bayes converge to the same classifier asy
     \item Shared variance
 \end{itemize}
 
-What if the GNB assumption is not true?
-
 % }
 % https://www.cs.princeton.edu/courses/archive/spring07/cos424/scribe_notes/0410.pdf
 \end{frame}
 
+\begin{frame}
+{Generative vs discriminative classifiers}
+Ng, A. and Jordan, M. (2002). \href{https://ai.stanford.edu/~ang/papers/nips01-discriminativegenerative.pdf}{On discriminative versus generative classifiers: A comparison of logistic regression and naive Bayes}. In Advances in Neural Information Processing Systems 14.
+
+\begin{tikzpicture}
+            \node[anchor=south west,inner sep=0] at (5,0) {\includegraphics[scale=0.5]{figures/gen-disc}};
+            \node[fill=white,inner sep=1pt] (t1) at (2.5,3) {faster convergence};
+         \draw[ultra thick,red,->] (t1) -- (7,2.5);
+         \node[fill=white,inner sep=1pt] (t2) at (13,4.5) {higher asymptotic error};
+         \draw[ultra thick,red,->] (t2) -- (10.5,2);
+\end{tikzpicture}
+
+Solid line: naive Bayes; dashed line: logistic regression.
+\end{frame}
 
 \begin{frame}{Multivariate Gaussian Distribution}
 \begin{itemize}
+% \item What if input dimensions are not independent?
 \item $\bx \sim {\cal N} (\mu, \Sigma)$, a Gaussian (or normal) distribution defined as
 \[
 p(\bx) = \frac{1}{(2 \pi)^{d/2} |\Sigma|^{1/2}} \exp \left[ -\frac{1}{2} (\bx - \mu)^T \Sigma^{-1} (\bx - \mu) \right] \
@@ -2147,7 +2203,7 @@ p(\bx) = \frac{1}{(2 \pi)^{d/2} |\Sigma|^{1/2}} \exp \left[ -\frac{1}{2} (\bx - 
 \begin{figure}
 \includegraphics[width=0.3\linewidth]{figures/gaussian2d}
 \end{figure}
-\onslide<2->\item Mahalanobis distance $(\bx - \mu_k)^T \Sigma^{-1} (\bx - \mu_k)$ measures the distance from $\bx$ to $\mu$ in terms of $\Sigma$
+\onslide<2->\item Mahalanobis distance $(\bx - \mu_k)^T \Sigma^{-1} (\bx - \mu_k)$ measures the distance from $\bx$ to $\mu$.
 \onslide<3->\item It normalizes for difference in variances and correlations
 \end{itemize}
 \end{frame}
@@ -2240,7 +2296,7 @@ $\quad$$Cov(x_1,x_2)=0$ & $Cov(x_1,x_2)>0$  & $Cov(x_1,x_2)<0$ \\
 \item Gaussian Bayes Classifier in its general form assumes that $p(\bx|y)$ is distributed according to a multivariate normal (Gaussian) distribution
 \item Multivariate Gaussian distribution:
 \[
-p(\bx|t=k) = \frac{1}{(2 \pi)^{d/2} |\Sigma_k|^{1/2}} \exp \left[ -\frac{1}{2} (\bx - \boldsymbol{\mu}_k)^T \Sigma_k^{-1} (\bx - \boldsymbol\mu_k) \right] \
+p(\bx|y=k) = \frac{1}{(2 \pi)^{d/2} |\Sigma_k|^{1/2}} \exp \left[ -\frac{1}{2} (\bx - \boldsymbol{\mu}_k)^T \Sigma_k^{-1} (\bx - \boldsymbol\mu_k) \right] \
 \]
 where $|\Sigma_k|$ denotes the determinant of the matrix, and $d$ is dimension of $\bx$
 \onslide<2->\item Each class $k$ has associated mean vector $\boldsymbol{\mu}_k$ and covariance matrix $\Sigma_k$
@@ -2257,7 +2313,7 @@ where $|\Sigma_k|$ denotes the determinant of the matrix, and $d$ is dimension o
 \begin{frame}{Example}
 \vspace{-0.3cm}
 \begin{figure}
-    \includegraphics[width=0.8\linewidth,trim={5cm 1cm 5cm 1cm},clip]{figures/gbc_example}
+    \includegraphics[width=0.9\linewidth,trim={5cm 1cm 5cm 1cm},clip]{figures/gbc_example}
 \end{figure}
 \end{frame}
 
