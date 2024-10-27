@@ -1,6 +1,6 @@
 %% LyX 2.3.6.2 created this file.  For more info, see http://www.lyx.org/.
 %% Do not edit unless you really know what you are doing.
-\documentclass[english,dvipsnames,aspectratio=169,handout]{beamer}
+\documentclass[english,dvipsnames,aspectratio=169]{beamer}
 \usepackage{mathptmx}
 \usepackage{algorithm2e}
 \usepackage{eulervm}
@@ -113,7 +113,7 @@
 % Slides based on Lecture
 % \href{https://github.com/davidrosenberg/mlcourse/blob/gh-pages/Lectures/08a.bayesian-methods.pdf}{08a} from David Rosenberg's course materials (\url{https://github.com/davidrosenberg/mlcourse}) and Marylou Gabri\'e's materials
 % }
-\date{Oct 31, 2023}
+\date{Oct 29, 2023}
 \institute{NYU}
 
 % \title[DS-GA 1003]{Bayesian Methods}
@@ -626,9 +626,9 @@
 
 \begin{frame}{Announcement}
 \begin{itemize}
-  \item Schedule your project consultation soon.
+  \item Schedule your project consultation soon (they are on the week after the proposal).
   \item Use the provided template! (if your final report fails to use template then there will be marks off)
-  \item Homework 3 is released and due Nov 14 11:59AM.
+  \item Homework 3 will be released soon and due Nov 12 11:59AM.
 \end{itemize}
 \end{frame}
 
@@ -1577,26 +1577,32 @@ bands:
 {Motivation}
 \begin{itemize}
 \item So far, most algorithms we've learned are designed for binary classification.
+\mode<handout>{
   \begin{itemize}
   \item Sentiment analysis (positive vs. negative)
   \item Spam filter (spam vs. non-spam)
   \end{itemize}
+}
 \note[item]{Which ones we've learned can handle more than 2 classes? Multinomial logistic regression, naive Bayes. Next, trees and random forests.}
 \pause
 \item Many real-world problems have more than two classes.
+\mode<handout>{
 \begin{itemize}
   \item Document classification (over 10 classes)
   \item Object recognition (over 20k classes)
   \item Face recognition (millions of classes)
 \end{itemize}
+}
 \note[item]{Examples? Text classification, object recognition (ImageNet has more than 20k classes).}
 \pause
 \item<2-> What are some potential issues when we have a large number of classes?
+\mode<handout>{
 \begin{itemize}
   \item Computation cost
   \item Class imbalance
   \item Different cost of errors
 \end{itemize}
+}
 \note<2->[item]{Class imbalance, computation cost for both training and testing, different cost of errors etc.}
 \end{itemize}
 \end{frame}
@@ -1797,111 +1803,111 @@ Lack theoretical justification but simple to implement and works well in practic
 %Dual form would prefer AvA. When number of examples much larger than feature dimensions, dual is more expensive.}
 \end{frame}
 
-\subsection{Error correcting output codes}
+% \subsection{Error correcting output codes}
 
-\begin{frame}
-{Code word for labels}
-Using the reduction approach, can you train fewer than $k$ binary classifiers?
-\pause
+% \begin{frame}
+% {Code word for labels}
+% Using the reduction approach, can you train fewer than $k$ binary classifiers?
+% \pause
 
-\textbf{Key idea}: Encode labels as binary codes and predict the code bits directly.
-\pause
+% \textbf{Key idea}: Encode labels as binary codes and predict the code bits directly.
+% \pause
 
-OvA encoding:
-\begin{table}
-\begin{tabular}{|c|c|c|c|c|}
-\hline
-class & $h_1$ & $h_2$ & $h_3$ & $h_4$ \\
-\hline
-1 & 1 & 0 & 0 & 0 \\
-\hline
-2 & 0 & 1 & 0 & 0\\
-\hline
-3 & 0 & 0 & 1 & 0\\
-\hline
-4 & 0 & 0 & 0 & 1\\
-\hline
-\end{tabular}
-\end{table}
-\pause
+% OvA encoding:
+% \begin{table}
+% \begin{tabular}{|c|c|c|c|c|}
+% \hline
+% class & $h_1$ & $h_2$ & $h_3$ & $h_4$ \\
+% \hline
+% 1 & 1 & 0 & 0 & 0 \\
+% \hline
+% 2 & 0 & 1 & 0 & 0\\
+% \hline
+% 3 & 0 & 0 & 1 & 0\\
+% \hline
+% 4 & 0 & 0 & 0 & 1\\
+% \hline
+% \end{tabular}
+% \end{table}
+% \pause
 
-OvA uses $k$ bits to encode each label, what's the minimal number of bits you can use?
-\end{frame}
+% OvA uses $k$ bits to encode each label, what's the minimal number of bits you can use?
+% \end{frame}
 
-\begin{frame}
-{Error correcting output codes (ECOC)}
-\begin{columns}
-\begin{column}{0.4\textwidth}
-Example: 8 classes, 6-bit code
-\begin{table}
-\begin{tabular}{|c|c|c|c|c|c|c|}
-\hline
-class & $h_1$ & $h_2$ & $h_3$ & $h_4$ &  $h_5$ & $h_6$\\
-\hline
-1 & 0 & 0 & 0 & 1 & 0 & 0 \\
-\hline
-2 & 1 & 0 & 0 & 0 & 0 & 0 \\
-\hline
-\rowcolor{red!20}
-3 & 0 & 1 & 1 & 0 & 1 & 0\\
-\hline
-4 & 1 & 1 & 0 & 0 & 0 & 0 \\
-\hline
-5 & 1 & 1 & 0 & 0 & 1 & 0 \\
-\hline
-6 & 0 & 0 & 1 & 1 & 0 & 1 \\
-\hline
-7 & 0 & 0 & 1 & 0 & 0 & 0 \\
-\hline
-8 & 0 & 1 & 0 & 1 & 0 & 0 \\
-\hline
-\end{tabular}
-\end{table}
-\end{column}
-%
-\begin{column}{0.6\textwidth}
-\begin{description}
-\item<1->[Training]
-Binary classifier $h_i$: 
-\begin{itemize}
-\item +1: classes whose $i$-th bit is 1
-\item -1: classes whose $i$-th bit is 0
-\end{itemize}
-\item<2->[Prediction]
-Closest label in terms of Hamming distance.
-\begin{table}
-\begin{tabular}{{|c|c|c|c|c|c|}}
-\hline
-$h_1$ & $h_2$ & $h_3$ & $h_4$ &  $h_5$ & $h_6$\\
-\hline
-0 & 1 & 1 & 0 & 1 & 1 \\
-\hline
-\end{tabular}
-\end{table}
-\item<3->[Code design]
-Want good binary classifiers.
-\note<3->[item]{Random or depending on domain knowledge}
-\end{description}
-\end{column}
-\end{columns}
-\end{frame}
+% \begin{frame}
+% {Error correcting output codes (ECOC)}
+% \begin{columns}
+% \begin{column}{0.4\textwidth}
+% Example: 8 classes, 6-bit code
+% \begin{table}
+% \begin{tabular}{|c|c|c|c|c|c|c|}
+% \hline
+% class & $h_1$ & $h_2$ & $h_3$ & $h_4$ &  $h_5$ & $h_6$\\
+% \hline
+% 1 & 0 & 0 & 0 & 1 & 0 & 0 \\
+% \hline
+% 2 & 1 & 0 & 0 & 0 & 0 & 0 \\
+% \hline
+% \rowcolor{red!20}
+% 3 & 0 & 1 & 1 & 0 & 1 & 0\\
+% \hline
+% 4 & 1 & 1 & 0 & 0 & 0 & 0 \\
+% \hline
+% 5 & 1 & 1 & 0 & 0 & 1 & 0 \\
+% \hline
+% 6 & 0 & 0 & 1 & 1 & 0 & 1 \\
+% \hline
+% 7 & 0 & 0 & 1 & 0 & 0 & 0 \\
+% \hline
+% 8 & 0 & 1 & 0 & 1 & 0 & 0 \\
+% \hline
+% \end{tabular}
+% \end{table}
+% \end{column}
+% %
+% \begin{column}{0.6\textwidth}
+% \begin{description}
+% \item<1->[Training]
+% Binary classifier $h_i$: 
+% \begin{itemize}
+% \item +1: classes whose $i$-th bit is 1
+% \item -1: classes whose $i$-th bit is 0
+% \end{itemize}
+% \item<2->[Prediction]
+% Closest label in terms of Hamming distance.
+% \begin{table}
+% \begin{tabular}{{|c|c|c|c|c|c|}}
+% \hline
+% $h_1$ & $h_2$ & $h_3$ & $h_4$ &  $h_5$ & $h_6$\\
+% \hline
+% 0 & 1 & 1 & 0 & 1 & 1 \\
+% \hline
+% \end{tabular}
+% \end{table}
+% \item<3->[Code design]
+% Want good binary classifiers.
+% \note<3->[item]{Random or depending on domain knowledge}
+% \end{description}
+% \end{column}
+% \end{columns}
+% \end{frame}
 
-\begin{frame}
-{Error correcting output codes: summary}
-\begin{itemize}
-\item Computationally more efficient than OvA (a special case of ECOC). Better for large $k$.
-\item Why not use the minimal number of bits ($\log_2k$)?
-\pause
-\begin{itemize}
-\item If the minimum Hamming distance between any pair of code word is $d$, then it can correct $\left \lfloor \frac{d-1}{2} \right \rfloor$ errors.
-\item In plain words, if rows are far from each other, ECOC is robust to errors.
-\end{itemize}
-\pause
-\item Trade-off between code distance and binary classification performance.
-\note<2>[item]{Larger distance -> more binary problems -> more likely to have hard binary problems.}
-\item Nice theoretical results \href{http://www.jmlr.org/papers/volume1/allwein00a/allwein00a.pdf}{[Allwein et al., 2000]} (also incoporates AvA).
-\end{itemize}
-\end{frame}
+% \begin{frame}
+% {Error correcting output codes: summary}
+% \begin{itemize}
+% \item Computationally more efficient than OvA (a special case of ECOC). Better for large $k$.
+% \item Why not use the minimal number of bits ($\log_2k$)?
+% \pause
+% \begin{itemize}
+% \item If the minimum Hamming distance between any pair of code word is $d$, then it can correct $\left \lfloor \frac{d-1}{2} \right \rfloor$ errors.
+% \item In plain words, if rows are far from each other, ECOC is robust to errors.
+% \end{itemize}
+% \pause
+% \item Trade-off between code distance and binary classification performance.
+% \note<2>[item]{Larger distance -> more binary problems -> more likely to have hard binary problems.}
+% \item Nice theoretical results \href{http://www.jmlr.org/papers/volume1/allwein00a/allwein00a.pdf}{[Allwein et al., 2000]} (also incoporates AvA).
+% \end{itemize}
+% \end{frame}
 
 \begin{frame}
 {Review}
@@ -1946,14 +1952,18 @@ f(x) = sigmoid(z) = \frac{1}{1+ \exp(-z)}= \frac{1}{1 + \exp(- w^\top x-b)}.
   \item Now what if we have one $w_c$ for each class $c$?
 
   \pause
+  \mode<handout>{
  \begin{align}
   f_c(x) = \frac{\exp(w_c^\top x) + b_c}{\sum_c \exp(w_c^\top x + b_c)}
   \end{align}
+  }
   \item Also called ``softmax'' in neural networks.
 
   \pause
   \item Loss function:
+  \mode<handout>{
   $L = \sum_i -y_c^{(i)} \log f_c(x^{(i)})$
+  }
 
   \pause
   \item Gradient: $\frac{\partial L}{\partial z} = f - y$. Recall: MSE loss.
@@ -2231,13 +2241,19 @@ h(\xn,\yn)-h(\xn,y).
 \begin{frame}
 {Multiclass SVM: separable case}
 \begin{description}
-\item<1->[Binary] 
+\item<1->[Binary]Recall binary formulation.
+\mode<handout>{
 \begin{align}
 \min_w \quad & \frac{1}{2}\|w\|^2 \\
 \text{s.t.} \quad& \underbrace{\yn w^T\xn}_{\text{margin}} \geq 1 \quad \forall (\xn, \yn) \in \sD
 \end{align}
-
+}
+\mode<presentation>{
+  \vspace{1.0in}
+  % \\
+}
 \item<2->[Multiclass] As in the binary case, take 1 as our target margin.
+\mode<handout>{
 \begin{align}
 m_{n,y}(w)&\eqdef \underbrace{\left\langle w,\Psi(\xn,\yn)\right\rangle}_{\text{score of correct class}}
 - \underbrace{\left\langle w,\Psi(\xn,y)\right\rangle}_{\text{score of other class}} \\
@@ -2245,7 +2261,11 @@ m_{n,y}(w)&\eqdef \underbrace{\left\langle w,\Psi(\xn,\yn)\right\rangle}_{\text{
 \text{s.t.} \quad& m_{n,y}(w) \geq 1 \quad
 \forall (\xn, \yn) \in \sD,\, y\neq \yn
 \end{align}
-
+}
+\mode<presentation>{
+  \vspace{1.0in}
+  % \\
+}
 \end{description}
 \onslide<3->{
 \think{Exercise}: write the objective for the non-separable case
@@ -2277,6 +2297,7 @@ m_{n,y}(w)&\eqdef \underbrace{\left\langle w,\Psi(\xn,\yn)\right\rangle}_{\text{
 \item In general, can also have different cost for each class.
 
 \item Upper bound on $\Delta(y, y')$.
+\mode<handout>{
 \begin{align}
 \hat{y} &\eqdef \argmax_{y'\in\sY} \left\langle w, \Psi(x, y') \right\rangle \\
 \onslide<+->{
@@ -2289,8 +2310,13 @@ m_{n,y}(w)&\eqdef \underbrace{\left\langle w,\Psi(\xn,\yn)\right\rangle}_{\text{
 && \text{When are they equal?}
 }
 \end{align}
+}
+\mode<presentation>{
+  \vspace{1.0in}
+}
 
 \item Generalized hinge loss:
+\mode<handout>{
 \begin{align}
 \ell_\text{hinge}(y, x, w) \eqdef
 \max_{y'\in\sY}\p{
@@ -2298,6 +2324,10 @@ m_{n,y}(w)&\eqdef \underbrace{\left\langle w,\Psi(\xn,\yn)\right\rangle}_{\text{
 \left\langle w, \p{\Psi(x, {y}) - \Psi(x, {y'}}) \right\rangle
 }
 \end{align}
+}
+\mode<presentation>{
+  \vspace{0.4in}
+}
 % \note<+->{When $y'=y$, $\ell_{\text{hinge}}=0$.}
 \end{itemize}
 \end{frame}
@@ -2306,12 +2336,18 @@ m_{n,y}(w)&\eqdef \underbrace{\left\langle w,\Psi(\xn,\yn)\right\rangle}_{\text{
  
 \begin{itemize}
 \item Recall the hinge loss formulation for binary SVM (without the bias term):
+\mode<handout>{
 \[
 \min_{w\in\reals^{d}}\frac{1}{2}||w||^{2}+C\sum_{n=1}^{N}\max\left(0,1-\underbrace{\yn w^{T}\xn}_{\text{margin}}\right).
 \]
+}
+\mode<presentation>{
+  \vspace{1.0in}
+}
 
 \pause{}
 \item The multiclass objective: 
+\mode<handout>{
 \[
 \min_{w\in\reals^{d}}\frac{1}{2}||w||^{2}+
 C\sum_{n=1}^{N}\max_{y'\in\sY} \p{
@@ -2321,6 +2357,10 @@ C\sum_{n=1}^{N}\max_{y'\in\sY} \p{
 }_{\text{margin}}
 }
 \]
+}
+\mode<presentation>{
+  \vspace{0.8in}
+}
 
 \begin{itemize}
 \item $\Delta(y, y')$ as \textcolor{blue}{target margin} for each class.
@@ -2428,63 +2468,84 @@ $\forall y\in \sY$, then no loss on example $n$.
 % \end{itemize}
 % \end{frame}
 
-% \section{Introduction to Structured Prediction}
-% \begin{frame}{Example: Part-of-speech (POS) Tagging}
+\section{Introduction to Structured Prediction}
+\begin{frame}{Example: Part-of-speech (POS) Tagging}
 
-% \begin{itemize}
-% \item Given a sentence, give a part of speech tag for each word:
-% \end{itemize}
-% \begin{center}
-% \begin{tabular}{|c|c|c|c|c|}
-% \hline 
-% $x$ & $\underbrace{\mbox{[START]}}_{x_{0}}$ & $\underbrace{\mbox{He}}_{x_{1}}$ & $\underbrace{\mbox{eats}}_{x_{2}}$ & $\underbrace{\mbox{apples}}_{x_{3}}$\tabularnewline
-% \hline 
-% $y$ & $\underbrace{\mbox{[START]}}_{y_{0}}$ & $\underbrace{\mbox{Pronoun}}_{y_{1}}$ & $\underbrace{\mbox{Verb}}_{y_{2}}$ & $\underbrace{\mbox{Noun}}_{y_{3}}$\tabularnewline
-% \hline 
-% \end{tabular}
-% \par\end{center}
+\begin{itemize}
+\item Given a sentence, give a part of speech tag for each word:
+\end{itemize}
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|}
+\hline 
+$x$ & $\underbrace{\mbox{[START]}}_{x_{0}}$ & $\underbrace{\mbox{He}}_{x_{1}}$ & $\underbrace{\mbox{eats}}_{x_{2}}$ & $\underbrace{\mbox{apples}}_{x_{3}}$\tabularnewline
+\hline 
+$y$ & $\underbrace{\mbox{[START]}}_{y_{0}}$ & $\underbrace{\mbox{Pronoun}}_{y_{1}}$ & $\underbrace{\mbox{Verb}}_{y_{2}}$ & $\underbrace{\mbox{Noun}}_{y_{3}}$\tabularnewline
+\hline 
+\end{tabular}
+\par\end{center}
 
-% \pause{}
-% \begin{itemize}
-% \item $\cv=\left\{ \mbox{all English words}\right\} \cup\left\{ \mbox{[START]},"."\right\} $
-% \item $\cx=\cv^{n}$, $n=1,2,3,\ldots$ {[}Word sequences of any length{]}
+\pause{}
+\mode<handout>{
+\begin{itemize}
+\item $\cv=\left\{ \mbox{all English words}\right\} \cup\left\{ \mbox{[START]},"."\right\} $
+\item $\cx=\cv^{n}$, $n=1,2,3,\ldots$ {[}Word sequences of any length{]}
 
-% \pause{}
-% \item $\cp=\left\{ \mbox{START},\mbox{Pronoun,Verb,Noun,Adjective}\right\} $
-% \item $\cy=\cp^{n},\,n=1,2,3,\ldots${[}Part of speech sequence of any length{]}
+\pause{}
+\item $\cp=\left\{ \mbox{START},\mbox{Pronoun,Verb,Noun,Adjective}\right\} $
+\item $\cy=\cp^{n},\,n=1,2,3,\ldots${[}Part of speech sequence of any length{]}
+\end{itemize}
+}
+\mode<presentation>{
+  \vspace{1.0in}
+}
+\end{frame}
 
-% \end{itemize}
-% \end{frame}
+\begin{frame}{Example: Action grounding from long-form videos}
+\begin{itemize}
+  \item Given a long video, segment the video into short windows where each window corresponds to an action from a list of actions.
+  \item E.g. slicing, chopping, frying, washing, etc.
 
-% \begin{frame}{Multiclass Hypothesis Space}
+  \mode<handout>{
+  \item $\cv=\mathbb{R}^D $ image features
+  \item $\cx=\cv^{n}$, $n=1,2,3,\ldots$ {[}video frame length{]}
+  \item $\cp=\left\{ \mbox{Slicing,Chopping,Frying,...}\right\} $
+  \item $\cy=\cp^{n},\,n=1,2,3,\ldots${[}Part of speech sequence of any length{]}
+  \item Can also be represented with start and end timestamps.
+  }
+  \mode<presentation>{
+  \vspace{1.3in}
+  }
+\end{itemize}
+\end{frame}
 
-% \begin{itemize}
-% \item \textcolor{blue}{Discrete} output space: $\cy(x)$ 
-% \begin{itemize}
-% \item Very large but has structure, e.g., linear chain (sequence labeling), tree (parsing)
-% \item Size depends on input $x$
-% \end{itemize}
+\begin{frame}{Multiclass Hypothesis Space}
 
-% \pause{}
-% \item Base Hypothesis Space: $\ch=\left\{ h:\cx\times\cy\to\reals\right\} $
-% \begin{itemize}
-% \item $h(x,y)$ gives \textcolor{blue}{compatibility score} between input $x$ and
-% output $y$ 
-% \end{itemize}
+\begin{itemize}
+\item \textcolor{blue}{Discrete} output space: $\cy(x)$ 
+\begin{itemize}
+\item Very large but has structure, e.g., linear chain (sequence labeling), tree (parsing)
+\item Size depends on input $x$
+\end{itemize}
 
-% \pause{}
-% \item Multiclass hypothesis space
-% \[
-% \cf=\left\{ x\mapsto\argmax_{y\in\cy}h(x,y)\mid h\in\ch\right\} 
-% \]
+\pause{}
+\item Base Hypothesis Space: $\ch=\left\{ h:\cx\times\cy\to\reals\right\} $
+\begin{itemize}
+\item $h(x,y)$ gives \textcolor{blue}{compatibility score} between input $x$ and
+output $y$ 
+\end{itemize}
 
+\pause{}
+\item Multiclass hypothesis space
+\[
+\cf=\left\{ x\mapsto\argmax_{y\in\cy}h(x,y)\mid h\in\ch\right\} 
+\]
 
-% \item Final prediction function is an $f\in\cf$. 
-% \item For each $f\in\cf$ there is an underlying compatibility score function
-% $h\in\ch$. 
-% \end{itemize}
-% \end{frame}
-% %
+\item Final prediction function is an $f\in\cf$. 
+\item For each $f\in\cf$ there is an underlying compatibility score function
+$h\in\ch$. 
+\end{itemize}
+\end{frame}
+%
 
 % \begin{frame}{Structured Prediction}
 % \begin{itemize}
