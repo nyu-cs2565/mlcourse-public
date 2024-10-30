@@ -108,13 +108,15 @@
 \begin{document}
 \input{../rosenberg-macros.tex}
 \title[CSCI-GA 2565]{Bayesian Methods \& Multiclass}
-\author{Mengye Ren}
+\author[]{Mengye Ren
+\\ \quad\\
+\small (Slides credit to David Rosenberg, He He, et al.)}
 % \author{Tal Linzen \\
 % Slides based on Lecture
 % \href{https://github.com/davidrosenberg/mlcourse/blob/gh-pages/Lectures/08a.bayesian-methods.pdf}{08a} from David Rosenberg's course materials (\url{https://github.com/davidrosenberg/mlcourse}) and Marylou Gabri\'e's materials
 % }
-\date{Oct 29, 2023}
-\institute{NYU}
+\date[]{Oct 29, 2024}
+\institute[]{NYU}
 
 % \title[DS-GA 1003]{Bayesian Methods}
 % \author{Julia Kempe \& David S. Rosenberg }
@@ -624,8 +626,15 @@
 
 % \end{frame}
 
+\begin{frame}{Slides}
+\begin{center}
+\includegraphics[width=0.35\textwidth]{figures/qr_7.png}
+\end{center}
+\end{frame}
+
 \begin{frame}{Announcement}
 \begin{itemize}
+  \item Project proposal due Oct 31 noon.
   \item Schedule your project consultation soon (they are on the week after the proposal).
   \item Use the provided template! (if your final report fails to use template then there will be marks off)
   \item Homework 3 will be released soon and due Nov 12 11:59AM.
@@ -2247,6 +2256,7 @@ h(\xn,\yn)-h(\xn,y).
 \min_w \quad & \frac{1}{2}\|w\|^2 \\
 \text{s.t.} \quad& \underbrace{\yn w^T\xn}_{\text{margin}} \geq 1 \quad \forall (\xn, \yn) \in \sD
 \end{align}
+\vspace{-1.0in}
 }
 \mode<presentation>{
   \vspace{1.0in}
@@ -2310,6 +2320,7 @@ m_{n,y}(w)&\eqdef \underbrace{\left\langle w,\Psi(\xn,\yn)\right\rangle}_{\text{
 && \text{When are they equal?}
 }
 \end{align}
+\vspace{-1.0in}
 }
 \mode<presentation>{
   \vspace{1.0in}
@@ -2324,6 +2335,7 @@ m_{n,y}(w)&\eqdef \underbrace{\left\langle w,\Psi(\xn,\yn)\right\rangle}_{\text{
 \left\langle w, \p{\Psi(x, {y}) - \Psi(x, {y'}}) \right\rangle
 }
 \end{align}
+\vspace{-0.4in}
 }
 \mode<presentation>{
   \vspace{0.4in}
@@ -2340,6 +2352,7 @@ m_{n,y}(w)&\eqdef \underbrace{\left\langle w,\Psi(\xn,\yn)\right\rangle}_{\text{
 \[
 \min_{w\in\reals^{d}}\frac{1}{2}||w||^{2}+C\sum_{n=1}^{N}\max\left(0,1-\underbrace{\yn w^{T}\xn}_{\text{margin}}\right).
 \]
+\vspace{-1.0in}
 }
 \mode<presentation>{
   \vspace{1.0in}
@@ -2357,6 +2370,7 @@ C\sum_{n=1}^{N}\max_{y'\in\sY} \p{
 }_{\text{margin}}
 }
 \]
+\vspace{-0.8in}
 }
 \mode<presentation>{
   \vspace{0.8in}
@@ -2547,344 +2561,344 @@ $h\in\ch$.
 \end{frame}
 %
 
-% \begin{frame}{Structured Prediction}
-% \begin{itemize}
-% \item Part-of-speech tagging
+\begin{frame}{Structured Prediction}
+\begin{itemize}
+\item Part-of-speech tagging
+\begin{table}
+\begin{tabular}{llll}
+$x\colon$ & he & eats & apples \\
+$y\colon$ & pronoun & verb & noun 
+\end{tabular}
+\end{table}
+
+\item Multiclass hypothesis space:
+\begin{align}
+& h(x,y) = w^T \Psi(x, y) \\
+& \cf = \left\{ x\mapsto\argmax_{y\in\cy}h(x,y)\mid h\in\ch\right\}
+\end{align}
+\end{itemize}
+
+\begin{itemize}
+\item A special case of multiclass classification
+\item  How to design the feature map $\Psi$? What are the considerations?
+\note{contextual dependence, efficient argmax}
+\end{itemize}
+\end{frame}
+%
+\begin{frame}{Unary features}
+
+\begin{itemize}
+\item A  \textbf{unary feature} only depends on 
+\begin{itemize}
+\item the label at a \textcolor{blue}{single position}, $y_{i}$, and $x$ 
+\end{itemize}
+
+\item Example: 
+\begin{eqnarray*}
+\phi_{1}(x,y_{i}) & = & \ind{x_{i}=\mbox{runs}}\ind{y_{i}=\mbox{Verb}}\\
+\phi_{2}(x,y_{i}) & = & \ind{x_{i}=\mbox{runs}}\ind{y_{i}=\mbox{Noun}}\\
+\phi_{3}(x,y_{i}) & = & \ind{x_{i-1}=\mbox{He}}\ind{x_{i}=\mbox{runs}}\ind{y_{i}=\mbox{Verb}}
+\end{eqnarray*}
+ 
+\end{itemize}
+\end{frame}
+%
+\begin{frame}{Markov features}
+
+\begin{itemize}
+\item A \textbf{markov feature} only depends on 
+\begin{itemize}
+\item two \textcolor{blue}{adjacent} labels, $y_{i-1}$ and $y_{i}$,
+and $x$
+\end{itemize}
+
+\item Example: 
+\begin{eqnarray*}
+\theta_{1}(x,y_{i-1},y_{i}) & = & \ind{y_{i-1}=\mbox{Pronoun}}\ind{y_{i}=\mbox{Verb}}\\
+\theta_{2}(x,y_{i-1},y_{i}) & = & \ind{y_{i-1}=\mbox{Pronoun}}\ind{y_{i}=\mbox{Noun}}
+\end{eqnarray*}
+
+\item Reminiscent of Markov models in the output space
+\item Possible to have higher-order features 
+ 
+\end{itemize}
+\end{frame}
+%
+\begin{frame}{Local Feature Vector and Compatibility Score}
+\begin{itemize}[<+->]
+\item At each position $i$ in sequence, define the \textbf{local feature
+vector} (\textcolor{blue}{unary} and \textcolor{red}{markov}):
+\begin{eqnarray*}
+\Psi_{i}(x,y_{i-1},y_{i}) & = & (\phi_{1}(x,{\color{blue}y_{i}}),\phi_{2}(x,{\color{blue}y_{i}}),\ldots,\\
+ &  & \theta_{1}(x,{\color{red}y_{i-1},y_{i}}),\theta_{2}(x,{\color{red}y_{i-1},y_{i}}),\ldots)
+\end{eqnarray*}
+
+\item And \textbf{local compatibility score} at position $i$:
+$\left\langle w,\Psi_{i}(x,y_{i-1},y_{i})\right\rangle $. 
+
+\item The compatibility score for $\left(x,y\right)$
+is the sum of local compatibility scores: 
+\begin{align}
+\sum_{i}\left\langle w,\Psi_{i}(x,y_{i-1},y_{i})\right\rangle 
+= \left\langle w,\sum_{i}\Psi_{i}(x,y_{i-1},y_{i})\right\rangle
+= \left\langle w,\Psi(x,y)\right\rangle ,
+\end{align}
+where we define the \textbf{sequence feature vector} by 
+\[
+\Psi(x,y)=\sum_{i}\Psi_{i}(x,y_{i-1},y_{i}). \qquad \text{\color{blue}decomposable}
+\]
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+{Structured perceptron}
+\begin{algorithm}[H]
+  Given a dataset $\sD=\pc{(x, y)}$\;
+  Initialize $w\leftarrow 0$\;
+  \For{$\text{iter} = 1,2,\ldots,T$}
+  {
+  \For{$(x,y) \in \sD$}
+  {
+    $\hat{y} = \argmax_{y'\in{\color<2->{red}\sY(x)}} w^T\psi(x, y')$\;
+    \If(\tcp*[h]{We've made a mistake}){$\hat{y} \neq y$}{ 
+    $w \leftarrow w + \Psi(x, y)$ \tcp*[l]{Move the scorer towards $\psi(x, y)$}
+    $w \leftarrow w - \Psi(x, \hat{y})$ \tcp*[l]{Move the scorer away from $\psi(x, \hat{y})$}
+    }
+    }
+    }
+\end{algorithm}
+\onslide<2->{
+Identical to the multiclass perceptron algorithm except the $\argmax$ is now over the structured output space $\sY(x)$.
+}
+\end{frame}
+%
+
+\begin{frame}
+{Structured hinge loss}
+\begin{itemize}
+\item Recall the generalized hinge loss
+\begin{align}
+\ell_\text{hinge}(y, \hat{y}) \eqdef
+\max_{y'\in{\color{blue}\sY(x)}}\p{
+\Delta(y, {y'}) +
+\left\langle w, \p{\Psi(x, {y'}) - \Psi(x, {y}}) \right\rangle
+}
+\end{align}
+
+\item What is $\Delta(y, {y'})$ for two sequences?
+\pause
+\item \textbf{Hamming loss} is common:
+\[
+\Delta(y,y')=\frac{1}{L}\sum_{i=1}^{L}\ind{y_{i}\neq y_{i}'}
+\]
+where $L$ is the sequence length.
+
+%\item Can generalize to the cost-sensitive version using $\delta(y_{i},y_{i}')$
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+{Structured SVM}
+\textcolor{Green}{Exercise}:
+\begin{itemize}
+\item Write down the objective of structured SVM using the structured hinge loss.
+
+\item Stochastic sub-gradient descent for structured SVM (similar to HW3 P3)
+\item Compare with the structured perceptron algorithm
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+{The argmax problem for sequences}
+% \pause
+\begin{description}[<+->]
+\item[Problem]
+To compute predictions, we need to find 
+$\argmax_{y\in\cy(x)}\left\langle w,\Psi(x,y)\right\rangle$, and $\left|\cy(x)\right|$ is \textcolor{blue}{exponentially} large.
+
+\item[Observation]
+$\Psi(x,y)$ decomposes to $\sum_i \Psi_i(x,y)$.
+
+\item[Solution]
+Dynamic programming (similar to the Viterbi algorithm)
+\includegraphics[height=0.4\textheight]{figures/dp}
+What's the running time?
+\note<.>{Let $K=\vert\sY\vert$, DP runtime $O(K^2L)$, $m$th order Markov feature has runtime $O(K^mL)$, naive runtime $O(K^L)$.}
+\end{description}
+\let\thefootnote\relax\footnotetext{\tiny{Figure by Daum\'e III. A course in machine learning. Figure 17.1}.}
+\end{frame}
+
+% \begin{frame}
+% {The argmax problem in general}
+% Efficient problem-specific algorithms:
 % \begin{table}
 % \begin{tabular}{llll}
-% $x\colon$ & he & eats & apples \\
-% $y\colon$ & pronoun & verb & noun 
+% \toprule
+% problem & structure & algorithm \\
+% \midrule
+% constituent parsing & binary trees with context-free features & CYK  \\
+% dependency parsing & spanning trees with edge features & Chu-Liu-Edmonds \\
+% image segmentation & 2d with adjacent-pixel features & graph cuts \\
+% \bottomrule
 % \end{tabular}
 % \end{table}
-
-% \item Multiclass hypothesis space:
-% \begin{align}
-% & h(x,y) = w^T \Psi(x, y) \\
-% & \cf = \left\{ x\mapsto\argmax_{y\in\cy}h(x,y)\mid h\in\ch\right\}
-% \end{align}
-% \end{itemize}
-
-% \begin{itemize}
-% \item A special case of multiclass classification
-% \item  How to design the feature map $\Psi$? What are the considerations?
-% \note{contextual dependence, efficient argmax}
-% \end{itemize}
-% \end{frame}
-% %
-% \begin{frame}{Unary features}
-
-% \begin{itemize}
-% \item A  \textbf{unary feature} only depends on 
-% \begin{itemize}
-% \item the label at a \textcolor{blue}{single position}, $y_{i}$, and $x$ 
-% \end{itemize}
-
-% \item Example: 
-% \begin{eqnarray*}
-% \phi_{1}(x,y_{i}) & = & \ind{x_{i}=\mbox{runs}}\ind{y_{i}=\mbox{Verb}}\\
-% \phi_{2}(x,y_{i}) & = & \ind{x_{i}=\mbox{runs}}\ind{y_{i}=\mbox{Noun}}\\
-% \phi_{3}(x,y_{i}) & = & \ind{x_{i-1}=\mbox{He}}\ind{x_{i}=\mbox{runs}}\ind{y_{i}=\mbox{Verb}}
-% \end{eqnarray*}
- 
-% \end{itemize}
-% \end{frame}
-% %
-% \begin{frame}{Markov features}
-
-% \begin{itemize}
-% \item A \textbf{markov feature} only depends on 
-% \begin{itemize}
-% \item two \textcolor{blue}{adjacent} labels, $y_{i-1}$ and $y_{i}$,
-% and $x$
-% \end{itemize}
-
-% \item Example: 
-% \begin{eqnarray*}
-% \theta_{1}(x,y_{i-1},y_{i}) & = & \ind{y_{i-1}=\mbox{Pronoun}}\ind{y_{i}=\mbox{Verb}}\\
-% \theta_{2}(x,y_{i-1},y_{i}) & = & \ind{y_{i-1}=\mbox{Pronoun}}\ind{y_{i}=\mbox{Noun}}
-% \end{eqnarray*}
-
-% \item Reminiscent of Markov models in the output space
-% \item Possible to have higher-order features 
- 
-% \end{itemize}
-% \end{frame}
-% %
-% \begin{frame}{Local Feature Vector and Compatibility Score}
-% \begin{itemize}[<+->]
-% \item At each position $i$ in sequence, define the \textbf{local feature
-% vector} (\textcolor{blue}{unary} and \textcolor{red}{markov}):
-% \begin{eqnarray*}
-% \Psi_{i}(x,y_{i-1},y_{i}) & = & (\phi_{1}(x,{\color{blue}y_{i}}),\phi_{2}(x,{\color{blue}y_{i}}),\ldots,\\
-%  &  & \theta_{1}(x,{\color{red}y_{i-1},y_{i}}),\theta_{2}(x,{\color{red}y_{i-1},y_{i}}),\ldots)
-% \end{eqnarray*}
-
-% \item And \textbf{local compatibility score} at position $i$:
-% $\left\langle w,\Psi_{i}(x,y_{i-1},y_{i})\right\rangle $. 
-
-% \item The compatibility score for $\left(x,y\right)$
-% is the sum of local compatibility scores: 
-% \begin{align}
-% \sum_{i}\left\langle w,\Psi_{i}(x,y_{i-1},y_{i})\right\rangle 
-% = \left\langle w,\sum_{i}\Psi_{i}(x,y_{i-1},y_{i})\right\rangle
-% = \left\langle w,\Psi(x,y)\right\rangle ,
-% \end{align}
-% where we define the \textbf{sequence feature vector} by 
-% \[
-% \Psi(x,y)=\sum_{i}\Psi_{i}(x,y_{i-1},y_{i}). \qquad \text{\color{blue}decomposable}
-% \]
-% \end{itemize}
-% \end{frame}
-
-% \begin{frame}
-% {Structured perceptron}
-% \begin{algorithm}[H]
-%   Given a dataset $\sD=\pc{(x, y)}$\;
-%   Initialize $w\leftarrow 0$\;
-%   \For{$\text{iter} = 1,2,\ldots,T$}
-%   {
-%   \For{$(x,y) \in \sD$}
-%   {
-%     $\hat{y} = \argmax_{y'\in{\color<2->{red}\sY(x)}} w^T\psi(x, y')$\;
-%     \If(\tcp*[h]{We've made a mistake}){$\hat{y} \neq y$}{ 
-%     $w \leftarrow w + \Psi(x, y)$ \tcp*[l]{Move the scorer towards $\psi(x, y)$}
-%     $w \leftarrow w - \Psi(x, \hat{y})$ \tcp*[l]{Move the scorer away from $\psi(x, \hat{y})$}
-%     }
-%     }
-%     }
-% \end{algorithm}
-% \onslide<2->{
-% Identical to the multiclass perceptron algorithm except the $\argmax$ is now over the structured output space $\sY(x)$.
-% }
-% \end{frame}
-% %
-
-% \begin{frame}
-% {Structured hinge loss}
-% \begin{itemize}
-% \item Recall the generalized hinge loss
-% \begin{align}
-% \ell_\text{hinge}(y, \hat{y}) \eqdef
-% \max_{y'\in{\color{blue}\sY(x)}}\p{
-% \Delta(y, {y'}) +
-% \left\langle w, \p{\Psi(x, {y'}) - \Psi(x, {y}}) \right\rangle
-% }
-% \end{align}
-
-% \item What is $\Delta(y, {y'})$ for two sequences?
 % \pause
-% \item \textbf{Hamming loss} is common:
-% \[
-% \Delta(y,y')=\frac{1}{L}\sum_{i=1}^{L}\ind{y_{i}\neq y_{i}'}
-% \]
-% where $L$ is the sequence length.
 
-% %\item Can generalize to the cost-sensitive version using $\delta(y_{i},y_{i}')$
-
-% \end{itemize}
-% \end{frame}
-
-% \begin{frame}
-% {Structured SVM}
-% \textcolor{Green}{Exercise}:
+% General algorithm:
 % \begin{itemize}
-% \item Write down the objective of structured SVM using the structured hinge loss.
-
-% \item Stochastic sub-gradient descent for structured SVM (similar to HW3 P3)
-% \item Compare with the structured perceptron algorithm
-% \end{itemize}
-% \end{frame}
-
-% \begin{frame}
-% {The argmax problem for sequences}
-% % \pause
-% \begin{description}[<+->]
-% \item[Problem]
-% To compute predictions, we need to find 
-% $\argmax_{y\in\cy(x)}\left\langle w,\Psi(x,y)\right\rangle$, and $\left|\cy(x)\right|$ is \textcolor{blue}{exponentially} large.
-
-% \item[Observation]
-% $\Psi(x,y)$ decomposes to $\sum_i \Psi_i(x,y)$.
-
-% \item[Solution]
-% Dynamic programming (similar to the Viterbi algorithm)
-% \includegraphics[height=0.4\textheight]{figures/dp}
-% What's the running time?
-% \note<.>{Let $K=\vert\sY\vert$, DP runtime $O(K^2L)$, $m$th order Markov feature has runtime $O(K^mL)$, naive runtime $O(K^L)$.}
-% \end{description}
-% \let\thefootnote\relax\footnotetext{\tiny{Figure by Daum\'e III. A course in machine learning. Figure 17.1}.}
-% \end{frame}
-
-% % \begin{frame}
-% % {The argmax problem in general}
-% % Efficient problem-specific algorithms:
-% % \begin{table}
-% % \begin{tabular}{llll}
-% % \toprule
-% % problem & structure & algorithm \\
-% % \midrule
-% % constituent parsing & binary trees with context-free features & CYK  \\
-% % dependency parsing & spanning trees with edge features & Chu-Liu-Edmonds \\
-% % image segmentation & 2d with adjacent-pixel features & graph cuts \\
-% % \bottomrule
-% % \end{tabular}
-% % \end{table}
-% % \pause
-
-% % General algorithm:
-% % \begin{itemize}
-% % \item Integer linear programming (ILP)
-% % \begin{align}
-% % \max_z\; a^Tz \quad \text{s.t. linear constraints on $z$}
-% % \end{align}
-% % \item $z$: indicator of substructures, \eg $\1\pc{y_i=\text{article and }y_{i+1}=\text{noun}}$
-% % \item constraints: $z$ must correspond to a valid structure
-% % \end{itemize}
-% % \end{frame}
-
-% % Additional resource:
-% % https://people.cs.umass.edu/~mccallum/papers/crf-tutorial.pdf
-% \begin{frame}{Conditional random field (CRF)}
-% \begin{itemize}
-% \item Recall that we can write logistic regression in a general form:
-% \[
-% p(y|x) = \frac{1}{Z(x)} \exp(w^\top \psi(x, y)).
-% \]
-% \item $Z$ is normalization constant: $Z(x) = \sum_{y \in Y} \exp(w^\top \psi(x, y))$.
-% \pause
-% \item Example: linear chain $\{y_t\}$
-% \item We can incorporate unary and Markov features:
-% $p(y|x) = \frac{1}{Z(x)} \exp(\sum_t w^\top \psi(x, y_t, y_{t-1}))$
-% \begin{center}
-% \includegraphics[width=0.6\textwidth]{figures/crf.png}
-% \end{center}
-% % \item Unary energy
-% % \item Pairwise energy
-% % \item Total energy
-% \end{itemize}
-% \end{frame}
-
-% \begin{frame}{Conditional random field (CRF)}
-% \begin{itemize}
-%   \item Compared to Structured SVM, CRF has a probabilistic interpretation.
-%   \item We can draw samples in the output space.
-%   \pause
-%   \item How do we learn $w$? Maximum log likelihood, and regularization term: $\lambda \lVert w \rVert^2$
-%   \item Loss function:
-%   \begin{align*}
-%   l(w) &= - \frac{1}{N} \sum_{i=1}^{N} \log p(y^{(i)} | x^{(i)}) + \frac{1}{2} \lambda \lVert w \rVert^2 \\
-%   &= - \frac{1}{N} \sum_i \sum_t \sum_k w_k \psi_k(y^{(i)}_t, y^{(i)}_{t-1}) + \frac{1}{N} \sum_{i} \log Z(x^{(i)}) + \frac{1}{2}  \sum_k \lambda w_k^2
-%   \end{align*}
-% \end{itemize}
-% \end{frame}
-
-% \begin{frame}{Conditional random field (CRF)}
-% \begin{itemize}
-%   \item Loss function:
-%   \[
-%   l(w)= - \frac{1}{N} \sum_i \sum_t \sum_k w_k \psi_k(x^{(i)}, y^{(i)}_t, y^{(i)}_{t-1}) + \frac{1}{N} \sum_{i} \log Z(x^{(i)}) +\frac{1}{2} \sum_k  \lambda w_k^2
-%   \]
-% \item Gradient:
+% \item Integer linear programming (ILP)
 % \begin{align}
-% \frac{\partial l(w)}{\partial w_k} &= -\frac{1}{N} \sum_i \sum_t \sum_k \psi_k(x^{(i)}, y^{(i)}_t, y^{(i)}_{t-1}) \\
-% & + \frac{1}{N} \sum_{i} \frac{\partial}{\partial w_k} \log \sum_{y' \in Y} \exp(\sum_t \sum_{k'} w_{k'} \psi_{k'}(x^{(i)}, y'_t, y'_{t-1})) + \sum_k \lambda w_k
+% \max_z\; a^Tz \quad \text{s.t. linear constraints on $z$}
 % \end{align}
+% \item $z$: indicator of substructures, \eg $\1\pc{y_i=\text{article and }y_{i+1}=\text{noun}}$
+% \item constraints: $z$ must correspond to a valid structure
 % \end{itemize}
 % \end{frame}
 
-% \begin{frame}{Conditional random field (CRF)}
-% \begin{itemize}
-%   \item What is $\frac{1}{N} \sum_i \sum_t \sum_k \psi_k(x^{(i)}, y^{(i)}_t, y^{(i)}_{t-1})$?
-%   \pause
+% Additional resource:
+% https://people.cs.umass.edu/~mccallum/papers/crf-tutorial.pdf
+\begin{frame}{Conditional random field (CRF)}
+\begin{itemize}
+\item Recall that we can write logistic regression in a general form:
+\[
+p(y|x) = \frac{1}{Z(x)} \exp(w^\top \psi(x, y)).
+\]
+\item $Z$ is normalization constant: $Z(x) = \sum_{y \in Y} \exp(w^\top \psi(x, y))$.
+\pause
+\item Example: linear chain $\{y_t\}$
+\item We can incorporate unary and Markov features:
+$p(y|x) = \frac{1}{Z(x)} \exp(\sum_t w^\top \psi(x, y_t, y_{t-1}))$
+\begin{center}
+\includegraphics[width=0.6\textwidth]{figures/crf.png}
+\end{center}
+% \item Unary energy
+% \item Pairwise energy
+% \item Total energy
+\end{itemize}
+\end{frame}
 
-%   \item It is the expectation $\psi_k (x^{(i)}, y_t, y_{t-1})$ under the empirical distribution $\tilde{p}(x, y) = \frac{1}{N} \sum_i \mathbbm{1} [x = x^{(i)}] \mathbbm{1} [y = y^{(i)}]$.
-% \end{itemize}
-% \end{frame}
+\begin{frame}{Conditional random field (CRF)}
+\begin{itemize}
+  \item Compared to Structured SVM, CRF has a probabilistic interpretation.
+  \item We can draw samples in the output space.
+  \pause
+  \item How do we learn $w$? Maximum log likelihood, and regularization term: $\lambda \lVert w \rVert^2$
+  \item Loss function:
+  \begin{align*}
+  l(w) &= - \frac{1}{N} \sum_{i=1}^{N} \log p(y^{(i)} | x^{(i)}) + \frac{1}{2} \lambda \lVert w \rVert^2 \\
+  &= - \frac{1}{N} \sum_i \sum_t \sum_k w_k \psi_k(y^{(i)}_t, y^{(i)}_{t-1}) + \frac{1}{N} \sum_{i} \log Z(x^{(i)}) + \frac{1}{2}  \sum_k \lambda w_k^2
+  \end{align*}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Conditional random field (CRF)}
+\begin{itemize}
+  \item Loss function:
+  \[
+  l(w)= - \frac{1}{N} \sum_i \sum_t \sum_k w_k \psi_k(x^{(i)}, y^{(i)}_t, y^{(i)}_{t-1}) + \frac{1}{N} \sum_{i} \log Z(x^{(i)}) +\frac{1}{2} \sum_k  \lambda w_k^2
+  \]
+\item Gradient:
+\begin{align}
+\frac{\partial l(w)}{\partial w_k} &= -\frac{1}{N} \sum_i \sum_t \sum_k \psi_k(x^{(i)}, y^{(i)}_t, y^{(i)}_{t-1}) \\
+& + \frac{1}{N} \sum_{i} \frac{\partial}{\partial w_k} \log \sum_{y' \in Y} \exp(\sum_t \sum_{k'} w_{k'} \psi_{k'}(x^{(i)}, y'_t, y'_{t-1})) + \sum_k \lambda w_k
+\end{align}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Conditional random field (CRF)}
+\begin{itemize}
+  \item What is $\frac{1}{N} \sum_i \sum_t \sum_k \psi_k(x^{(i)}, y^{(i)}_t, y^{(i)}_{t-1})$?
+  \pause
+
+  \item It is the expectation $\psi_k (x^{(i)}, y_t, y_{t-1})$ under the empirical distribution $\tilde{p}(x, y) = \frac{1}{N} \sum_i \mathbbm{1} [x = x^{(i)}] \mathbbm{1} [y = y^{(i)}]$.
+\end{itemize}
+\end{frame}
 
 
-% \begin{frame}{Conditional random field (CRF)}
-% \begin{itemize}
-%   \item What is $\frac{1}{N} \sum_i \frac{\partial}{\partial w_k} \log \sum_{y' \in Y} \exp(\sum_t \sum_{k'} w_{k'} \psi_{k'}(x^{(i)}, y_t', y_{t-1}'))$?
-%   \pause
-%   \begin{align}
-%   & \frac{1}{N} \sum_i \frac{\partial}{\partial w_k} \log \sum_{y' \in Y} \exp(\sum_t \sum_{k'} w_{k'} \psi_{k'}(x^{(i)}, y_t', y_{t-1}'))\\
-%   &= \frac{1}{N} \sum_i \left[\sum_{y' \in Y} \exp(\sum_t \sum_{k'} w_{k'} \psi_{k'}(x^{(i)}, y_t', y_{t-1}'))\right]^{-1}\\
-%   &\left[\sum_{y' \in Y} \exp(\sum_t \sum_{k'} w_{k'} \psi_{k'}(x^{(i)}, y_t^{(i)}, y_{t-1}^{(i)})) \sum_t \psi_k(x^{(i)}, y_t', y_{t-1}') \right] \\
-%   &= \frac{1}{N} \sum_i \sum_t \sum_{y'\in Y} p(y'_t, y_{t-1}' | x) \psi_k (x^{(i)}, y'_t, y'_{t-1})
-%   \end{align}
-%   \pause
-%   \item It is the expectation of $\psi_k (x^{(i)}, y'_t, y'_{t-1})$ under the model distribution $p(y'_t, y_{t-1}' | x)$.
-% \end{itemize}
-% \end{frame}
+\begin{frame}{Conditional random field (CRF)}
+\begin{itemize}
+  \item What is $\frac{1}{N} \sum_i \frac{\partial}{\partial w_k} \log \sum_{y' \in Y} \exp(\sum_t \sum_{k'} w_{k'} \psi_{k'}(x^{(i)}, y_t', y_{t-1}'))$?
+  \pause
+  \begin{align}
+  & \frac{1}{N} \sum_i \frac{\partial}{\partial w_k} \log \sum_{y' \in Y} \exp(\sum_t \sum_{k'} w_{k'} \psi_{k'}(x^{(i)}, y_t', y_{t-1}'))\\
+  &= \frac{1}{N} \sum_i \left[\sum_{y' \in Y} \exp(\sum_t \sum_{k'} w_{k'} \psi_{k'}(x^{(i)}, y_t', y_{t-1}'))\right]^{-1}\\
+  &\left[\sum_{y' \in Y} \exp(\sum_t \sum_{k'} w_{k'} \psi_{k'}(x^{(i)}, y_t^{(i)}, y_{t-1}^{(i)})) \sum_t \psi_k(x^{(i)}, y_t', y_{t-1}') \right] \\
+  &= \frac{1}{N} \sum_i \sum_t \sum_{y'\in Y} p(y'_t, y_{t-1}' | x) \psi_k (x^{(i)}, y'_t, y'_{t-1})
+  \end{align}
+  \pause
+  \item It is the expectation of $\psi_k (x^{(i)}, y'_t, y'_{t-1})$ under the model distribution $p(y'_t, y_{t-1}' | x)$.
+\end{itemize}
+\end{frame}
 
 
-% \begin{frame}{Conditional random field (CRF)}
-% \begin{itemize}
-%   \item To compute the gradient, we need to infer expectation under the model distribution $p(y|x)$.
-%   \pause
-%   \item Compare the learning algorithms: in structured SVM we need to compute the argmax, whereas in CRF we need to compute the model expectation.
-%   \pause
-%   \item Both problems are NP-hard for general graphs.
-% \end{itemize}
-% \end{frame}
+\begin{frame}{Conditional random field (CRF)}
+\begin{itemize}
+  \item To compute the gradient, we need to infer expectation under the model distribution $p(y|x)$.
+  \pause
+  \item Compare the learning algorithms: in structured SVM we need to compute the argmax, whereas in CRF we need to compute the model expectation.
+  \pause
+  \item Both problems are NP-hard for general graphs.
+\end{itemize}
+\end{frame}
 
-% \begin{frame}{CRF Inference}
-% \begin{itemize}
-%   \item In the linear chain structure, we can use the forward-backward algorithm for inference, similar to Viterbi.
-%   \pause
-%   \item Initiate $\alpha_j(1) = \exp (w^\top \psi(y_1=j, x_1))$
-%   \pause
-%   \item Recursion: $\alpha_j(t) = \sum_i \alpha_i (t-1) \exp(w^\top \psi(y_t=j, y_{t-1}=i, x_t))$
-%   \pause
-%   \item Result: $Z(x) = \sum_j \alpha_j(T)$
-%   \pause
-%   \item Similar for the backward direction.
-%   \pause
-%   \item Test time, again use Viterbi algorithm to infer argmax.
-%   \pause
-%   \item The inference algorithm can be generalized to belief propagation (BP) in a tree structure (exact inference).
-%   \pause
-%   \item In general graphs, we rely on approximate inference (e.g. loopy belief propagation).
-% \end{itemize}
-% \end{frame}
+\begin{frame}{CRF Inference}
+\begin{itemize}
+  \item In the linear chain structure, we can use the forward-backward algorithm for inference, similar to Viterbi.
+  \pause
+  \item Initiate $\alpha_j(1) = \exp (w^\top \psi(y_1=j, x_1))$
+  \pause
+  \item Recursion: $\alpha_j(t) = \sum_i \alpha_i (t-1) \exp(w^\top \psi(y_t=j, y_{t-1}=i, x_t))$
+  \pause
+  \item Result: $Z(x) = \sum_j \alpha_j(T)$
+  \pause
+  \item Similar for the backward direction.
+  \pause
+  \item Test time, again use Viterbi algorithm to infer argmax.
+  \pause
+  \item The inference algorithm can be generalized to belief propagation (BP) in a tree structure (exact inference).
+  \pause
+  \item In general graphs, we rely on approximate inference (e.g. loopy belief propagation).
+\end{itemize}
+\end{frame}
 
-% \begin{frame}{Examples}
-% \begin{itemize}
-%   \item POS tag
-%   Relationship between constituents, e.g. NP is likely to be followed by a VP.
-%   \pause
+\begin{frame}{Examples}
+\begin{itemize}
+  \item POS tag
+  Relationship between constituents, e.g. NP is likely to be followed by a VP.
+  \pause
 
-%   \item Semantic segmentation
+  \item Semantic segmentation
   
-%   Relationship between pixels, e.g. a grass pixel is likely to be next to another grass pixel, and a sky pixel is likely to be above a grass pixel.
-%   \pause
+  Relationship between pixels, e.g. a grass pixel is likely to be next to another grass pixel, and a sky pixel is likely to be above a grass pixel.
+  \pause
 
-%   \item Multi-label learning
+  \item Multi-label learning
 
-%   An image may contain multiple class labels, e.g. a bus is likely to co-occur with a car.
-% \end{itemize}
-% \end{frame}
+  An image may contain multiple class labels, e.g. a bus is likely to co-occur with a car.
+\end{itemize}
+\end{frame}
 
-% \begin{frame}
-% {Conclusion}
-% Multiclass algorithms
-% \begin{itemize}
-% \item Reduce to binary classification, \eg OvA, AvA
-% \begin{itemize}
-% \item Good enough for simple multiclass problems
-% \item They don't scale and have simplified assumptions
-% \end{itemize}
-% \pause
-% \item Generalize binary classification algorithms using multiclass loss
-% \begin{itemize}
-% \item Multi-class perceptron, multi-class logistics regression, multi-class SVM
-% % \item Useful for problems with extremely large output space, \eg structured prediction
-% % \item Related problems: ranking, multi-label classification
-% \end{itemize}
-% \pause
-% \item Structured prediction: Structured SVM, CRF. Data containing structure. Extremely large output space. Text and image applications.
-% \end{itemize}
-% \end{frame}
+\begin{frame}
+{Conclusion}
+Multiclass algorithms
+\begin{itemize}
+\item Reduce to binary classification, \eg OvA, AvA
+\begin{itemize}
+\item Good enough for simple multiclass problems
+\item They don't scale and have simplified assumptions
+\end{itemize}
+\pause
+\item Generalize binary classification algorithms using multiclass loss
+\begin{itemize}
+\item Multi-class perceptron, multi-class logistics regression, multi-class SVM
+% \item Useful for problems with extremely large output space, \eg structured prediction
+% \item Related problems: ranking, multi-label classification
+\end{itemize}
+\pause
+\item Structured prediction: Structured SVM, CRF. Data containing structure. Extremely large output space. Text and image applications.
+\end{itemize}
+\end{frame}
 
 \end{document}
 
