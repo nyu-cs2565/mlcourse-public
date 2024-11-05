@@ -1,6 +1,6 @@
 %% LyX 2.3.4.2 created this file.  For more info, see http://www.lyx.org/.
 %% Do not edit unless you really know what you are doing.
-\documentclass[english,dvipsnames,aspectratio=169,handout]{beamer}
+\documentclass[english,dvipsnames,aspectratio=169]{beamer}
 \usepackage{mathptmx}
 \usepackage{algorithm2e}
 \usepackage{eulervm}
@@ -106,8 +106,6 @@
 \setbeamercolor{block body}{bg=normal text.bg!90!NYUPurple}
 \setbeamercolor{block title}{bg=NYUPurple!30, fg=NYUPurple}
 
-
-
 \AtBeginSection[]{
   \begin{frame}
   \vfill
@@ -131,14 +129,16 @@
 
 %\setbeameroption{show notes on second screen}
 
-\title[CSCI-GA 2565]{Multiclass Classification, Structured Prediction, \& Decision Trees}
-\author{Mengye Ren}
+\title[CSCI-GA 2565]{Structured Prediction \& Decision Trees}
+\author[]{Mengye Ren
+\\ \quad\\
+\small (Slides credit to David Rosenberg, He He, et al.)}
 % \author{He He \\
 % Slides based on Lecture
 % \href{https://github.com/davidrosenberg/mlcourse/blob/gh-pages/Lectures/09.multiclass.pdf}{09} from David Rosenberg's course materials (\url{https://github.com/davidrosenberg/mlcourse})
 % }
-\date{Nov 5, 2024}
-\institute{NYU}
+\date[]{Nov 5, 2024}
+\institute[]{NYU}
 
 \makebeamertitle
 \mode<article>{Just in article version}
@@ -146,232 +146,156 @@
 
 %================================== 
 
-
-\subsection{Linear Multiclass SVM}
-\subsubsection{Formulation through constraints on margin}
-
-\begin{frame}{Margin for Multiclass}
-\begin{description}
-\item<1->[Binary]
-\begin{itemize}
-\item Margin for $(\xn, \yn)$:
-\begin{align}
-\yn w^T\xn
-\end{align}
-\item Want margin to be large and positive ($w^T\xn$ has same sign as $\yn$)
-\end{itemize}
-
-\item<2->[Multiclass]
-\begin{itemize}
-\item Class-specific margin for $(\xn, \yn)$:
-\begin{align}
-h(\xn,\yn)-h(\xn,y).
-\end{align}
-\item Difference between scores of the correct class and each other class
-\item Want margin to be large and positive for all $y\neq \yn$. 
-\end{itemize}
-\end{description}
+\begin{frame}{Slides}
+\begin{center}
+\includegraphics[width=0.35\textwidth]{figures/qr_8.png}
+\end{center}
 \end{frame}
-%
 
-\begin{frame}
-{Multiclass SVM: separable case}
-\begin{description}
-\item<1->[Binary] 
-\begin{align}
-\min_w \quad & \frac{1}{2}\|w\|^2 \\
-\text{s.t.} \quad& \underbrace{\yn w^T\xn}_{\text{margin}} \geq 1 \quad \forall (\xn, \yn) \in \sD
-\end{align}
+\begin{frame}{Final Project}
+\begin{itemize}
+  \item Project Consultation is mandatory. I am meeting with all 22 teams. 
+  \item Every member in the group needs to be present.
+  \item If you have an emergency situation and cannot attend, you need to let me know. 
+  \item You may lose participation marks for not showing up in the consultation session without a reason.
+  \item If you plan to show up, be on time. Your team member's time is also valuable.
+\end{itemize}
+\end{frame}
 
-\item<2->[Multiclass] As in the binary case, take 1 as our target margin.
-\begin{align}
-m_{n,y}(w)&\eqdef \underbrace{\left\langle w,\Psi(\xn,\yn)\right\rangle}_{\text{score of correct class}}
-- \underbrace{\left\langle w,\Psi(\xn,y)\right\rangle}_{\text{score of other class}} \\
-\min_w \quad & \frac{1}{2}\|w\|^2 \\
-\text{s.t.} \quad& m_{n,y}(w) \geq 1 \quad
-\forall (\xn, \yn) \in \sD,\, y\neq \yn
-\end{align}
+\begin{frame}{Midterm}
+\begin{itemize}
+  \item Out of 30: Average: 16.05, Std: 4.29
+  \item 9 free marks, capped at 30.
+  \item Regrade request --- email graders.
+\end{itemize}
+\begin{center}
+\includegraphics[width=0.6\textwidth]{figures/midterm.png}
+\end{center}
+\end{frame}
 
-\end{description}
-\onslide<3->{
-\think{Exercise}: write the objective for the non-separable case
+\section{Scientific Writing}
+
+\begin{frame}{Introduction}
+\begin{itemize}
+  \item Introduction is the road map of the full report. Here is a general structure.
+  \item<+-> Paragraph 1
+  \begin{itemize}
+    \small
+  \item<1-> What are some broad context of the problem? $\checkmark$
+  \item<1-> What is the problem that you are studying? $\checkmark$
+  \item<1-> Why is the problem interesting? $\checkmark$
+  \end{itemize}
+  \item<+-> Paragraph 2
+  \begin{itemize}
+    \small
+    \item<2-> Historically, what have people been doing in the space of similar problems?
+    \item<2-> What is the gap and what extra can this project bring?
+  \end{itemize}
+  \item<+-> Paragraph 3
+  \begin{itemize}
+    \small
+    \item<3-> What technical approach are you taking?
+    \item<3-> What dataset have you experimented with and what are the core results?
+    \item<3-> What are some broader impact of the work?
+  \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Example}
+
+{\small
+{\bf Introduction}
+
+Cybersecurity threats have become a major concern, posing risks to both personal data and organizational assets. In 2023, cyberattacks led to financial damages of over \$10 billion in the United States alone, according to recent reports. Globally, these numbers were even more concerning, with the cost of cybercrime expected to surpass \$8 trillion in 2023, as noted by cybersecurity researchers. In the U.S., approximately 66\% of organizations experienced at least one form of cyberattack in 2023. These figures highlight an urgent need for robust strategies to detect, prevent, and mitigate cybersecurity breaches across industries.
 }
-\note<3->{Next, let's think about how to write the objective using hinge loss.}
-\end{frame}
-
-\subsubsection{Formulation through hinge loss}
-\begin{frame}
-{Recap: hingle loss for binary classification}
-\begin{itemize}
-\item Hinge loss: a convex upperbound on the 0-1 loss
-\begin{align}
-\ell_{\text{hinge}}(y, \hat{y}) = \max(0, 1 -  yh(x))
-\end{align}
-\begin{figure}
-\includegraphics[height=0.5\textheight]{{figures/loss.Zero_One.Hinge}.png}
-\end{figure}
-\end{itemize}
-\end{frame}
-
-\begin{frame}
-{Generalized hinge loss}
-\begin{itemize}[<+->]
-\item What's the zero-one loss for multiclass classification?
-\begin{align}
-\onslide<+->{\Delta(y, y') = \1\pc{y\neq y'}}
-\end{align}
-\item In general, can also have different cost for each class.
-
-\item Upper bound on $\Delta(y, y')$.
-\begin{align}
-\hat{y} &\eqdef \argmax_{y'\in\sY} \left\langle w, \Psi(x, y') \right\rangle \\
-\onslide<+->{
-\implies & \left\langle w, \Psi(x, y) \right\rangle \leq
-\left\langle w, \Psi(x, \hat{y}) \right\rangle \\
-}
-\onslide<+->{
-\implies & \Delta(y, \hat{y}) \leq \Delta(y, \hat{y}) -
-\left\langle w, \p{\Psi(x, {y}) - \Psi(x, \hat{y}}) \right\rangle
-&& \text{When are they equal?}
-}
-\end{align}
-
-\item Generalized hinge loss:
-\begin{align}
-\ell_\text{hinge}(y, x, w) \eqdef
-\max_{y'\in\sY}\p{
-\Delta(y, {y'}) -
-\left\langle w, \p{\Psi(x, {y}) - \Psi(x, {y'}}) \right\rangle
-}
-\end{align}
-% \note<+->{When $y'=y$, $\ell_{\text{hinge}}=0$.}
-\end{itemize}
-\end{frame}
-
-\begin{frame}{Multiclass SVM with Hinge Loss}
- 
-\begin{itemize}
-\item Recall the hinge loss formulation for binary SVM (without the bias term):
-\[
-\min_{w\in\reals^{d}}\frac{1}{2}||w||^{2}+C\sum_{n=1}^{N}\max\left(0,1-\underbrace{\yn w^{T}\xn}_{\text{margin}}\right).
-\]
-
-\pause{}
-\item The multiclass objective: 
-\[
-\min_{w\in\reals^{d}}\frac{1}{2}||w||^{2}+
-C\sum_{n=1}^{N}\max_{y'\in\sY} \p{
-\Delta(y, {y'}) -
-\underbrace{
-\left\langle w, \p{\Psi(x, {y}) - \Psi(x, {y'}}) \right\rangle
-}_{\text{margin}}
-}
-\]
-
-\begin{itemize}
-\item $\Delta(y, y')$ as \textcolor{blue}{target margin} for each class.
-\item If margin $m_{n, y'}(w)$ meets or exceeds its target $\Delta(\yn,y')$
-$\forall y\in \sY$, then no loss on example $n$. 
-\note<2->{If exceeds margin, loss is negative, which must be smaller than loss of the true class, which is zero.}
-\end{itemize}
-\end{itemize}
-\end{frame}
-%
-
-\subsection{Is This Worth The Hassle Compared to One-vs-All?}
-\begin{frame}{Recap: What Have We Got?}
-\begin{itemize}
-\item Problem: Multiclass classification $\cy=\left\{ 1,\ldots,k\right\} $
-\end{itemize}
-
-\pause{}
-\begin{itemize}
-\item Solution 1: One-vs-All
-
-
-\begin{itemize}
-\item Train $k$ models: $h_{1}(x),\ldots,h_{k}(x):\cx\to\reals$.
-
-
-\item Predict with $\argmax_{y\in\cy}h_{y}(x)$.
-
-
-\item Gave simple example where this fails for linear classifiers
-\end{itemize}
-\end{itemize}
-
-\pause{}
-\begin{itemize}
-\item Solution 2: Multiclass loss
-
-
-\begin{itemize}
-\item Train one model: $h(x,y):\cx\times\cy\to\reals$.
-
-
-\item Prediction involves solving $\argmax_{y\in\cy}h(x,y)$.
-\end{itemize}
-\end{itemize}
-\end{frame}
-%
-\begin{frame}{Does it work better in practice?}
-\begin{itemize}
-\item Paper by Rifkin \& Klautau: ``\href{http://www.jmlr.org/papers/v5/rifkin04a.html}{In Defense of One-Vs-All Classification}''
-(2004)
-\begin{itemize}
-\item Extensive experiments, carefully done 
-\begin{itemize}
-\item albeit on relatively small UCI datasets
-\end{itemize}
-\end{itemize}
-
-
-\begin{itemize}
-\item Suggests one-vs-all works just as well in practice
-\begin{itemize}
-\item (or at least, the advantages claimed by earlier papers for multiclass
-methods were not compelling)
-\end{itemize}
-\end{itemize}
-\end{itemize}
-
 \pause
-\begin{itemize}
-\item Compared 
-\begin{itemize}
-\item many multiclass frameworks (including the one we discuss)
-\item one-vs-all for SVMs with RBF kernel
-\item one-vs-all for square loss with RBF kernel (for classification!) 
-\end{itemize}
-\end{itemize}
+
+\textcolor{red}{What are the issues?}
+
+\end{frame}
 
 
+\begin{frame}{Revised Example}
+\small
+\textcolor{green}{The rapid escalation in cybersecurity threats has led to significant financial and operational impacts, with damages in the United States alone exceeding \$10 billion in 2023, according to the Cybersecurity \& Infrastructure Security Agency (CISA) [1].} 
+\textcolor{orange}{Despite advancements in cybersecurity solutions, traditional rule-based systems often struggle to detect new or sophisticated attack patterns, especially as cybercriminals evolve their techniques to evade static detection rules. This limitation highlights a critical gap: the need for adaptable, data-driven methods that can dynamically learn and respond to emerging threats.}
+
+Continue...
+\end{frame}
+
+\begin{frame}{Revised Example}
+\small
+\textcolor{blue}{In response to this gap, our project applies machine learning to develop a robust intrusion detection system that leverages a hybrid approach combining supervised and unsupervised learning.} 
+\textcolor{cyan}{Using a labeled dataset of network traffic, our model is first trained to distinguish normal from suspicious activity. To enhance adaptability, we also employ an anomaly detection module using autoencoders, which identifies deviations from typical patterns, even for attack types not present in the training data.}
+
+\textcolor{purple}{Our results demonstrate the effectiveness of our approach. The model achieved an accuracy of 94\% in detecting known attack types and reduced false positives by 30\% compared to a traditional rule-based system. Furthermore, the anomaly detection module identified previously unseen attack patterns with an 87\% true positive rate.} 
+\textcolor{pink}{These results suggest that our machine learning-based system can offer a more flexible and accurate defense mechanism against evolving cybersecurity threats.}
+\end{frame}
+
+\begin{frame}{Abstract}
+Abstract is the summary of the introduction. Make it into one paragraph.
+
+{\small
+\textcolor{green}{Cybersecurity threats are increasing in frequency and sophistication, resulting in substantial financial losses and operational disruptions.}
+\textcolor{orange}{Traditional rule-based detection systems are limited in their ability to identify novel attack patterns, creating a need for adaptable, data-driven solutions.}
+\textcolor{blue}{This project presents a machine learning-based intrusion detection system designed to address this gap by combining supervised learning for known threats with an unsupervised anomaly detection module to identify emerging attack types.}
+\textcolor{purple}{Experimental results demonstrate the model's effectiveness, achieving 94\% accuracy in detecting known attacks and an 87\% true positive rate for novel threats, while reducing false positives by 30\% compared to rule-based methods.}
+\textcolor{pink}{These findings suggest that our hybrid approach provides a more flexible and accurate defense against evolving cyber threats.}
+}
+\end{frame}
+
+\begin{frame}{Related Work}
 \begin{itemize}
-\item All performed roughly the same
+  \item Survey historical attempts of similar problems (not necessarily the same problem!)
+  \item What categories do historical approaches span across? Which category does your method fall into?
+  \item What is the relation of your work in the context of prior literature?
 \end{itemize}
 \end{frame}
-%
-\begin{frame}{Why Are We Bothering with Multiclass?}
-\begin{itemize}
-\item The framework we have developed for multiclass
-\begin{itemize}
-\item compatibility features / scoring functions
-\item multiclass margin
-\item target margin / multiclass loss
-\end{itemize}
-\end{itemize}
 
-\pause{}
-\begin{itemize}
-\item Generalizes to situations where \textcolor{blue}{$k$ is very large} and one-vs-all
-is intractable.
-\end{itemize}
+\begin{frame}{Example}
+\small
+Intrusion detection has been approached from several angles, with methods broadly categorized into rule-based systems, supervised learning-based intrusion detection, unsupervised anomaly detection, and hybrid models.
 
-\pause{}
+\textbf{Rule-Based Detection:}
+Traditional rule-based systems, such as Snort, use known attack signatures to detect intrusions [1]. While effective for known threats, these systems fail to recognize novel or evolving attacks [2]. Our approach seeks to address this limitation by incorporating machine learning for greater adaptability.
+
+\textbf{Supervised Machine Learning:}
+Supervised models like support vector machines and neural networks are commonly used due to their high accuracy with labeled data, effectively identifying known attacks [3, 4]. However, their reliance on labeled datasets makes them less adaptable to new threats. Our project builds on supervised methods but adds an anomaly detection layer to handle unknown attacks.
+
+Continue...
+\end{frame}
+
+\begin{frame}{Example}
+\small
+\textbf{Unsupervised and Anomaly-Based Detection:}
+Unsupervised methods, including autoencoders and clustering, detect unusual patterns in network traffic without labeled data [6, 7]. While flexible, these techniques often produce higher false-positive rates, posing practical challenges [8]. Our model incorporates an autoencoder for anomaly detection, with optimized thresholds to reduce false positives.
+
+\textbf{Hybrid Approaches:}
+Hybrid models combine supervised and unsupervised techniques to balance accuracy and adaptability. For example, hybrid models like those by Huang et al. (2021) integrate anomaly detection within supervised frameworks, achieving lower false-positive rates [9]. Our work further advances these methods by embedding an autoencoder anomaly module into a supervised model with optimized thresholds, aiming for reliable real-time intrusion detection.
+\end{frame}
+
+\begin{frame}{Figures and Tables}
 \begin{itemize}
-\item Key idea is that we can \textcolor{blue}{generalize across outputs $y$ by using features
-of $y$}.
+  \item<+-> When there is a strong trend, use a figure.
+  \item<+-> Try to export as PDF instead of JPG/PNG (rasterized).
+  \item<+-> Use bigger font size in the figure (same or slightly smaller than the main text).
 \end{itemize}
+\begin{center}
+\includegraphics[width=0.6\textwidth]{figures/plot_example.png}
+\end{center}
+\end{frame}
+
+\begin{frame}{Figures and Tables}
+\begin{itemize}
+  \item<+-> When you need to emphasize a small difference, use a table.
+  \item<+-> When the table is too wide, use \texttt{resizebox} to fit your table with the text width.
+  \item<+-> Keep the same number of significant digits.
+  \item<+-> Explain the Figure and Table in the caption.
+  \item<+-> Nice to have: Bold the column/row and best numbers. Highlight the important rows.
+\end{itemize}
+\begin{center}
+\includegraphics[width=0.6\textwidth]{figures/table_example.png}
+\end{center}
 \end{frame}
 
 \section{Introduction to Structured Prediction}
@@ -391,6 +315,7 @@ $y$ & $\underbrace{\mbox{[START]}}_{y_{0}}$ & $\underbrace{\mbox{Pronoun}}_{y_{1
 \par\end{center}
 
 \pause{}
+\mode<handout>{
 \begin{itemize}
 \item $\cv=\left\{ \mbox{all English words}\right\} \cup\left\{ \mbox{[START]},"."\right\} $
 \item $\cx=\cv^{n}$, $n=1,2,3,\ldots$ {[}Word sequences of any length{]}
@@ -398,7 +323,28 @@ $y$ & $\underbrace{\mbox{[START]}}_{y_{0}}$ & $\underbrace{\mbox{Pronoun}}_{y_{1
 \pause{}
 \item $\cp=\left\{ \mbox{START},\mbox{Pronoun,Verb,Noun,Adjective}\right\} $
 \item $\cy=\cp^{n},\,n=1,2,3,\ldots${[}Part of speech sequence of any length{]}
+\end{itemize}
+}
+\mode<presentation>{
+  \vspace{1.0in}
+}
+\end{frame}
 
+\begin{frame}{Example: Action grounding from long-form videos}
+\begin{itemize}
+  \item Given a long video, segment the video into short windows where each window corresponds to an action from a list of actions.
+  \item E.g. slicing, chopping, frying, washing, etc.
+
+  \mode<handout>{
+  \item $\cv=\mathbb{R}^D $ image features
+  \item $\cx=\cv^{n}$, $n=1,2,3,\ldots$ {[}video frame length{]}
+  \item $\cp=\left\{ \mbox{Slicing,Chopping,Frying,...}\right\} $
+  \item $\cy=\cp^{n},\,n=1,2,3,\ldots${[}Part of speech sequence of any length{]}
+  \item Can also be represented with start and end timestamps.
+  }
+  \mode<presentation>{
+  \vspace{1.3in}
+  }
 \end{itemize}
 \end{frame}
 
@@ -423,7 +369,6 @@ output $y$
 \[
 \cf=\left\{ x\mapsto\argmax_{y\in\cy}h(x,y)\mid h\in\ch\right\} 
 \]
-
 
 \item Final prediction function is an $f\in\cf$. 
 \item For each $f\in\cf$ there is an underlying compatibility score function
@@ -524,19 +469,19 @@ where we define the \textbf{sequence feature vector} by
 \begin{frame}
 {Structured perceptron}
 \begin{algorithm}[H]
-	Given a dataset $\sD=\pc{(x, y)}$\;
-	Initialize $w\leftarrow 0$\;
-	\For{$\text{iter} = 1,2,\ldots,T$}
-	{
-	\For{$(x,y) \in \sD$}
- 	{
- 		$\hat{y} = \argmax_{y'\in{\color<2->{red}\sY(x)}} w^T\psi(x, y')$\;
- 		\If(\tcp*[h]{We've made a mistake}){$\hat{y} \neq y$}{ 
- 		$w \leftarrow w + \Psi(x, y)$ \tcp*[l]{Move the scorer towards $\psi(x, y)$}
- 		$w \leftarrow w - \Psi(x, \hat{y})$ \tcp*[l]{Move the scorer away from $\psi(x, \hat{y})$}
- 		}
-  	}
-  	}
+  Given a dataset $\sD=\pc{(x, y)}$\;
+  Initialize $w\leftarrow 0$\;
+  \For{$\text{iter} = 1,2,\ldots,T$}
+  {
+  \For{$(x,y) \in \sD$}
+  {
+    $\hat{y} = \argmax_{y'\in{\color<2->{red}\sY(x)}} w^T\psi(x, y')$\;
+    \If(\tcp*[h]{We've made a mistake}){$\hat{y} \neq y$}{ 
+    $w \leftarrow w + \Psi(x, y)$ \tcp*[l]{Move the scorer towards $\psi(x, y)$}
+    $w \leftarrow w - \Psi(x, \hat{y})$ \tcp*[l]{Move the scorer away from $\psi(x, \hat{y})$}
+    }
+    }
+    }
 \end{algorithm}
 \onslide<2->{
 Identical to the multiclass perceptron algorithm except the $\argmax$ is now over the structured output space $\sY(x)$.
@@ -575,7 +520,7 @@ where $L$ is the sequence length.
 \begin{itemize}
 \item Write down the objective of structured SVM using the structured hinge loss.
 
-\item Stochastic sub-gradient descent for structured SVM % (similar to HW3 P3)
+\item Stochastic sub-gradient descent for structured SVM (similar to HW3 P3)
 \item Compare with the structured perceptron algorithm
 \end{itemize}
 \end{frame}
@@ -592,61 +537,56 @@ $\argmax_{y\in\cy(x)}\left\langle w,\Psi(x,y)\right\rangle$, and $\left|\cy(x)\r
 $\Psi(x,y)$ decomposes to $\sum_i \Psi_i(x,y)$.
 
 \item[Solution]
-Dynamic programming (similar to the Viterbi algorithm)
+Dynamic programming
 \includegraphics[height=0.4\textheight]{figures/dp}
-% What's the running time?
-% \note<.>{Let $K=\vert\sY\vert$, DP runtime $O(K^2L)$, $m$th order Markov feature has runtime $O(K^mL)$, naive runtime $O(K^L)$.}
+What's the running time?
+\note<.>{Let $K=\vert\sY\vert$, DP runtime $O(K^2L)$, $m$th order Markov feature has runtime $O(K^mL)$, naive runtime $O(K^L)$.}
 \end{description}
 \let\thefootnote\relax\footnotetext{\tiny{Figure by Daum\'e III. A course in machine learning. Figure 17.1}.}
 \end{frame}
 
-\begin{frame}{Structured SVM inference (linear chain)}
-% Dynamic programming (similar to the Viterbi algorithm)
+\begin{frame}{Dynamic Programming (MAP inference)}
 \begin{center}
-\includegraphics[height=0.35\textheight]{figures/dp}
+\includegraphics[height=0.4\textheight]{figures/dp}
 \end{center}
+\vspace{-0.1in}
 \begin{itemize}
-  \item Initiate $\alpha_j (1) = w^\top \psi(y_1=j, x_1)$
+  \item Initiate $\alpha_j(1) = \exp (w^\top \psi(y_1=j, x_1))$
   \pause
-  \item Recursion $\alpha_j (t) = \max_i \alpha_i (t-1) + w^\top \psi(y_t=j, y_{t-1}=i, x_t)$
+  \item Recursion: $\alpha_j(t) = \max_i \alpha_i (t-1)+ w^\top \psi(y_t=j, y_{t-1}=i, x_t)$
   \pause
-  \item Pointer $\gamma(t, j) = \argmax_i \alpha_i (t-1) + w^\top \psi(y_t=j, y_{t-1}=i, x_t)$
-  \pause
-  \item Backtrack: $r(T) = \argmax_i \alpha_i(T), r(t) = \gamma(t, r(t+1))$
-\end{itemize}
-\pause
-What's the running time?
-\note<.>{Let $K=\vert\sY\vert$, DP runtime $O(K^2L)$, $m$th order Markov feature has runtime $O(K^mL)$, naive runtime $O(K^L)$.}
-% \end{description}
-% \let\thefootnote\relax\footnotetext{\tiny{Figure by Daum\'e III. A course in machine learning. Figure 17.1}.}
-\end{frame}
-
-\begin{frame}
-{The argmax problem in general}
-Efficient problem-specific algorithms:
-\begin{table}
-\begin{tabular}{llll}
-\toprule
-problem & structure & algorithm \\
-\midrule
-constituent parsing & binary trees with context-free features & CYK  \\
-dependency parsing & spanning trees with edge features & Chu-Liu-Edmonds \\
-image segmentation & 2d with adjacent-pixel features & graph cuts \\
-\bottomrule
-\end{tabular}
-\end{table}
-\pause
-
-General algorithm:
-\begin{itemize}
-\item Integer linear programming (ILP)
-\begin{align}
-\max_z\; a^Tz \quad \text{s.t. linear constraints on $z$}
-\end{align}
-\item $z$: indicator of substructures, \eg $\1\pc{y_i=\text{article and }y_{i+1}=\text{noun}}$
-\item constraints: $z$ must correspond to a valid structure
+  \item $p_j(t) = \argmax ...$ (why?)
+  % \item Result: $Z(x) = \sum_j \alpha_j(T)$
+  \item Problem-specific: DP, graph cuts, etc. General: integer linear programming (ILP).
 \end{itemize}
 \end{frame}
+
+% \begin{frame}
+% {The argmax problem in general}
+% Efficient problem-specific algorithms:
+% \begin{table}
+% \begin{tabular}{llll}
+% \toprule
+% problem & structure & algorithm \\
+% \midrule
+% constituent parsing & binary trees with context-free features & CYK  \\
+% dependency parsing & spanning trees with edge features & Chu-Liu-Edmonds \\
+% image segmentation & 2d with adjacent-pixel features & graph cuts \\
+% \bottomrule
+% \end{tabular}
+% \end{table}
+% \pause
+
+% General algorithm:
+% \begin{itemize}
+% \item Integer linear programming (ILP)
+% \begin{align}
+% \max_z\; a^Tz \quad \text{s.t. linear constraints on $z$}
+% \end{align}
+% \item $z$: indicator of substructures, \eg $\1\pc{y_i=\text{article and }y_{i+1}=\text{noun}}$
+% \item constraints: $z$ must correspond to a valid structure
+% \end{itemize}
+% \end{frame}
 
 % Additional resource:
 % https://people.cs.umass.edu/~mccallum/papers/crf-tutorial.pdf
@@ -675,8 +615,7 @@ $p(y|x) = \frac{1}{Z(x)} \exp(\sum_t w^\top \psi(x, y_t, y_{t-1}))$
   \item Compared to Structured SVM, CRF has a probabilistic interpretation.
   \item We can draw samples in the output space.
   \pause
-  \item How do we learn $w$? Maximum log likelihood, and regularization term: $\lambda \lVert w \rVert^2$.
-  \item $p(y|x) = \frac{1}{Z(x)} \exp(w^\top \psi(x, y))$.
+  \item How do we learn $w$? Maximum log likelihood, and regularization term: $\lambda \lVert w \rVert^2$
   \item Loss function:
   \begin{align*}
   l(w) &= - \frac{1}{N} \sum_{i=1}^{N} \log p(y^{(i)} | x^{(i)}) + \frac{1}{2} \lambda \lVert w \rVert^2 \\
@@ -723,6 +662,7 @@ $p(y|x) = \frac{1}{Z(x)} \exp(\sum_t w^\top \psi(x, y_t, y_{t-1}))$
   \item It is the expectation of $\psi_k (x^{(i)}, y'_t, y'_{t-1})$ under the model distribution $p(y'_t, y_{t-1}' | x)$.
 \end{itemize}
 \end{frame}
+
 
 \begin{frame}{Conditional random field (CRF)}
 \begin{itemize}
@@ -773,25 +713,14 @@ $p(y|x) = \frac{1}{Z(x)} \exp(\sum_t w^\top \psi(x, y_t, y_{t-1}))$
 
 \begin{frame}
 {Conclusion}
-Multiclass algorithms
+Structured Prediction
 \begin{itemize}
-\item Reduce to binary classification, \eg OvA, AvA
-\begin{itemize}
-\item Good enough for simple multiclass problems
-\item They don't scale and have simplified assumptions
-\end{itemize}
-\pause
-\item Generalize binary classification algorithms using multiclass loss
-\begin{itemize}
-\item Multi-class perceptron, multi-class logistics regression, multi-class SVM
-% \item Useful for problems with extremely large output space, \eg structured prediction
-% \item Related problems: ranking, multi-label classification
-\end{itemize}
-\pause
-\item Structured prediction: Structured SVM, CRF. Data containing structure. Extremely large output space. Text and image applications. More in-depth content in a probabilistic graphical model (PGM) course.
+\item Extension to multi-class prediction
+\item Structured SVM, CRF
+\item Output space containing structure
+\item Text and image applications
 \end{itemize}
 \end{frame}
-
 
 \section{Decision Trees}
 
@@ -1156,427 +1085,427 @@ Trees may have to work hard to capture linear decision boundaries, but can easil
 \note[item]{One big issue with trees is that they are very unstable, meaning that if the training data is changed slightly, our classifier will be quite different, and this makes the performance of a single tree not competitive.}
 \end{frame}
 
-% \section{Bagging and Random Forests}
-% \subsection{Variance of an Estimator}
-% \begin{frame}
-% {Recap: Statistics and Point Estimators}
-%     \begin{itemize}[<+->]
-% \item We observe data $\cd=\left(x_{1},x_{2},\ldots,x_{n}\right)$ sampled i.i.d. from a parametric distribution $p(\cdot\mid \theta)$
-
-% \item A \textbf{statistic} $s=s(\cd)$ is any function of the data:
-% \begin{itemize}
-% \item E.g., sample mean, sample variance, histogram, empirical data distribution
-% \end{itemize}
-
-% \item A statistic $\hat{\theta}=\hat{\theta}(\cd)$ is a \textbf{point estimator}
-% of $\theta$ if $\hat{\theta}\approx\theta$
-% \end{itemize}
-
-% %\onslide<+->{
-% %\begin{block}{Review questions}
-% %In frequentist statistics,
-% %\begin{itemize}
-% %\item Is $\theta$ random?
-% %\item Is $\hat{\theta}$ random?
-% %\item Is the function $s(\cdot)$ random?
-% %\end{itemize}
-% %\end{block}
-% %}
-
-% \note[item]{When we say trees are not stable or have high variance, what do we mean by that precisely? Let's recall properties of point estimators we talked about in frequentist statistics.}
-% \note[item]{We call a statistic a point estimator if it approximates some unknown parameter.}
-% \note[item]{The function $s$ is not random, but we plug in random samples of data.}
-% \end{frame}
-
-% \begin{frame}
-% {Recap: Bias and Variance of an Estimator}
-% \begin{itemize}[<.->]
-%     \setlength\itemsep{2pt}
-% \item Statistics are random, so they have probability distributions.
-% \item The distribution of a statistic is called a \textbf{sampling distribution}. 
-% \item<+-> The standard deviation of the sampling distribution is called the \textbf{standard error}.
-% \item<+-> Some parameters of the sampling distribution we might be interested in:
-% \begin{description}
-% \item[Bias]  $\mbox{Bias}(\hat{\theta})\eqdef \ex\pb{\hat{\theta}}-\theta$.
-% \item[Variance] $\mbox{Var}(\hat{\theta})\eqdef \ex\pb{\hat{\theta}^{2}} - \ex^2\pb{\hat{\theta}}$.
-% \end{description}
-% %\item<+-> \dis Is bias and variance random?
-% %\begin{itemize}
-%     \note[item]{Neither bias nor variance depend on a specific sample $\cd_{n}$.
-%         We are \emph{taking expectation over $\cd$.}}
-% %\end{itemize}
-% \item<+-> Why does variance matter if an estimator is unbiased?
-% \pause
-% \begin{itemize}
-%     \item {$\hat{\theta}(\sD) = x_1$ is an unbiased estimator of the mean of a Gaussian, but would be farther away from $\theta$ than the sample mean.}
-% \end{itemize}
-% \end{itemize}
-% \note[item]{Next let's look at how we can reduce variance of an estimator.}
-% \end{frame}
-
-% \subsection{The Benefits of Averaging}
-% \begin{frame}
-% {Variance of a Mean}
-% \begin{itemize}
-% \item Let $\hat{\theta}(\sD)$ be an unbiased estimator with variance $\sigma^2$:
-% $\BE\pb{\hat{\theta}} = \theta$, $\mbox{Var}(\hat{\theta}) = \sigma^2$.
-% \item<+-> So far we have used a single statistic $\hat{\theta} = \hat{\theta}(\sD)$ to estimate $\theta$.
-% \item<+-> Its standard error is $\sqrt{\mbox{Var}(\hat{\theta})} = \sigma$
-% \end{itemize}
-
-% \onslide<+->{
-% \begin{itemize}
-% \item Consider a new estimator that takes the average of i.i.d. $\hat{\theta}_1, \ldots, \hat{\theta}_n$ where $\hat{\theta}_i = \hat{\theta}(\sD^{i})$.
-%     \pause
-% \item The average has the same expected value but smaller standard error (recall that $Var(cX) = c^2 Var(X)$, and that the $\hat{\theta}_i$-s are uncorrelated):
-% \begin{align}
-% \BE\pb{\frac{1}{n}\sum_{i=1}^n \hat{\theta}_i} = \theta \qquad
-% \mbox{Var}\pb{\frac{1}{n}\sum_{i=1}^n \hat{\theta}_i} = \frac{\sigma^2}{n}
-% \label{eqn:variance-of-sample-mean}
-% \end{align}
-% \end{itemize}
-% }
-% \note[item]{Let's say we want to estimate some parameter $\theta$.}
-% \note[item]{What is the standard error?}
-% \note[item]{Now let's consider a new estimator that takes the average of $n$ i.i.d. estimates, each computed from some data $\sD^i$.}
-% \note[item]{It will still be unbiased, but now the variance is reduced. Try to prove it yourself.}
-% \end{frame}
-
-% \begin{frame}{Averaging Independent Prediction Functions }
-%     \begin{itemize}[<+->]
-% \item Suppose we have $B$ independent training sets, all drawn from the same distribution ($\sD \sim p(\cdot\mid \theta)$).
-
-% \item Our learning algorithm gives us $B$ prediction functions: $\hat{f}_{1}(x),\hat{f}_{2}(x),\ldots,\hat{f}_{B}(x)$
-
-% \item We will define the average prediction function as:
-% \begin{align}
-% \hat{f}_{\text{avg}}\eqdef \frac{1}{B}\sum_{b=1}^{B}\hat{f}_{b}
-% \end{align}
-
-% %\item<+-> \dis What's random here?
-% %\begin{itemize}
-%     \note[item]{The $B$ independent training sets are random, which gives rise to
-%         variation among the $\hat{f}_{b}$'s.}
-% %\end{itemize}
-
-% %\item<+-> \think{Concept check}: What's the distribution of $\hat{f}$ called?
-% %What do we know about the distribution?
-% \end{itemize}
-
-% \note[item]{Concept check: sampling distribution. We don't know anything about it because we don't know the data generating distribution.}
-% \end{frame}
-
-% %
-% \begin{frame}{Averaging Reduces Variance of Predictions}
-% \begin{itemize}
-% \item The average prediction for $x_{0}$ is
-% \[
-% \hat{f}_{\text{avg}}(x_{0})=\frac{1}{B}\sum_{b=1}^{B}\hat{f}_{b}(x_{0}).
-% \]
-
-% \item $\hat{f}_{\text{avg}}(x_{0})$ and $\hat{f}_{b}(x_{0})$ have the
-% same expected value, but
-
-% \item $\hat{f}_{\text{avg}}(x_{0})$ has smaller variance:% (see \ref{eqn:variance-of-sample-mean}):
-% \begin{eqnarray*}
-% \mbox{\ensuremath{\var}}(\hat{f}_{\mbox{avg}}(x_{0})) = 
-% \frac{1}{B}\var\left(\hat{f}_{1}(x_{0})\right)
-% \end{eqnarray*}
-% \pause
-% \item \al{Problem}: in practice we don't have $B$ independent training sets!
-% \end{itemize}
-% \note[item]{The average prediction has the same expected value as the single prediction, but it has smaller variance.}
-% \note[item]{But are we done? Just train $n$ predictors and average them?}
-% \end{frame}
-
-% \subsection{Bootstrap}
-
-% \begin{frame}{The Bootstrap Sample}
-% \begin{simpleblock}
-% {How do we simulate multiple samples when we only have one?}
-% \begin{itemize}[<+->]
-% \item A \textbf{bootstrap sample} from $\cd_{n}=\left(x_{1},\ldots,x_{n}\right)$
-% is a sample of size $n$ drawn \emph{with replacement} from $\cd_{n}$
-
-% \item Some elements of $\cd_{n}$ 
-% will show up multiple times, and
-% some won't show up at all 
-% \end{itemize}
-% \end{simpleblock}
-
-% %\onslide<+->{\dis How similar are the bootstrap samples?}
-% \begin{itemize}[<+->]
-% \item Each $x_{i}$ has a probability of $(1-1/n)^{n}$ of not being
-% included in a given bootstrap sample
-
-% \item For large $n$,
-% \begin{align}
-% \left(1-\frac{1}{n}\right)^{n}\approx\frac{1}{e}\approx.368.
-% \end{align}
-
-% \item<.-> So we expect \textasciitilde 63.2\% of elements of $\cd_n$ will show
-% up at least once.
-% \end{itemize}
-
-% \note[item]{Now the question is how similar these bootstrap samples are. If they are pretty much the same, its distribution would be far from the actual data generating distribution.}
-% \note[item]{Because we are sampling with replacement, each element has $1/n$ probability to be selected during each draw. And after $n$ draws, the probability that it's still not selected is $1-1/n$ to the power of $n$.}
-% \note[item]{Actually $n$ doesn't have to be very large, with $n=1000$, we already reach this number here.}
-% \note[item]{Since about 60 percent examples shown in each bootstrap sample, they should be fairly different.}
-% \end{frame}
-% %
-% %
-% \begin{frame}{The Bootstrap Method}
-% \begin{definition}
-% A \textbf{bootstrap method } simulates $B$
-% independent samples from $P$ by taking $B$ bootstrap samples from
-% the sample $\cd_{n}$.
-
-% \end{definition}
-% \pause
-
-% \begin{itemize}
-% \item Given original data $\cd_{n}$, compute $B$ bootstrap samples $D_{n}^{1},\ldots,D_{n}^{B}$.
-
-% \pause
-% \item For each bootstrap sample, compute some function
-% \[
-% \phi(D_{n}^{1}),\ldots,\phi(D_{n}^{B})
-% \]
-% \pause
-
-% \item Use these values as though $D_{n}^{1},\ldots,D_{n}^{B}$ were
-% i.i.d. samples from $P$.
-
-% \item This often ends up being very close to what we'd get with independent samples from $P$!
-% \end{itemize}
-% \end{frame}
-% %
-% \begin{frame}{Independent Samples vs. Bootstrap Samples}
-% \begin{itemize}
-% \item Point estimator $\hat{\alpha}=\hat{\alpha}(\cd_{100})$ for samples
-% of size $100$, for a synthetic case where the data generating distribution is known
-
-% \item Histograms of $\hat{\alpha}$ based on
-% \begin{itemize}
-%     \item 1000 independent samples of size 100 (left), vs.
-%     \item 1000 bootstrap samples of size 100 (right)
-
-% \end{itemize}
-% \end{itemize}
-% \begin{figure}
-% \includegraphics[height=0.4\textheight]{figures/independentVsBootstrap}
-
-% \end{figure}
-
-% \let\thefootnote\relax\footnotetext{\tiny{Figure 5.10 from \emph{ISLR} (Springer, 2013) with permission from the authors: G. James, D. Witten,  T. Hastie and R. Tibshirani.}}
-% \end{frame}
-% %
-% %\begin{frame}{Side note: Bootstrap in Practice}
-% %We can use bootstrap to get error bars in a cheap way.
-% %\begin{itemize}
-% %\item Suppose we have an estimator $\hat{\theta}=\hat{\theta}(\cd_{n})$.
-
-% %\item To get error bars, we can compute the ``\emph{bootstrap variance}''. 
-
-% %\begin{itemize}
-
-% %\item Draw $B$ bootstrap samples.
-% %\item Compute sample variance of $\hat{\theta}(\cd_{n}^{1}),\ldots,\hat{\theta}(\cd_{n}^{B})$..
-
-% %\item Could report 
-% %\[
-% %\hat{\theta}(\cd_{n})\pm\sqrt{\mbox{Bootstrap Variance}}
-% %\]
-
-% %\end{itemize}
-% %\end{itemize}
-% %\end{frame}
-
-% \begin{frame}{Ensemble Methods}
-
-% {\textbf{Key ideas:}}
-
-%     \begin{itemize}[<+->]
-%     \item In general, \textbf{ensemble methods} combine multiple weak models into a single, more powerful model
-%     \item Averaging i.i.d. estimates reduces variance without changing bias
-%     \item We can use bootstrap to simulate multiple data samples and average them
-%     \item Parallel ensemble (\eg bagging): models are built independently
-%     \item Sequential ensemble (\eg boosting): models are built sequentially
-%         \begin{itemize}
-%         \item We try to find new learners that do well where previous learners fall short
-%         \end{itemize}
-% \end{itemize}
-
-% \end{frame}
-
-% \subsection{Bagging}
-% \begin{frame}{Bagging: Bootstrap Aggregation}
-%     \begin{itemize}[<+->]
-% \item We draw $B$ bootstrap samples $D^{1},\ldots,D^{B}$ from original data
-% $\cd$
-
-% \item Let $\hat{f}_{1},\hat{f}_{2},\ldots,\hat{f}_{B}$ be the prediction
-% functions resulting from training on $D^{1},\ldots,D^{B}$, respectively
-
-% \item The \textbf{bagged prediction function} is a \emph{combination }of
-% these:
-% \[
-% \hat{f}_{\text{avg}}(x)=\mbox{Combine}\left(\hat{f}_{1}(x),\hat{f}_{2}(x),\ldots,\hat{f}_{B}(x)\right)
-% \]
-
-% %\pause{}
-% %\item \dis How might we combine 
-% %\begin{itemize}
-% %\item prediction functions for regression?
-% %\item binary class predictions? 
-% %\item binary probability predictions?
-% %\item multiclass predictions? 
-% %\end{itemize}
-
-%     \end{itemize}
-% \end{frame}
-
-% \begin{frame}{Bagging: Bootstrap Aggregation}
-%     \begin{itemize}[<+->]
-
-% \item Bagging is a general method for variance reduction, but it is particularly useful for decision trees
-
-% \item For classification, averaging doesn't make sense; we can take a \textbf{majority vote} instead
-
-% \item Increasing the number of trees we use in bagging does not lead to overfitting
-
-% \item Is there a downside, compared to having a single decision tree?
-
-% \item Yes: if we have many trees, the bagged predictor is much less interpretable
-
-% \end{itemize}
-% \end{frame}
-
-% \begin{frame}{Aside: Out-of-Bag Error Estimation}
-% \begin{itemize}
-% \item Recall that each bagged predictor was trained on about 63\% of the data.
-% \item The remaining 37\% are called \textbf{out-of-bag (OOB)} observations.
-
-% \pause{}
-% \item For $i$th training point, let 
-% \[
-% S_{i}=\left\{ b\mid D^{b}\text{ does not contain }i\text{th point}\right\} 
-% \]
-
-% \item The \textbf{OOB prediction} on $x_{i}$ is
-% \[
-% \hat{f}_{\text{OOB}}(x_{i})=\frac{1}{\left|S_{i}\right|}\sum_{b\in S_{i}}\hat{f}_{b}(x_{i})
-% \]
-% \pause
-% \item The OOB error is a good estimate of the test error
-
-% \item Similar to cross validation error: both are computed
-% on the training set
-% \end{itemize}
-% \end{frame}
-
-% \begin{frame}{Applying Bagging to Classification Trees}
-% \begin{itemize}
-% \item Input space $\cx=\reals^{5}$ and output space $\cy=\left\{ -1,1\right\} $.
-% Sample size $n=30$.
-% \begin{columns}[t]
-
-% \column{.4\textwidth}
-
-% \includegraphics[width=1\columnwidth]{figures/baggedTrees}
-
-% \pause{}
-
-% \column{.6\textwidth}
-% \begin{itemize}[<+->]
-% \item Each bootstrap tree is quite different: different splitting variable at the root!
-
-% \item \textbf{High variance}: small perturbations of the training data lead to a high degree of model variability
-
-% \item Bagging helps most when the base learners are relatively unbiased but have high variance (exactly the case for
-%     decision trees)
-
-% \end{itemize}
-% \end{columns}
-
-% \end{itemize}
-% \let\thefootnote\relax\footnotetext{\tiny{From HTF Figure 8.9}}
-% \end{frame}
-% %
-
-% \subsection{Random Forests}
-% \begin{frame}{Motivating Random Forests: Correlated Prediction Functions}
-% Recall the motivating principle of bagging:
-%     \begin{itemize}[<+->]
-% \item For $\hat{\theta}_{1},\ldots,\hat{\theta}_{n}$ \emph{i.i.d.} with $\ex\pb{\hat{\theta}}=\theta$ and $\var\pb{\hat{\theta}}=\sigma^{2}$,
-% \[
-% \ex\left[\frac{1}{n}\sum_{i=1}^{n}\hat{\theta}_{i}\right]=\mu\qquad\var\left[\frac{1}{n}\sum_{i=1}^{n}\hat{\theta}_{i}\right]=\frac{\sigma^{2}}{n}.
-% \]
-
-% \item What if $\hat{\theta}$'s are correlated? 
-
-% %\item Suppose $\forall i\neq j$, $\text{Corr}(\hat{\theta}_{i},\hat{\theta}_{j})=\rho$ . Then
-% %\[
-% %\var\left[\frac{1}{n}\sum_{i=1}^{n}\hat{\theta}_{i}\right]=\rho\sigma^{2}+\frac{1-\rho}{n}\sigma^{2}.
-% %\]
-
-% \item For large $n$, the covariance term dominates, limiting the benefits of averaging
-% \item Bootstrap samples are 
-% \begin{itemize}
-% \item independent samples from the training set, but
-% \item \al{not} independent samples from $P_{\cx\times\cy}$
-% \end{itemize}
-
-% \item Can we reduce the dependence between $\hat{f}_{i}$'s?
-% \end{itemize}
-% \end{frame}
-
-% \begin{frame}{Random Forests}
-% \begin{simpleblock}{\textbf{Key idea}}
-% Use bagged decision trees, but modify the tree-growing procedure
-% to reduce the dependence between trees.
-% \end{simpleblock}
-
-% \begin{itemize}[<+->]
-% \item Build a collection of trees independently (in parallel), as before
-% \item When constructing each tree node, restrict choice of splitting
-% variable to a randomly chosen subset of features of size $m$
-% \begin{itemize}
-%     \item<.-> This prevents a situation where all trees are dominated by the same small number of strong features (and are therefore too similar to each other)
-% \end{itemize}
-% \item We typically choose $m\approx\sqrt{p}$, where $p$ is the number of
-%     features (or we can choose $m$ using cross validation)
-% \item If $m = p$, this is just bagging
-% \end{itemize}
-% \note[item]{When $m$ is too small, you might underfit. When $m$ is too large, it won't be effective at reducing dependence.}
-% \end{frame}
-% %
-% \begin{frame}{Random Forests: Effect of $m$} 
-% \begin{figure}
-% \includegraphics[height=0.7\textheight]{figures/randomForestVsBagging}
-% \end{figure}
-
-% \let\thefootnote\relax\footnotetext{\tiny{From \emph{An Introduction to Statistical Learning, with applications in R} (Springer, 2013) with permission from the authors: G. James, D. Witten,  T. Hastie and R. Tibshirani.}}
-% \end{frame}
-
-% \begin{frame}{Review}
-% \begin{itemize}[<+->]
-% \item The usual approach is to build very deep trees---low bias but \al{high variance}
-% \item Ensembling many models reduces variance
-% \begin{itemize}[<.->]
-% \item Motivation: Mean of i.i.d. estimates has smaller variance than single estimate
-% \end{itemize}
-% \item Use bootstrap to simulate many data samples from one dataset
-% \begin{itemize}[<.->]
-% \item $\implies$ Bagged decision trees
-% \end{itemize}
-% \item But bootstrap samples (and the induced models) are correlated
-% \item Ensembling works better when we combine a diverse set of
-% prediction functions
-% \begin{itemize}[<.->]
-%     \item $\implies$ Random forests: select a random subset of features for each decision tree
-% \end{itemize}
-% \end{itemize}
-% \end{frame}
+\section{Bagging and Random Forests}
+\subsection{Variance of an Estimator}
+\begin{frame}
+{Recap: Statistics and Point Estimators}
+    \begin{itemize}[<+->]
+\item We observe data $\cd=\left(x_{1},x_{2},\ldots,x_{n}\right)$ sampled i.i.d. from a parametric distribution $p(\cdot\mid \theta)$
+
+\item A \textbf{statistic} $s=s(\cd)$ is any function of the data:
+\begin{itemize}
+\item E.g., sample mean, sample variance, histogram, empirical data distribution
+\end{itemize}
+
+\item A statistic $\hat{\theta}=\hat{\theta}(\cd)$ is a \textbf{point estimator}
+of $\theta$ if $\hat{\theta}\approx\theta$
+\end{itemize}
+
+%\onslide<+->{
+%\begin{block}{Review questions}
+%In frequentist statistics,
+%\begin{itemize}
+%\item Is $\theta$ random?
+%\item Is $\hat{\theta}$ random?
+%\item Is the function $s(\cdot)$ random?
+%\end{itemize}
+%\end{block}
+%}
+
+\note[item]{When we say trees are not stable or have high variance, what do we mean by that precisely? Let's recall properties of point estimators we talked about in frequentist statistics.}
+\note[item]{We call a statistic a point estimator if it approximates some unknown parameter.}
+\note[item]{The function $s$ is not random, but we plug in random samples of data.}
+\end{frame}
+
+\begin{frame}
+{Recap: Bias and Variance of an Estimator}
+\begin{itemize}[<.->]
+    \setlength\itemsep{2pt}
+\item Statistics are random, so they have probability distributions.
+\item The distribution of a statistic is called a \textbf{sampling distribution}. 
+\item<+-> The standard deviation of the sampling distribution is called the \textbf{standard error}.
+\item<+-> Some parameters of the sampling distribution we might be interested in:
+\begin{description}
+\item[Bias]  $\mbox{Bias}(\hat{\theta})\eqdef \ex\pb{\hat{\theta}}-\theta$.
+\item[Variance] $\mbox{Var}(\hat{\theta})\eqdef \ex\pb{\hat{\theta}^{2}} - \ex^2\pb{\hat{\theta}}$.
+\end{description}
+%\item<+-> \dis Is bias and variance random?
+%\begin{itemize}
+    \note[item]{Neither bias nor variance depend on a specific sample $\cd_{n}$.
+        We are \emph{taking expectation over $\cd$.}}
+%\end{itemize}
+\item<+-> Why does variance matter if an estimator is unbiased?
+\pause
+\begin{itemize}
+    \item {$\hat{\theta}(\sD) = x_1$ is an unbiased estimator of the mean of a Gaussian, but would be farther away from $\theta$ than the sample mean.}
+\end{itemize}
+\end{itemize}
+\note[item]{Next let's look at how we can reduce variance of an estimator.}
+\end{frame}
+
+\subsection{The Benefits of Averaging}
+\begin{frame}
+{Variance of a Mean}
+\begin{itemize}
+\item Let $\hat{\theta}(\sD)$ be an unbiased estimator with variance $\sigma^2$:
+$\BE\pb{\hat{\theta}} = \theta$, $\mbox{Var}(\hat{\theta}) = \sigma^2$.
+\item<+-> So far we have used a single statistic $\hat{\theta} = \hat{\theta}(\sD)$ to estimate $\theta$.
+\item<+-> Its standard error is $\sqrt{\mbox{Var}(\hat{\theta})} = \sigma$
+\end{itemize}
+
+\onslide<+->{
+\begin{itemize}
+\item Consider a new estimator that takes the average of i.i.d. $\hat{\theta}_1, \ldots, \hat{\theta}_n$ where $\hat{\theta}_i = \hat{\theta}(\sD^{i})$.
+    \pause
+\item The average has the same expected value but smaller standard error (recall that $Var(cX) = c^2 Var(X)$, and that the $\hat{\theta}_i$-s are uncorrelated):
+\begin{align}
+\BE\pb{\frac{1}{n}\sum_{i=1}^n \hat{\theta}_i} = \theta \qquad
+\mbox{Var}\pb{\frac{1}{n}\sum_{i=1}^n \hat{\theta}_i} = \frac{\sigma^2}{n}
+\label{eqn:variance-of-sample-mean}
+\end{align}
+\end{itemize}
+}
+\note[item]{Let's say we want to estimate some parameter $\theta$.}
+\note[item]{What is the standard error?}
+\note[item]{Now let's consider a new estimator that takes the average of $n$ i.i.d. estimates, each computed from some data $\sD^i$.}
+\note[item]{It will still be unbiased, but now the variance is reduced. Try to prove it yourself.}
+\end{frame}
+
+\begin{frame}{Averaging Independent Prediction Functions }
+    \begin{itemize}[<+->]
+\item Suppose we have $B$ independent training sets, all drawn from the same distribution ($\sD \sim p(\cdot\mid \theta)$).
+
+\item Our learning algorithm gives us $B$ prediction functions: $\hat{f}_{1}(x),\hat{f}_{2}(x),\ldots,\hat{f}_{B}(x)$
+
+\item We will define the average prediction function as:
+\begin{align}
+\hat{f}_{\text{avg}}\eqdef \frac{1}{B}\sum_{b=1}^{B}\hat{f}_{b}
+\end{align}
+
+%\item<+-> \dis What's random here?
+%\begin{itemize}
+    \note[item]{The $B$ independent training sets are random, which gives rise to
+        variation among the $\hat{f}_{b}$'s.}
+%\end{itemize}
+
+%\item<+-> \think{Concept check}: What's the distribution of $\hat{f}$ called?
+%What do we know about the distribution?
+\end{itemize}
+
+\note[item]{Concept check: sampling distribution. We don't know anything about it because we don't know the data generating distribution.}
+\end{frame}
+
+%
+\begin{frame}{Averaging Reduces Variance of Predictions}
+\begin{itemize}
+\item The average prediction for $x_{0}$ is
+\[
+\hat{f}_{\text{avg}}(x_{0})=\frac{1}{B}\sum_{b=1}^{B}\hat{f}_{b}(x_{0}).
+\]
+
+\item $\hat{f}_{\text{avg}}(x_{0})$ and $\hat{f}_{b}(x_{0})$ have the
+same expected value, but
+
+\item $\hat{f}_{\text{avg}}(x_{0})$ has smaller variance:% (see \ref{eqn:variance-of-sample-mean}):
+\begin{eqnarray*}
+\mbox{\ensuremath{\var}}(\hat{f}_{\mbox{avg}}(x_{0})) = 
+\frac{1}{B}\var\left(\hat{f}_{1}(x_{0})\right)
+\end{eqnarray*}
+\pause
+\item \al{Problem}: in practice we don't have $B$ independent training sets!
+\end{itemize}
+\note[item]{The average prediction has the same expected value as the single prediction, but it has smaller variance.}
+\note[item]{But are we done? Just train $n$ predictors and average them?}
+\end{frame}
+
+\subsection{Bootstrap}
+
+\begin{frame}{The Bootstrap Sample}
+\begin{simpleblock}
+{How do we simulate multiple samples when we only have one?}
+\begin{itemize}[<+->]
+\item A \textbf{bootstrap sample} from $\cd_{n}=\left(x_{1},\ldots,x_{n}\right)$
+is a sample of size $n$ drawn \emph{with replacement} from $\cd_{n}$
+
+\item Some elements of $\cd_{n}$ 
+will show up multiple times, and
+some won't show up at all 
+\end{itemize}
+\end{simpleblock}
+
+%\onslide<+->{\dis How similar are the bootstrap samples?}
+\begin{itemize}[<+->]
+\item Each $x_{i}$ has a probability of $(1-1/n)^{n}$ of not being
+included in a given bootstrap sample
+
+\item For large $n$,
+\begin{align}
+\left(1-\frac{1}{n}\right)^{n}\approx\frac{1}{e}\approx.368.
+\end{align}
+
+\item<.-> So we expect \textasciitilde 63.2\% of elements of $\cd_n$ will show
+up at least once.
+\end{itemize}
+
+\note[item]{Now the question is how similar these bootstrap samples are. If they are pretty much the same, its distribution would be far from the actual data generating distribution.}
+\note[item]{Because we are sampling with replacement, each element has $1/n$ probability to be selected during each draw. And after $n$ draws, the probability that it's still not selected is $1-1/n$ to the power of $n$.}
+\note[item]{Actually $n$ doesn't have to be very large, with $n=1000$, we already reach this number here.}
+\note[item]{Since about 60 percent examples shown in each bootstrap sample, they should be fairly different.}
+\end{frame}
+%
+%
+\begin{frame}{The Bootstrap Method}
+\begin{definition}
+A \textbf{bootstrap method } simulates $B$
+independent samples from $P$ by taking $B$ bootstrap samples from
+the sample $\cd_{n}$.
+
+\end{definition}
+\pause
+
+\begin{itemize}
+\item Given original data $\cd_{n}$, compute $B$ bootstrap samples $D_{n}^{1},\ldots,D_{n}^{B}$.
+
+\pause
+\item For each bootstrap sample, compute some function
+\[
+\phi(D_{n}^{1}),\ldots,\phi(D_{n}^{B})
+\]
+\pause
+
+\item Use these values as though $D_{n}^{1},\ldots,D_{n}^{B}$ were
+i.i.d. samples from $P$.
+
+\item This often ends up being very close to what we'd get with independent samples from $P$!
+\end{itemize}
+\end{frame}
+%
+\begin{frame}{Independent Samples vs. Bootstrap Samples}
+\begin{itemize}
+\item Point estimator $\hat{\alpha}=\hat{\alpha}(\cd_{100})$ for samples
+of size $100$, for a synthetic case where the data generating distribution is known
+
+\item Histograms of $\hat{\alpha}$ based on
+\begin{itemize}
+    \item 1000 independent samples of size 100 (left), vs.
+    \item 1000 bootstrap samples of size 100 (right)
+
+\end{itemize}
+\end{itemize}
+\begin{figure}
+\includegraphics[height=0.4\textheight]{figures/independentVsBootstrap}
+
+\end{figure}
+
+\let\thefootnote\relax\footnotetext{\tiny{Figure 5.10 from \emph{ISLR} (Springer, 2013) with permission from the authors: G. James, D. Witten,  T. Hastie and R. Tibshirani.}}
+\end{frame}
+%
+%\begin{frame}{Side note: Bootstrap in Practice}
+%We can use bootstrap to get error bars in a cheap way.
+%\begin{itemize}
+%\item Suppose we have an estimator $\hat{\theta}=\hat{\theta}(\cd_{n})$.
+
+%\item To get error bars, we can compute the ``\emph{bootstrap variance}''. 
+
+%\begin{itemize}
+
+%\item Draw $B$ bootstrap samples.
+%\item Compute sample variance of $\hat{\theta}(\cd_{n}^{1}),\ldots,\hat{\theta}(\cd_{n}^{B})$..
+
+%\item Could report 
+%\[
+%\hat{\theta}(\cd_{n})\pm\sqrt{\mbox{Bootstrap Variance}}
+%\]
+
+%\end{itemize}
+%\end{itemize}
+%\end{frame}
+
+\begin{frame}{Ensemble Methods}
+
+{\textbf{Key ideas:}}
+
+    \begin{itemize}[<+->]
+    \item In general, \textbf{ensemble methods} combine multiple weak models into a single, more powerful model
+    \item Averaging i.i.d. estimates reduces variance without changing bias
+    \item We can use bootstrap to simulate multiple data samples and average them
+    \item Parallel ensemble (\eg bagging): models are built independently
+    \item Sequential ensemble (\eg boosting): models are built sequentially
+        \begin{itemize}
+        \item We try to find new learners that do well where previous learners fall short
+        \end{itemize}
+\end{itemize}
+
+\end{frame}
+
+\subsection{Bagging}
+\begin{frame}{Bagging: Bootstrap Aggregation}
+    \begin{itemize}[<+->]
+\item We draw $B$ bootstrap samples $D^{1},\ldots,D^{B}$ from original data
+$\cd$
+
+\item Let $\hat{f}_{1},\hat{f}_{2},\ldots,\hat{f}_{B}$ be the prediction
+functions resulting from training on $D^{1},\ldots,D^{B}$, respectively
+
+\item The \textbf{bagged prediction function} is a \emph{combination }of
+these:
+\[
+\hat{f}_{\text{avg}}(x)=\mbox{Combine}\left(\hat{f}_{1}(x),\hat{f}_{2}(x),\ldots,\hat{f}_{B}(x)\right)
+\]
+
+%\pause{}
+%\item \dis How might we combine 
+%\begin{itemize}
+%\item prediction functions for regression?
+%\item binary class predictions? 
+%\item binary probability predictions?
+%\item multiclass predictions? 
+%\end{itemize}
+
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Bagging: Bootstrap Aggregation}
+    \begin{itemize}[<+->]
+
+\item Bagging is a general method for variance reduction, but it is particularly useful for decision trees
+
+\item For classification, averaging doesn't make sense; we can take a \textbf{majority vote} instead
+
+\item Increasing the number of trees we use in bagging does not lead to overfitting
+
+\item Is there a downside, compared to having a single decision tree?
+
+\item Yes: if we have many trees, the bagged predictor is much less interpretable
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Aside: Out-of-Bag Error Estimation}
+\begin{itemize}
+\item Recall that each bagged predictor was trained on about 63\% of the data.
+\item The remaining 37\% are called \textbf{out-of-bag (OOB)} observations.
+
+\pause{}
+\item For $i$th training point, let 
+\[
+S_{i}=\left\{ b\mid D^{b}\text{ does not contain }i\text{th point}\right\} 
+\]
+
+\item The \textbf{OOB prediction} on $x_{i}$ is
+\[
+\hat{f}_{\text{OOB}}(x_{i})=\frac{1}{\left|S_{i}\right|}\sum_{b\in S_{i}}\hat{f}_{b}(x_{i})
+\]
+\pause
+\item The OOB error is a good estimate of the test error
+
+\item Similar to cross validation error: both are computed
+on the training set
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Applying Bagging to Classification Trees}
+\begin{itemize}
+\item Input space $\cx=\reals^{5}$ and output space $\cy=\left\{ -1,1\right\} $.
+Sample size $n=30$.
+\begin{columns}[t]
+
+\column{.4\textwidth}
+
+\includegraphics[width=1\columnwidth]{figures/baggedTrees}
+
+\pause{}
+
+\column{.6\textwidth}
+\begin{itemize}[<+->]
+\item Each bootstrap tree is quite different: different splitting variable at the root!
+
+\item \textbf{High variance}: small perturbations of the training data lead to a high degree of model variability
+
+\item Bagging helps most when the base learners are relatively unbiased but have high variance (exactly the case for
+    decision trees)
+
+\end{itemize}
+\end{columns}
+
+\end{itemize}
+\let\thefootnote\relax\footnotetext{\tiny{From HTF Figure 8.9}}
+\end{frame}
+%
+
+\subsection{Random Forests}
+\begin{frame}{Motivating Random Forests: Correlated Prediction Functions}
+Recall the motivating principle of bagging:
+    \begin{itemize}[<+->]
+\item For $\hat{\theta}_{1},\ldots,\hat{\theta}_{n}$ \emph{i.i.d.} with $\ex\pb{\hat{\theta}}=\theta$ and $\var\pb{\hat{\theta}}=\sigma^{2}$,
+\[
+\ex\left[\frac{1}{n}\sum_{i=1}^{n}\hat{\theta}_{i}\right]=\mu\qquad\var\left[\frac{1}{n}\sum_{i=1}^{n}\hat{\theta}_{i}\right]=\frac{\sigma^{2}}{n}.
+\]
+
+\item What if $\hat{\theta}$'s are correlated? 
+
+%\item Suppose $\forall i\neq j$, $\text{Corr}(\hat{\theta}_{i},\hat{\theta}_{j})=\rho$ . Then
+%\[
+%\var\left[\frac{1}{n}\sum_{i=1}^{n}\hat{\theta}_{i}\right]=\rho\sigma^{2}+\frac{1-\rho}{n}\sigma^{2}.
+%\]
+
+\item For large $n$, the covariance term dominates, limiting the benefits of averaging
+\item Bootstrap samples are 
+\begin{itemize}
+\item independent samples from the training set, but
+\item \al{not} independent samples from $P_{\cx\times\cy}$
+\end{itemize}
+
+\item Can we reduce the dependence between $\hat{f}_{i}$'s?
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Random Forests}
+\begin{simpleblock}{\textbf{Key idea}}
+Use bagged decision trees, but modify the tree-growing procedure
+to reduce the dependence between trees.
+\end{simpleblock}
+
+\begin{itemize}[<+->]
+\item Build a collection of trees independently (in parallel), as before
+\item When constructing each tree node, restrict choice of splitting
+variable to a randomly chosen subset of features of size $m$
+\begin{itemize}
+    \item<.-> This prevents a situation where all trees are dominated by the same small number of strong features (and are therefore too similar to each other)
+\end{itemize}
+\item We typically choose $m\approx\sqrt{p}$, where $p$ is the number of
+    features (or we can choose $m$ using cross validation)
+\item If $m = p$, this is just bagging
+\end{itemize}
+\note[item]{When $m$ is too small, you might underfit. When $m$ is too large, it won't be effective at reducing dependence.}
+\end{frame}
+%
+\begin{frame}{Random Forests: Effect of $m$} 
+\begin{figure}
+\includegraphics[height=0.7\textheight]{figures/randomForestVsBagging}
+\end{figure}
+
+\let\thefootnote\relax\footnotetext{\tiny{From \emph{An Introduction to Statistical Learning, with applications in R} (Springer, 2013) with permission from the authors: G. James, D. Witten,  T. Hastie and R. Tibshirani.}}
+\end{frame}
+
+\begin{frame}{Review}
+\begin{itemize}[<+->]
+\item The usual approach is to build very deep trees---low bias but \al{high variance}
+\item Ensembling many models reduces variance
+\begin{itemize}[<.->]
+\item Motivation: Mean of i.i.d. estimates has smaller variance than single estimate
+\end{itemize}
+\item Use bootstrap to simulate many data samples from one dataset
+\begin{itemize}[<.->]
+\item $\implies$ Bagged decision trees
+\end{itemize}
+\item But bootstrap samples (and the induced models) are correlated
+\item Ensembling works better when we combine a diverse set of
+prediction functions
+\begin{itemize}[<.->]
+    \item $\implies$ Random forests: select a random subset of features for each decision tree
+\end{itemize}
+\end{itemize}
+\end{frame}
 
 \end{document}
