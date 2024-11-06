@@ -325,7 +325,7 @@ $y$ & $\underbrace{\mbox{[START]}}_{y_{0}}$ & $\underbrace{\mbox{Pronoun}}_{y_{1
 \item $\cy=\cp^{n},\,n=1,2,3,\ldots${[}Part of speech sequence of any length{]}
 \end{itemize}
 }
-\mode<presentation>{
+\mode<beamer>{
   \vspace{1.0in}
 }
 \end{frame}
@@ -342,7 +342,7 @@ $y$ & $\underbrace{\mbox{[START]}}_{y_{0}}$ & $\underbrace{\mbox{Pronoun}}_{y_{1
   \item $\cy=\cp^{n},\,n=1,2,3,\ldots${[}Part of speech sequence of any length{]}
   \item Can also be represented with start and end timestamps.
   }
-  \mode<presentation>{
+  \mode<beamer>{
   \vspace{1.3in}
   }
 \end{itemize}
@@ -539,8 +539,8 @@ $\Psi(x,y)$ decomposes to $\sum_i \Psi_i(x,y)$.
 \item[Solution]
 Dynamic programming
 \includegraphics[height=0.4\textheight]{figures/dp}
-What's the running time?
-\note<.>{Let $K=\vert\sY\vert$, DP runtime $O(K^2L)$, $m$th order Markov feature has runtime $O(K^mL)$, naive runtime $O(K^L)$.}
+% What's the running time?
+\note<.>{Let $K=\vert\sY\vert$, DP2 runtime $O(K^2L)$, $m$th order Markov feature has runtime $O(K^mL)$, naive runtime $O(K^L)$.}
 \end{description}
 \let\thefootnote\relax\footnotetext{\tiny{Figure by Daum\'e III. A course in machine learning. Figure 17.1}.}
 \end{frame}
@@ -550,8 +550,9 @@ What's the running time?
 \includegraphics[height=0.4\textheight]{figures/dp}
 \end{center}
 \vspace{-0.1in}
+\mode<handout>{
 \begin{itemize}
-  \item Initiate $\alpha_j(1) = \exp (w^\top \psi(y_1=j, x_1))$
+  \item Initiate $\alpha_j(1) = w^\top \psi(y_1=j, x_1)$
   \pause
   \item Recursion: $\alpha_j(t) = \max_i \alpha_i (t-1)+ w^\top \psi(y_t=j, y_{t-1}=i, x_t)$
   \pause
@@ -559,6 +560,10 @@ What's the running time?
   % \item Result: $Z(x) = \sum_j \alpha_j(T)$
   \item Problem-specific: DP, graph cuts, etc. General: integer linear programming (ILP).
 \end{itemize}
+}
+\mode<beamer>{
+  \vspace{2.0in}
+}
 \end{frame}
 
 % \begin{frame}
@@ -652,12 +657,19 @@ $p(y|x) = \frac{1}{Z(x)} \exp(\sum_t w^\top \psi(x, y_t, y_{t-1}))$
 \begin{itemize}
   \item What is $\frac{1}{N} \sum_i \frac{\partial}{\partial w_k} \log \sum_{y' \in Y} \exp(\sum_t \sum_{k'} w_{k'} \psi_{k'}(x^{(i)}, y_t', y_{t-1}'))$?
   \pause
+  \mode<handout>{
   \begin{align}
   & \frac{1}{N} \sum_i \frac{\partial}{\partial w_k} \log \sum_{y' \in Y} \exp(\sum_t \sum_{k'} w_{k'} \psi_{k'}(x^{(i)}, y_t', y_{t-1}'))\\
   &= \frac{1}{N} \sum_i \left[\sum_{y' \in Y} \exp(\sum_t \sum_{k'} w_{k'} \psi_{k'}(x^{(i)}, y_t', y_{t-1}'))\right]^{-1}\\
   &\left[\sum_{y' \in Y} \exp(\sum_t \sum_{k'} w_{k'} \psi_{k'}(x^{(i)}, y_t^{(i)}, y_{t-1}^{(i)})) \sum_t \psi_k(x^{(i)}, y_t', y_{t-1}') \right] \\
   &= \frac{1}{N} \sum_i \sum_t \sum_{y'\in Y} p(y'_t, y_{t-1}' | x) \psi_k (x^{(i)}, y'_t, y'_{t-1})
   \end{align}
+  }
+  \mode<beamer>{
+  \begin{align}
+  &= \frac{1}{N} \sum_i \sum_t \sum_{y'\in Y} p(y'_t, y_{t-1}' | x) \psi_k (x^{(i)}, y'_t, y'_{t-1})
+  \end{align}
+  }
   \pause
   \item It is the expectation of $\psi_k (x^{(i)}, y'_t, y'_{t-1})$ under the model distribution $p(y'_t, y_{t-1}' | x)$.
 \end{itemize}
@@ -667,6 +679,7 @@ $p(y|x) = \frac{1}{Z(x)} \exp(\sum_t w^\top \psi(x, y_t, y_{t-1}))$
 \begin{frame}{Conditional random field (CRF)}
 \begin{itemize}
   \item To compute the gradient, we need to infer expectation under the model distribution $p(y|x)$.
+  \item We contrast between the data expectation and the model expectation.
   \pause
   \item Compare the learning algorithms: in structured SVM we need to compute the argmax, whereas in CRF we need to compute the model expectation.
   \pause
@@ -675,40 +688,46 @@ $p(y|x) = \frac{1}{Z(x)} \exp(\sum_t w^\top \psi(x, y_t, y_{t-1}))$
 \end{frame}
 
 \begin{frame}{CRF Inference}
+\begin{center}
+\includegraphics[height=0.4\textheight]{figures/dp}
+\end{center}
 \begin{itemize}
   \item In the linear chain structure, we can use the forward-backward algorithm for inference, similar to Viterbi.
-  \pause
+  \mode<handout>{
   \item Initiate $\alpha_j(1) = \exp (w^\top \psi(y_1=j, x_1))$
-  \pause
   \item Recursion: $\alpha_j(t) = \sum_i \alpha_i (t-1) \exp(w^\top \psi(y_t=j, y_{t-1}=i, x_t))$
-  \pause
   \item Result: $Z(x) = \sum_j \alpha_j(T)$
-  \pause
   \item Similar for the backward direction.
-  \pause
   \item Test time, again use Viterbi algorithm to infer argmax.
-  \pause
+  }
   \item The inference algorithm can be generalized to belief propagation (BP) in a tree structure (exact inference).
-  \pause
   \item In general graphs, we rely on approximate inference (e.g. loopy belief propagation).
 \end{itemize}
 \end{frame}
 
 \begin{frame}{Examples}
 \begin{itemize}
-  \item POS tag
+  \item<+-> POS tag
   Relationship between constituents, e.g. NP is likely to be followed by a VP.
-  \pause
 
-  \item Semantic segmentation
+  \item<+-> Semantic segmentation
   
-  Relationship between pixels, e.g. a grass pixel is likely to be next to another grass pixel, and a sky pixel is likely to be above a grass pixel.
-  \pause
+  Relationship between pixels, e.g. a grass pixel is likely to be next to another grass pixel.
 
-  \item Multi-label learning
+  \item<+-> Multi-label learning
 
-  An image may contain multiple class labels, e.g. a bus is likely to co-occur with a car.
+  An image may contain multiple class labels, e.g. water is likely to co-occur with fish.
 \end{itemize}
+
+\begin{center}
+\includegraphics[width=0.35\textwidth]{figures/pos_tag.png}
+\includegraphics[width=0.35\textwidth]{figures/semantic_seg.png}
+\includegraphics[width=0.27\textwidth]{figures/deep_structured.png}
+\end{center}
+
+\begin{flushright}
+{\tiny Chen et al. Learning Deep Structured Models. ICML 2015.}
+\end{flushright}
 \end{frame}
 
 \begin{frame}
@@ -925,19 +944,34 @@ Intuition: we want to produce \emph{pure} nodes,
 $m$:
 \begin{itemize}[<+->]
 \item Misclassification error
+
+\mode<handout>{
 \[
 1 -  \hat{p}_{mk(m)}.
 \]
-
+}
+\mode<beamer>{
+  \vspace{0.3in}
+}
 \item The Gini index encourages $\hat{p}_{mk}$ to be close to 0 or 1
+\mode<handout>{
 \[
 \sum_{k=1}^{K}\hat{p}_{mk}(1-\hat{p}_{mk}).
 \]
+}
+\mode<beamer>{
+\vspace{0.3in}
+}
 
 \item Entropy / Information gain
+\mode<handout>{
 \[
 -\sum_{k=1}^{K}\hat{p}_{mk}\log\hat{p}_{mk}.
 \]
+}
+\mode<beamer>{
+\vspace{0.3in}
+}
 \end{itemize}
 \item The Gini index and entropy are numerically similar to each other, and both work better in practice than the misclassification error.
 
@@ -1085,427 +1119,429 @@ Trees may have to work hard to capture linear decision boundaries, but can easil
 \note[item]{One big issue with trees is that they are very unstable, meaning that if the training data is changed slightly, our classifier will be quite different, and this makes the performance of a single tree not competitive.}
 \end{frame}
 
-\section{Bagging and Random Forests}
-\subsection{Variance of an Estimator}
-\begin{frame}
-{Recap: Statistics and Point Estimators}
-    \begin{itemize}[<+->]
-\item We observe data $\cd=\left(x_{1},x_{2},\ldots,x_{n}\right)$ sampled i.i.d. from a parametric distribution $p(\cdot\mid \theta)$
-
-\item A \textbf{statistic} $s=s(\cd)$ is any function of the data:
-\begin{itemize}
-\item E.g., sample mean, sample variance, histogram, empirical data distribution
-\end{itemize}
-
-\item A statistic $\hat{\theta}=\hat{\theta}(\cd)$ is a \textbf{point estimator}
-of $\theta$ if $\hat{\theta}\approx\theta$
-\end{itemize}
-
-%\onslide<+->{
-%\begin{block}{Review questions}
-%In frequentist statistics,
-%\begin{itemize}
-%\item Is $\theta$ random?
-%\item Is $\hat{\theta}$ random?
-%\item Is the function $s(\cdot)$ random?
-%\end{itemize}
-%\end{block}
-%}
-
-\note[item]{When we say trees are not stable or have high variance, what do we mean by that precisely? Let's recall properties of point estimators we talked about in frequentist statistics.}
-\note[item]{We call a statistic a point estimator if it approximates some unknown parameter.}
-\note[item]{The function $s$ is not random, but we plug in random samples of data.}
-\end{frame}
-
-\begin{frame}
-{Recap: Bias and Variance of an Estimator}
-\begin{itemize}[<.->]
-    \setlength\itemsep{2pt}
-\item Statistics are random, so they have probability distributions.
-\item The distribution of a statistic is called a \textbf{sampling distribution}. 
-\item<+-> The standard deviation of the sampling distribution is called the \textbf{standard error}.
-\item<+-> Some parameters of the sampling distribution we might be interested in:
-\begin{description}
-\item[Bias]  $\mbox{Bias}(\hat{\theta})\eqdef \ex\pb{\hat{\theta}}-\theta$.
-\item[Variance] $\mbox{Var}(\hat{\theta})\eqdef \ex\pb{\hat{\theta}^{2}} - \ex^2\pb{\hat{\theta}}$.
-\end{description}
-%\item<+-> \dis Is bias and variance random?
-%\begin{itemize}
-    \note[item]{Neither bias nor variance depend on a specific sample $\cd_{n}$.
-        We are \emph{taking expectation over $\cd$.}}
-%\end{itemize}
-\item<+-> Why does variance matter if an estimator is unbiased?
-\pause
-\begin{itemize}
-    \item {$\hat{\theta}(\sD) = x_1$ is an unbiased estimator of the mean of a Gaussian, but would be farther away from $\theta$ than the sample mean.}
-\end{itemize}
-\end{itemize}
-\note[item]{Next let's look at how we can reduce variance of an estimator.}
-\end{frame}
-
-\subsection{The Benefits of Averaging}
-\begin{frame}
-{Variance of a Mean}
-\begin{itemize}
-\item Let $\hat{\theta}(\sD)$ be an unbiased estimator with variance $\sigma^2$:
-$\BE\pb{\hat{\theta}} = \theta$, $\mbox{Var}(\hat{\theta}) = \sigma^2$.
-\item<+-> So far we have used a single statistic $\hat{\theta} = \hat{\theta}(\sD)$ to estimate $\theta$.
-\item<+-> Its standard error is $\sqrt{\mbox{Var}(\hat{\theta})} = \sigma$
-\end{itemize}
-
-\onslide<+->{
-\begin{itemize}
-\item Consider a new estimator that takes the average of i.i.d. $\hat{\theta}_1, \ldots, \hat{\theta}_n$ where $\hat{\theta}_i = \hat{\theta}(\sD^{i})$.
-    \pause
-\item The average has the same expected value but smaller standard error (recall that $Var(cX) = c^2 Var(X)$, and that the $\hat{\theta}_i$-s are uncorrelated):
-\begin{align}
-\BE\pb{\frac{1}{n}\sum_{i=1}^n \hat{\theta}_i} = \theta \qquad
-\mbox{Var}\pb{\frac{1}{n}\sum_{i=1}^n \hat{\theta}_i} = \frac{\sigma^2}{n}
-\label{eqn:variance-of-sample-mean}
-\end{align}
-\end{itemize}
-}
-\note[item]{Let's say we want to estimate some parameter $\theta$.}
-\note[item]{What is the standard error?}
-\note[item]{Now let's consider a new estimator that takes the average of $n$ i.i.d. estimates, each computed from some data $\sD^i$.}
-\note[item]{It will still be unbiased, but now the variance is reduced. Try to prove it yourself.}
-\end{frame}
-
-\begin{frame}{Averaging Independent Prediction Functions }
-    \begin{itemize}[<+->]
-\item Suppose we have $B$ independent training sets, all drawn from the same distribution ($\sD \sim p(\cdot\mid \theta)$).
-
-\item Our learning algorithm gives us $B$ prediction functions: $\hat{f}_{1}(x),\hat{f}_{2}(x),\ldots,\hat{f}_{B}(x)$
-
-\item We will define the average prediction function as:
-\begin{align}
-\hat{f}_{\text{avg}}\eqdef \frac{1}{B}\sum_{b=1}^{B}\hat{f}_{b}
-\end{align}
-
-%\item<+-> \dis What's random here?
-%\begin{itemize}
-    \note[item]{The $B$ independent training sets are random, which gives rise to
-        variation among the $\hat{f}_{b}$'s.}
-%\end{itemize}
-
-%\item<+-> \think{Concept check}: What's the distribution of $\hat{f}$ called?
-%What do we know about the distribution?
-\end{itemize}
-
-\note[item]{Concept check: sampling distribution. We don't know anything about it because we don't know the data generating distribution.}
-\end{frame}
-
-%
-\begin{frame}{Averaging Reduces Variance of Predictions}
-\begin{itemize}
-\item The average prediction for $x_{0}$ is
-\[
-\hat{f}_{\text{avg}}(x_{0})=\frac{1}{B}\sum_{b=1}^{B}\hat{f}_{b}(x_{0}).
-\]
-
-\item $\hat{f}_{\text{avg}}(x_{0})$ and $\hat{f}_{b}(x_{0})$ have the
-same expected value, but
-
-\item $\hat{f}_{\text{avg}}(x_{0})$ has smaller variance:% (see \ref{eqn:variance-of-sample-mean}):
-\begin{eqnarray*}
-\mbox{\ensuremath{\var}}(\hat{f}_{\mbox{avg}}(x_{0})) = 
-\frac{1}{B}\var\left(\hat{f}_{1}(x_{0})\right)
-\end{eqnarray*}
-\pause
-\item \al{Problem}: in practice we don't have $B$ independent training sets!
-\end{itemize}
-\note[item]{The average prediction has the same expected value as the single prediction, but it has smaller variance.}
-\note[item]{But are we done? Just train $n$ predictors and average them?}
-\end{frame}
-
-\subsection{Bootstrap}
-
-\begin{frame}{The Bootstrap Sample}
-\begin{simpleblock}
-{How do we simulate multiple samples when we only have one?}
-\begin{itemize}[<+->]
-\item A \textbf{bootstrap sample} from $\cd_{n}=\left(x_{1},\ldots,x_{n}\right)$
-is a sample of size $n$ drawn \emph{with replacement} from $\cd_{n}$
-
-\item Some elements of $\cd_{n}$ 
-will show up multiple times, and
-some won't show up at all 
-\end{itemize}
-\end{simpleblock}
-
-%\onslide<+->{\dis How similar are the bootstrap samples?}
-\begin{itemize}[<+->]
-\item Each $x_{i}$ has a probability of $(1-1/n)^{n}$ of not being
-included in a given bootstrap sample
-
-\item For large $n$,
-\begin{align}
-\left(1-\frac{1}{n}\right)^{n}\approx\frac{1}{e}\approx.368.
-\end{align}
-
-\item<.-> So we expect \textasciitilde 63.2\% of elements of $\cd_n$ will show
-up at least once.
-\end{itemize}
-
-\note[item]{Now the question is how similar these bootstrap samples are. If they are pretty much the same, its distribution would be far from the actual data generating distribution.}
-\note[item]{Because we are sampling with replacement, each element has $1/n$ probability to be selected during each draw. And after $n$ draws, the probability that it's still not selected is $1-1/n$ to the power of $n$.}
-\note[item]{Actually $n$ doesn't have to be very large, with $n=1000$, we already reach this number here.}
-\note[item]{Since about 60 percent examples shown in each bootstrap sample, they should be fairly different.}
-\end{frame}
-%
-%
-\begin{frame}{The Bootstrap Method}
-\begin{definition}
-A \textbf{bootstrap method } simulates $B$
-independent samples from $P$ by taking $B$ bootstrap samples from
-the sample $\cd_{n}$.
-
-\end{definition}
-\pause
-
-\begin{itemize}
-\item Given original data $\cd_{n}$, compute $B$ bootstrap samples $D_{n}^{1},\ldots,D_{n}^{B}$.
-
-\pause
-\item For each bootstrap sample, compute some function
-\[
-\phi(D_{n}^{1}),\ldots,\phi(D_{n}^{B})
-\]
-\pause
-
-\item Use these values as though $D_{n}^{1},\ldots,D_{n}^{B}$ were
-i.i.d. samples from $P$.
-
-\item This often ends up being very close to what we'd get with independent samples from $P$!
-\end{itemize}
-\end{frame}
-%
-\begin{frame}{Independent Samples vs. Bootstrap Samples}
-\begin{itemize}
-\item Point estimator $\hat{\alpha}=\hat{\alpha}(\cd_{100})$ for samples
-of size $100$, for a synthetic case where the data generating distribution is known
-
-\item Histograms of $\hat{\alpha}$ based on
-\begin{itemize}
-    \item 1000 independent samples of size 100 (left), vs.
-    \item 1000 bootstrap samples of size 100 (right)
-
-\end{itemize}
-\end{itemize}
-\begin{figure}
-\includegraphics[height=0.4\textheight]{figures/independentVsBootstrap}
-
-\end{figure}
-
-\let\thefootnote\relax\footnotetext{\tiny{Figure 5.10 from \emph{ISLR} (Springer, 2013) with permission from the authors: G. James, D. Witten,  T. Hastie and R. Tibshirani.}}
-\end{frame}
-%
-%\begin{frame}{Side note: Bootstrap in Practice}
-%We can use bootstrap to get error bars in a cheap way.
-%\begin{itemize}
-%\item Suppose we have an estimator $\hat{\theta}=\hat{\theta}(\cd_{n})$.
-
-%\item To get error bars, we can compute the ``\emph{bootstrap variance}''. 
-
-%\begin{itemize}
-
-%\item Draw $B$ bootstrap samples.
-%\item Compute sample variance of $\hat{\theta}(\cd_{n}^{1}),\ldots,\hat{\theta}(\cd_{n}^{B})$..
-
-%\item Could report 
-%\[
-%\hat{\theta}(\cd_{n})\pm\sqrt{\mbox{Bootstrap Variance}}
-%\]
-
-%\end{itemize}
-%\end{itemize}
-%\end{frame}
-
-\begin{frame}{Ensemble Methods}
-
-{\textbf{Key ideas:}}
-
-    \begin{itemize}[<+->]
-    \item In general, \textbf{ensemble methods} combine multiple weak models into a single, more powerful model
-    \item Averaging i.i.d. estimates reduces variance without changing bias
-    \item We can use bootstrap to simulate multiple data samples and average them
-    \item Parallel ensemble (\eg bagging): models are built independently
-    \item Sequential ensemble (\eg boosting): models are built sequentially
-        \begin{itemize}
-        \item We try to find new learners that do well where previous learners fall short
-        \end{itemize}
-\end{itemize}
-
-\end{frame}
-
-\subsection{Bagging}
-\begin{frame}{Bagging: Bootstrap Aggregation}
-    \begin{itemize}[<+->]
-\item We draw $B$ bootstrap samples $D^{1},\ldots,D^{B}$ from original data
-$\cd$
-
-\item Let $\hat{f}_{1},\hat{f}_{2},\ldots,\hat{f}_{B}$ be the prediction
-functions resulting from training on $D^{1},\ldots,D^{B}$, respectively
-
-\item The \textbf{bagged prediction function} is a \emph{combination }of
-these:
-\[
-\hat{f}_{\text{avg}}(x)=\mbox{Combine}\left(\hat{f}_{1}(x),\hat{f}_{2}(x),\ldots,\hat{f}_{B}(x)\right)
-\]
-
-%\pause{}
-%\item \dis How might we combine 
-%\begin{itemize}
-%\item prediction functions for regression?
-%\item binary class predictions? 
-%\item binary probability predictions?
-%\item multiclass predictions? 
-%\end{itemize}
-
-    \end{itemize}
-\end{frame}
-
-\begin{frame}{Bagging: Bootstrap Aggregation}
-    \begin{itemize}[<+->]
-
-\item Bagging is a general method for variance reduction, but it is particularly useful for decision trees
-
-\item For classification, averaging doesn't make sense; we can take a \textbf{majority vote} instead
-
-\item Increasing the number of trees we use in bagging does not lead to overfitting
-
-\item Is there a downside, compared to having a single decision tree?
-
-\item Yes: if we have many trees, the bagged predictor is much less interpretable
-
-\end{itemize}
-\end{frame}
-
-\begin{frame}{Aside: Out-of-Bag Error Estimation}
-\begin{itemize}
-\item Recall that each bagged predictor was trained on about 63\% of the data.
-\item The remaining 37\% are called \textbf{out-of-bag (OOB)} observations.
-
-\pause{}
-\item For $i$th training point, let 
-\[
-S_{i}=\left\{ b\mid D^{b}\text{ does not contain }i\text{th point}\right\} 
-\]
-
-\item The \textbf{OOB prediction} on $x_{i}$ is
-\[
-\hat{f}_{\text{OOB}}(x_{i})=\frac{1}{\left|S_{i}\right|}\sum_{b\in S_{i}}\hat{f}_{b}(x_{i})
-\]
-\pause
-\item The OOB error is a good estimate of the test error
-
-\item Similar to cross validation error: both are computed
-on the training set
-\end{itemize}
-\end{frame}
-
-\begin{frame}{Applying Bagging to Classification Trees}
-\begin{itemize}
-\item Input space $\cx=\reals^{5}$ and output space $\cy=\left\{ -1,1\right\} $.
-Sample size $n=30$.
-\begin{columns}[t]
-
-\column{.4\textwidth}
-
-\includegraphics[width=1\columnwidth]{figures/baggedTrees}
-
-\pause{}
-
-\column{.6\textwidth}
-\begin{itemize}[<+->]
-\item Each bootstrap tree is quite different: different splitting variable at the root!
-
-\item \textbf{High variance}: small perturbations of the training data lead to a high degree of model variability
-
-\item Bagging helps most when the base learners are relatively unbiased but have high variance (exactly the case for
-    decision trees)
-
-\end{itemize}
-\end{columns}
-
-\end{itemize}
-\let\thefootnote\relax\footnotetext{\tiny{From HTF Figure 8.9}}
-\end{frame}
-%
-
-\subsection{Random Forests}
-\begin{frame}{Motivating Random Forests: Correlated Prediction Functions}
-Recall the motivating principle of bagging:
-    \begin{itemize}[<+->]
-\item For $\hat{\theta}_{1},\ldots,\hat{\theta}_{n}$ \emph{i.i.d.} with $\ex\pb{\hat{\theta}}=\theta$ and $\var\pb{\hat{\theta}}=\sigma^{2}$,
-\[
-\ex\left[\frac{1}{n}\sum_{i=1}^{n}\hat{\theta}_{i}\right]=\mu\qquad\var\left[\frac{1}{n}\sum_{i=1}^{n}\hat{\theta}_{i}\right]=\frac{\sigma^{2}}{n}.
-\]
-
-\item What if $\hat{\theta}$'s are correlated? 
-
-%\item Suppose $\forall i\neq j$, $\text{Corr}(\hat{\theta}_{i},\hat{\theta}_{j})=\rho$ . Then
-%\[
-%\var\left[\frac{1}{n}\sum_{i=1}^{n}\hat{\theta}_{i}\right]=\rho\sigma^{2}+\frac{1-\rho}{n}\sigma^{2}.
-%\]
-
-\item For large $n$, the covariance term dominates, limiting the benefits of averaging
-\item Bootstrap samples are 
-\begin{itemize}
-\item independent samples from the training set, but
-\item \al{not} independent samples from $P_{\cx\times\cy}$
-\end{itemize}
-
-\item Can we reduce the dependence between $\hat{f}_{i}$'s?
-\end{itemize}
-\end{frame}
-
-\begin{frame}{Random Forests}
-\begin{simpleblock}{\textbf{Key idea}}
-Use bagged decision trees, but modify the tree-growing procedure
-to reduce the dependence between trees.
-\end{simpleblock}
-
-\begin{itemize}[<+->]
-\item Build a collection of trees independently (in parallel), as before
-\item When constructing each tree node, restrict choice of splitting
-variable to a randomly chosen subset of features of size $m$
-\begin{itemize}
-    \item<.-> This prevents a situation where all trees are dominated by the same small number of strong features (and are therefore too similar to each other)
-\end{itemize}
-\item We typically choose $m\approx\sqrt{p}$, where $p$ is the number of
-    features (or we can choose $m$ using cross validation)
-\item If $m = p$, this is just bagging
-\end{itemize}
-\note[item]{When $m$ is too small, you might underfit. When $m$ is too large, it won't be effective at reducing dependence.}
-\end{frame}
-%
-\begin{frame}{Random Forests: Effect of $m$} 
-\begin{figure}
-\includegraphics[height=0.7\textheight]{figures/randomForestVsBagging}
-\end{figure}
-
-\let\thefootnote\relax\footnotetext{\tiny{From \emph{An Introduction to Statistical Learning, with applications in R} (Springer, 2013) with permission from the authors: G. James, D. Witten,  T. Hastie and R. Tibshirani.}}
-\end{frame}
-
-\begin{frame}{Review}
-\begin{itemize}[<+->]
-\item The usual approach is to build very deep trees---low bias but \al{high variance}
-\item Ensembling many models reduces variance
-\begin{itemize}[<.->]
-\item Motivation: Mean of i.i.d. estimates has smaller variance than single estimate
-\end{itemize}
-\item Use bootstrap to simulate many data samples from one dataset
-\begin{itemize}[<.->]
-\item $\implies$ Bagged decision trees
-\end{itemize}
-\item But bootstrap samples (and the induced models) are correlated
-\item Ensembling works better when we combine a diverse set of
-prediction functions
-\begin{itemize}[<.->]
-    \item $\implies$ Random forests: select a random subset of features for each decision tree
-\end{itemize}
-\end{itemize}
-\end{frame}
+% \section{Bagging and Random Forests}
+% \subsection{Variance of an Estimator}
+% \begin{frame}
+% {Recap: Statistics and Point Estimators}
+%     \begin{itemize}[<+->]
+% \item We observe data $\cd=\left(x_{1},x_{2},\ldots,x_{n}\right)$ sampled i.i.d. from a parametric distribution $p(\cdot\mid \theta)$
+
+% \item A \textbf{statistic} $s=s(\cd)$ is any function of the data:
+% \begin{itemize}
+% \item E.g., sample mean, sample variance, histogram, empirical data distribution
+% \end{itemize}
+
+% \item A statistic $\hat{\theta}=\hat{\theta}(\cd)$ is a \textbf{point estimator}
+% of $\theta$ if $\hat{\theta}\approx\theta$
+% \end{itemize}
+
+% %\onslide<+->{
+% %\begin{block}{Review questions}
+% %In frequentist statistics,
+% %\begin{itemize}
+% %\item Is $\theta$ random?
+% %\item Is $\hat{\theta}$ random?
+% %\item Is the function $s(\cdot)$ random?
+% %\end{itemize}
+% %\end{block}
+% %}
+
+% \note[item]{When we say trees are not stable or have high variance, what do we mean by that precisely? Let's recall properties of point estimators we talked about in frequentist statistics.}
+% \note[item]{We call a statistic a point estimator if it approximates some unknown parameter.}
+% \note[item]{The function $s$ is not random, but we plug in random samples of data.}
+% \end{frame}
+
+% \begin{frame}
+% {Recap: Bias and Variance of an Estimator}
+% \begin{itemize}[<.->]
+%     \setlength\itemsep{2pt}
+% \item Statistics are random, so they have probability distributions.
+% \item The distribution of a statistic is called a \textbf{sampling distribution}. 
+% \item<+-> The standard deviation of the sampling distribution is called the \textbf{standard error}.
+% \item<+-> Some parameters of the sampling distribution we might be interested in:
+% \begin{description}
+% \item[Bias]  $\mbox{Bias}(\hat{\theta})\eqdef \ex\pb{\hat{\theta}}-\theta$.
+% \item[Variance] $\mbox{Var}(\hat{\theta})\eqdef \ex\pb{\hat{\theta}^{2}} - \ex^2\pb{\hat{\theta}}$.
+% \end{description}
+% %\item<+-> \dis Is bias and variance random?
+% %\begin{itemize}
+%     \note[item]{Neither bias nor variance depend on a specific sample $\cd_{n}$.
+%         We are \emph{taking expectation over $\cd$.}}
+% %\end{itemize}
+% \item<+-> Why does variance matter if an estimator is unbiased?
+% \mode<handout>{
+% % \pause
+% \begin{itemize}
+%     \item {$\hat{\theta}(\sD) = x_1$ is an unbiased estimator of the mean of a Gaussian, but would be farther away from $\theta$ than the sample mean.}
+% \end{itemize}
+% }
+% \end{itemize}
+% \note[item]{Next let's look at how we can reduce variance of an estimator.}
+% \end{frame}
+
+% \subsection{The Benefits of Averaging}
+% \begin{frame}
+% {Variance of a Mean}
+% \begin{itemize}
+% \item Let $\hat{\theta}(\sD)$ be an unbiased estimator with variance $\sigma^2$:
+% $\BE\pb{\hat{\theta}} = \theta$, $\mbox{Var}(\hat{\theta}) = \sigma^2$.
+% \item<+-> So far we have used a single statistic $\hat{\theta} = \hat{\theta}(\sD)$ to estimate $\theta$.
+% \item<+-> Its standard error is $\sqrt{\mbox{Var}(\hat{\theta})} = \sigma$
+% \end{itemize}
+
+% \onslide<+->{
+% \begin{itemize}
+% \item Consider a new estimator that takes the average of i.i.d. $\hat{\theta}_1, \ldots, \hat{\theta}_n$ where $\hat{\theta}_i = \hat{\theta}(\sD^{i})$.
+%     \pause
+% \item The average has the same expected value but smaller standard error (recall that $Var(cX) = c^2 Var(X)$, and that the $\hat{\theta}_i$-s are uncorrelated):
+% \begin{align}
+% \BE\pb{\frac{1}{n}\sum_{i=1}^n \hat{\theta}_i} = \theta \qquad
+% \mbox{Var}\pb{\frac{1}{n}\sum_{i=1}^n \hat{\theta}_i} = \frac{\sigma^2}{n}
+% \label{eqn:variance-of-sample-mean}
+% \end{align}
+% \end{itemize}
+% }
+% \note[item]{Let's say we want to estimate some parameter $\theta$.}
+% \note[item]{What is the standard error?}
+% \note[item]{Now let's consider a new estimator that takes the average of $n$ i.i.d. estimates, each computed from some data $\sD^i$.}
+% \note[item]{It will still be unbiased, but now the variance is reduced. Try to prove it yourself.}
+% \end{frame}
+
+% \begin{frame}{Averaging Independent Prediction Functions }
+%     \begin{itemize}[<+->]
+% \item Suppose we have $B$ independent training sets, all drawn from the same distribution ($\sD \sim p(\cdot\mid \theta)$).
+
+% \item Our learning algorithm gives us $B$ prediction functions: $\hat{f}_{1}(x),\hat{f}_{2}(x),\ldots,\hat{f}_{B}(x)$
+
+% \item We will define the average prediction function as:
+% \begin{align}
+% \hat{f}_{\text{avg}}\eqdef \frac{1}{B}\sum_{b=1}^{B}\hat{f}_{b}
+% \end{align}
+
+% %\item<+-> \dis What's random here?
+% %\begin{itemize}
+%     \note[item]{The $B$ independent training sets are random, which gives rise to
+%         variation among the $\hat{f}_{b}$'s.}
+% %\end{itemize}
+
+% %\item<+-> \think{Concept check}: What's the distribution of $\hat{f}$ called?
+% %What do we know about the distribution?
+% \end{itemize}
+
+% \note[item]{Concept check: sampling distribution. We don't know anything about it because we don't know the data generating distribution.}
+% \end{frame}
+
+% %
+% \begin{frame}{Averaging Reduces Variance of Predictions}
+% \begin{itemize}
+% \item The average prediction for $x_{0}$ is
+% \[
+% \hat{f}_{\text{avg}}(x_{0})=\frac{1}{B}\sum_{b=1}^{B}\hat{f}_{b}(x_{0}).
+% \]
+
+% \item $\hat{f}_{\text{avg}}(x_{0})$ and $\hat{f}_{b}(x_{0})$ have the
+% same expected value, but
+
+% \item $\hat{f}_{\text{avg}}(x_{0})$ has smaller variance:% (see \ref{eqn:variance-of-sample-mean}):
+% \begin{eqnarray*}
+% \mbox{\ensuremath{\var}}(\hat{f}_{\mbox{avg}}(x_{0})) = 
+% \frac{1}{B}\var\left(\hat{f}_{1}(x_{0})\right)
+% \end{eqnarray*}
+% \pause
+% \item \al{Problem}: in practice we don't have $B$ independent training sets!
+% \end{itemize}
+% \note[item]{The average prediction has the same expected value as the single prediction, but it has smaller variance.}
+% \note[item]{But are we done? Just train $n$ predictors and average them?}
+% \end{frame}
+
+% \subsection{Bootstrap}
+
+% \begin{frame}{The Bootstrap Sample}
+% \begin{simpleblock}
+% {How do we simulate multiple samples when we only have one?}
+% \begin{itemize}[<+->]
+% \item A \textbf{bootstrap sample} from $\cd_{n}=\left(x_{1},\ldots,x_{n}\right)$
+% is a sample of size $n$ drawn \emph{with replacement} from $\cd_{n}$
+
+% \item Some elements of $\cd_{n}$ 
+% will show up multiple times, and
+% some won't show up at all 
+% \end{itemize}
+% \end{simpleblock}
+
+% %\onslide<+->{\dis How similar are the bootstrap samples?}
+% \begin{itemize}[<+->]
+% \item Each $x_{i}$ has a probability of $(1-1/n)^{n}$ of not being
+% included in a given bootstrap sample
+
+% \item For large $n$,
+% \begin{align}
+% \left(1-\frac{1}{n}\right)^{n}\approx\frac{1}{e}\approx.368.
+% \end{align}
+
+% \item<.-> So we expect \textasciitilde 63.2\% of elements of $\cd_n$ will show
+% up at least once.
+% \end{itemize}
+
+% \note[item]{Now the question is how similar these bootstrap samples are. If they are pretty much the same, its distribution would be far from the actual data generating distribution.}
+% \note[item]{Because we are sampling with replacement, each element has $1/n$ probability to be selected during each draw. And after $n$ draws, the probability that it's still not selected is $1-1/n$ to the power of $n$.}
+% \note[item]{Actually $n$ doesn't have to be very large, with $n=1000$, we already reach this number here.}
+% \note[item]{Since about 60 percent examples shown in each bootstrap sample, they should be fairly different.}
+% \end{frame}
+% %
+% %
+% \begin{frame}{The Bootstrap Method}
+% \begin{definition}
+% A \textbf{bootstrap method } simulates $B$
+% independent samples from $P$ by taking $B$ bootstrap samples from
+% the sample $\cd_{n}$.
+
+% \end{definition}
+% \pause
+
+% \begin{itemize}
+% \item Given original data $\cd_{n}$, compute $B$ bootstrap samples $D_{n}^{1},\ldots,D_{n}^{B}$.
+
+% \pause
+% \item For each bootstrap sample, compute some function
+% \[
+% \phi(D_{n}^{1}),\ldots,\phi(D_{n}^{B})
+% \]
+% \pause
+
+% \item Use these values as though $D_{n}^{1},\ldots,D_{n}^{B}$ were
+% i.i.d. samples from $P$.
+
+% \item This often ends up being very close to what we'd get with independent samples from $P$!
+% \end{itemize}
+% \end{frame}
+% %
+% \begin{frame}{Independent Samples vs. Bootstrap Samples}
+% \begin{itemize}
+% \item Point estimator $\hat{\alpha}=\hat{\alpha}(\cd_{100})$ for samples
+% of size $100$, for a synthetic case where the data generating distribution is known
+
+% \item Histograms of $\hat{\alpha}$ based on
+% \begin{itemize}
+%     \item 1000 independent samples of size 100 (left), vs.
+%     \item 1000 bootstrap samples of size 100 (right)
+
+% \end{itemize}
+% \end{itemize}
+% \begin{figure}
+% \includegraphics[height=0.4\textheight]{figures/independentVsBootstrap}
+
+% \end{figure}
+
+% \let\thefootnote\relax\footnotetext{\tiny{Figure 5.10 from \emph{ISLR} (Springer, 2013) with permission from the authors: G. James, D. Witten,  T. Hastie and R. Tibshirani.}}
+% \end{frame}
+% %
+% %\begin{frame}{Side note: Bootstrap in Practice}
+% %We can use bootstrap to get error bars in a cheap way.
+% %\begin{itemize}
+% %\item Suppose we have an estimator $\hat{\theta}=\hat{\theta}(\cd_{n})$.
+
+% %\item To get error bars, we can compute the ``\emph{bootstrap variance}''. 
+
+% %\begin{itemize}
+
+% %\item Draw $B$ bootstrap samples.
+% %\item Compute sample variance of $\hat{\theta}(\cd_{n}^{1}),\ldots,\hat{\theta}(\cd_{n}^{B})$..
+
+% %\item Could report 
+% %\[
+% %\hat{\theta}(\cd_{n})\pm\sqrt{\mbox{Bootstrap Variance}}
+% %\]
+
+% %\end{itemize}
+% %\end{itemize}
+% %\end{frame}
+
+% \begin{frame}{Ensemble Methods}
+
+% {\textbf{Key ideas:}}
+
+%     \begin{itemize}[<+->]
+%     \item In general, \textbf{ensemble methods} combine multiple weak models into a single, more powerful model
+%     \item Averaging i.i.d. estimates reduces variance without changing bias
+%     \item We can use bootstrap to simulate multiple data samples and average them
+%     \item Parallel ensemble (\eg bagging): models are built independently
+%     \item Sequential ensemble (\eg boosting): models are built sequentially
+%         \begin{itemize}
+%         \item We try to find new learners that do well where previous learners fall short
+%         \end{itemize}
+% \end{itemize}
+
+% \end{frame}
+
+% \subsection{Bagging}
+% \begin{frame}{Bagging: Bootstrap Aggregation}
+%     \begin{itemize}[<+->]
+% \item We draw $B$ bootstrap samples $D^{1},\ldots,D^{B}$ from original data
+% $\cd$
+
+% \item Let $\hat{f}_{1},\hat{f}_{2},\ldots,\hat{f}_{B}$ be the prediction
+% functions resulting from training on $D^{1},\ldots,D^{B}$, respectively
+
+% \item The \textbf{bagged prediction function} is a \emph{combination }of
+% these:
+% \[
+% \hat{f}_{\text{avg}}(x)=\mbox{Combine}\left(\hat{f}_{1}(x),\hat{f}_{2}(x),\ldots,\hat{f}_{B}(x)\right)
+% \]
+
+% %\pause{}
+% %\item \dis How might we combine 
+% %\begin{itemize}
+% %\item prediction functions for regression?
+% %\item binary class predictions? 
+% %\item binary probability predictions?
+% %\item multiclass predictions? 
+% %\end{itemize}
+
+%     \end{itemize}
+% \end{frame}
+
+% \begin{frame}{Bagging: Bootstrap Aggregation}
+%     \begin{itemize}[<+->]
+
+% \item Bagging is a general method for variance reduction, but it is particularly useful for decision trees
+
+% \item For classification, averaging doesn't make sense; we can take a \textbf{majority vote} instead
+
+% \item Increasing the number of trees we use in bagging does not lead to overfitting
+
+% \item Is there a downside, compared to having a single decision tree?
+
+% \item Yes: if we have many trees, the bagged predictor is much less interpretable
+
+% \end{itemize}
+% \end{frame}
+
+% \begin{frame}{Aside: Out-of-Bag Error Estimation}
+% \begin{itemize}
+% \item Recall that each bagged predictor was trained on about 63\% of the data.
+% \item The remaining 37\% are called \textbf{out-of-bag (OOB)} observations.
+
+% \pause{}
+% \item For $i$th training point, let 
+% \[
+% S_{i}=\left\{ b\mid D^{b}\text{ does not contain }i\text{th point}\right\} 
+% \]
+
+% \item The \textbf{OOB prediction} on $x_{i}$ is
+% \[
+% \hat{f}_{\text{OOB}}(x_{i})=\frac{1}{\left|S_{i}\right|}\sum_{b\in S_{i}}\hat{f}_{b}(x_{i})
+% \]
+% \pause
+% \item The OOB error is a good estimate of the test error
+
+% \item Similar to cross validation error: both are computed
+% on the training set
+% \end{itemize}
+% \end{frame}
+
+% \begin{frame}{Applying Bagging to Classification Trees}
+% \begin{itemize}
+% \item Input space $\cx=\reals^{5}$ and output space $\cy=\left\{ -1,1\right\} $.
+% Sample size $n=30$.
+% \begin{columns}[t]
+
+% \column{.4\textwidth}
+
+% \includegraphics[width=1\columnwidth]{figures/baggedTrees}
+
+% \pause{}
+
+% \column{.6\textwidth}
+% \begin{itemize}[<+->]
+% \item Each bootstrap tree is quite different: different splitting variable at the root!
+
+% \item \textbf{High variance}: small perturbations of the training data lead to a high degree of model variability
+
+% \item Bagging helps most when the base learners are relatively unbiased but have high variance (exactly the case for
+%     decision trees)
+
+% \end{itemize}
+% \end{columns}
+
+% \end{itemize}
+% \let\thefootnote\relax\footnotetext{\tiny{From HTF Figure 8.9}}
+% \end{frame}
+% %
+
+% \subsection{Random Forests}
+% \begin{frame}{Motivating Random Forests: Correlated Prediction Functions}
+% Recall the motivating principle of bagging:
+%     \begin{itemize}[<+->]
+% \item For $\hat{\theta}_{1},\ldots,\hat{\theta}_{n}$ \emph{i.i.d.} with $\ex\pb{\hat{\theta}}=\theta$ and $\var\pb{\hat{\theta}}=\sigma^{2}$,
+% \[
+% \ex\left[\frac{1}{n}\sum_{i=1}^{n}\hat{\theta}_{i}\right]=\mu\qquad\var\left[\frac{1}{n}\sum_{i=1}^{n}\hat{\theta}_{i}\right]=\frac{\sigma^{2}}{n}.
+% \]
+
+% \item What if $\hat{\theta}$'s are correlated? 
+
+% %\item Suppose $\forall i\neq j$, $\text{Corr}(\hat{\theta}_{i},\hat{\theta}_{j})=\rho$ . Then
+% %\[
+% %\var\left[\frac{1}{n}\sum_{i=1}^{n}\hat{\theta}_{i}\right]=\rho\sigma^{2}+\frac{1-\rho}{n}\sigma^{2}.
+% %\]
+
+% \item For large $n$, the covariance term dominates, limiting the benefits of averaging
+% \item Bootstrap samples are 
+% \begin{itemize}
+% \item independent samples from the training set, but
+% \item \al{not} independent samples from $P_{\cx\times\cy}$
+% \end{itemize}
+
+% \item Can we reduce the dependence between $\hat{f}_{i}$'s?
+% \end{itemize}
+% \end{frame}
+
+% \begin{frame}{Random Forests}
+% \begin{simpleblock}{\textbf{Key idea}}
+% Use bagged decision trees, but modify the tree-growing procedure
+% to reduce the dependence between trees.
+% \end{simpleblock}
+
+% \begin{itemize}[<+->]
+% \item Build a collection of trees independently (in parallel), as before
+% \item When constructing each tree node, restrict choice of splitting
+% variable to a randomly chosen subset of features of size $m$
+% \begin{itemize}
+%     \item<.-> This prevents a situation where all trees are dominated by the same small number of strong features (and are therefore too similar to each other)
+% \end{itemize}
+% \item We typically choose $m\approx\sqrt{p}$, where $p$ is the number of
+%     features (or we can choose $m$ using cross validation)
+% \item If $m = p$, this is just bagging
+% \end{itemize}
+% \note[item]{When $m$ is too small, you might underfit. When $m$ is too large, it won't be effective at reducing dependence.}
+% \end{frame}
+% %
+% \begin{frame}{Random Forests: Effect of $m$} 
+% \begin{figure}
+% \includegraphics[height=0.7\textheight]{figures/randomForestVsBagging}
+% \end{figure}
+
+% \let\thefootnote\relax\footnotetext{\tiny{From \emph{An Introduction to Statistical Learning, with applications in R} (Springer, 2013) with permission from the authors: G. James, D. Witten,  T. Hastie and R. Tibshirani.}}
+% \end{frame}
+
+% \begin{frame}{Review}
+% \begin{itemize}[<+->]
+% \item The usual approach is to build very deep trees---low bias but \al{high variance}
+% \item Ensembling many models reduces variance
+% \begin{itemize}[<.->]
+% \item Motivation: Mean of i.i.d. estimates has smaller variance than single estimate
+% \end{itemize}
+% \item Use bootstrap to simulate many data samples from one dataset
+% \begin{itemize}[<.->]
+% \item $\implies$ Bagged decision trees
+% \end{itemize}
+% \item But bootstrap samples (and the induced models) are correlated
+% \item Ensembling works better when we combine a diverse set of
+% prediction functions
+% \begin{itemize}[<.->]
+%     \item $\implies$ Random forests: select a random subset of features for each decision tree
+% \end{itemize}
+% \end{itemize}
+% \end{frame}
 
 \end{document}
