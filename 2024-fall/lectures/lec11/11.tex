@@ -1,7 +1,7 @@
 %% LyX 2.3.4.2 created this file.  For more info, see http://www.lyx.org/.
 %% Do not edit unless you really know what you are doing.
-\documentclass[english,dvipsnames,aspectratio=169]{beamer}
-% \documentclass[english,dvipsnames,aspectratio=169,handout]{beamer}
+% \documentclass[english,dvipsnames,aspectratio=169]{beamer}
+\documentclass[english,dvipsnames,aspectratio=169,handout]{beamer}
 \usepackage{mathptmx}
 \usepackage{eulervm}
 \usepackage[T1]{fontenc}
@@ -131,43 +131,59 @@
 %\setbeameroption{show notes on second screen}
 
 \title[CSCI-GA]{Neural Networks II: Deep Learning}
-\author{Mengye Ren}
+\author[]{Mengye Ren
+\\ \quad\\
+\small (Slides credit to David Rosenberg, He He, et al.)}
 % \author{He He \\
 % Slides based on Lecture
 % \href{https://github.com/davidrosenberg/mlcourse/blob/gh-pages/Lectures/13a.k-means.pdf}{13a} from David Rosenberg's course materials (\url{https://github.com/davidrosenberg/mlcourse})
 % }
-\date{Nov 28, 2023}
-\institute{NYU}
+\date[]{Nov 26, 2024}
+\institute[]{NYU}
 
 \makebeamertitle
 \mode<article>{Just in article version}
 
+\begin{frame}{Slides}
+\begin{center}
+\includegraphics[width=0.4\textwidth]{figures/qr_11.png}
+\end{center}
+\end{frame}
 
-\begin{frame}{Fully connected vs. locally connected}
+\begin{frame}{Logistics}
 \begin{itemize}
-    \item So far we apply a layer where all output neurons are connected to all input neurons.
-    \item In matrix form, $\mathbf{z} = W \mathbf{x}$.
-    \item This is also called a fully connected layer or a dense layer or a linear layer.
-    \pause
-    \item For $200 \times 200$ image and 1000 hidden units, the matrix of a single layer will have 40M parameters!
+    \item Homework 4 Due: Dec 3.
+    \item Last lecture: Dec 10 Project presentation. 
+    \item Presentation order: Your assigned Group ID.
+    \item Each group has a max of 4 minutes (hard stop) + 1 min Q\&A.
 \end{itemize}
-\begin{center}
-\includegraphics[width=0.34\textwidth]{figures/fully_connected.png}
-\includegraphics[width=0.34\textwidth]{figures/nn_1000_hidden.png}
-\end{center}
 \end{frame}
-\begin{frame}{Fully connected vs. locally connected}
-\begin{itemize}
-    \item An alternative strategy is to use local connection.
-    \item For neuron i, only connects to its neighborhood (e.g. [i+k, i-k])
-    \item For images, we index neurons with three dimensions i, j, and c.
-    \item i = vertical index, j = horizontal index, c = channel index.
-\end{itemize}
-\begin{center}
-\includegraphics[width=0.3\textwidth]{figures/locally_connected.png}
-\includegraphics[width=0.3\textwidth]{figures/locally_connected_3d.png}
-\end{center}
-\end{frame}
+
+% \begin{frame}{Fully connected vs. locally connected}
+% \begin{itemize}
+%     \item So far we apply a layer where all output neurons are connected to all input neurons.
+%     \item In matrix form, $\mathbf{z} = W \mathbf{x}$.
+%     \item This is also called a fully connected layer or a dense layer or a linear layer.
+%     \pause
+%     \item For $200 \times 200$ image and 1000 hidden units, the matrix of a single layer will have 40M parameters!
+% \end{itemize}
+% \begin{center}
+% \includegraphics[width=0.34\textwidth]{figures/fully_connected.png}
+% \includegraphics[width=0.34\textwidth]{figures/nn_1000_hidden.png}
+% \end{center}
+% \end{frame}
+% \begin{frame}{Fully connected vs. locally connected}
+% \begin{itemize}
+%     \item An alternative strategy is to use local connection.
+%     \item For neuron i, only connects to its neighborhood (e.g. [i+k, i-k])
+%     \item For images, we index neurons with three dimensions i, j, and c.
+%     \item i = vertical index, j = horizontal index, c = channel index.
+% \end{itemize}
+% \begin{center}
+% \includegraphics[width=0.3\textwidth]{figures/locally_connected.png}
+% \includegraphics[width=0.3\textwidth]{figures/locally_connected_3d.png}
+% \end{center}
+% \end{frame}
 
 \begin{frame}{Local connection patterns}
 \begin{columns}
@@ -225,6 +241,7 @@
 \end{column}
 \begin{column}{0.5\textwidth}
 \begin{center}
+\mode<beamer>{
 \includegraphics<1>[width=0.8\textwidth]{figures/2d_conv/frame_0.png}
 \includegraphics<2>[width=0.8\textwidth]{figures/2d_conv/frame_1.png}
 \includegraphics<3>[width=0.8\textwidth]{figures/2d_conv/frame_2.png}
@@ -234,6 +251,10 @@
 \includegraphics<7>[width=0.8\textwidth]{figures/2d_conv/frame_6.png}
 \includegraphics<8>[width=0.8\textwidth]{figures/2d_conv/frame_7.png}
 \includegraphics<9>[width=0.8\textwidth]{figures/2d_conv/frame_8.png}
+}
+\mode<presentation>{
+\includegraphics[width=0.8\textwidth]{figures/2d_conv/frame_8.png}
+}
 \end{center}
 \end{column}
 \end{columns}
@@ -253,11 +274,16 @@
 \end{column}
 \begin{column}{0.5\textwidth}
 \begin{center}
+\mode<beamer>{
 \includegraphics[width=0.8\textwidth]{figures/maxpooling.png}
 \includegraphics<2>[width=0.5\textwidth]{figures/stride2_conv/frame_0.png}
 \includegraphics<3>[width=0.5\textwidth]{figures/stride2_conv/frame_1.png}
 \includegraphics<4>[width=0.5\textwidth]{figures/stride2_conv/frame_2.png}
 \includegraphics<5>[width=0.5\textwidth]{figures/stride2_conv/frame_3.png}
+}
+\mode<presentation>{
+\includegraphics[width=0.5\textwidth]{figures/stride2_conv/frame_3.png}
+}
 \end{center}
 \end{column}
 \end{columns}
@@ -329,13 +355,14 @@
     \pause
     \item Putting altogether, $x_{l+1} = \frac{1}{2} n_l Var[w_{l}] Var[x_l]$.
     \pause
-    \item To make the variance constant, we need $\frac{1}{2} n_l Var[w_{l}] = 1$, $Std[w_{l}] = \sqrt{2/n_l}$\footnote{He et al. Delving Deep into Rectifiers: Surpassing Human-Level Performance on ImageNet. ICCV, 2015.}.
+    \item To make the variance constant, we need $\frac{1}{2} n_l Var[w_{l}] = 1$, $Std[w_{l}] = \sqrt{2/n_l}$\footnote{
+    \tiny He et al. Delving Deep into Rectifiers: Surpassing Human-Level Performance on ImageNet. ICCV, 2015.}.
 \end{itemize}
 \end{frame}
 
 \begin{frame}{Activation functions}
 \begin{itemize}
-    \item ReLU was proposed in 2009-2010\footnote{Jarrett et al. What is the Best Multi-Stage Architecture for Object Recognition? ICCV, 2009.}\footnote{Nair \& Hinton/ Rectified Linear Units Improve Restricted Boltzmann Machines. ICML, 2010.}, and was successfully used in AlexNet in 2012\footnote{Krizhevsky et al. 
+    \item ReLU was proposed in 2009-2010\footnote{\tiny Jarrett et al. What is the Best Multi-Stage Architecture for Object Recognition? ICCV, 2009.}\footnote{\tiny Nair \& Hinton/ Rectified Linear Units Improve Restricted Boltzmann Machines. ICML, 2010.}, and was successfully used in AlexNet in 2012\footnote{\tiny Krizhevsky et al. 
 ImageNet Classification with Deep Convolutional Neural Networks. NIPS, 2012.}.
     \item Address the vanishing gradient issue in activations, comparing to sigmoid or tanh.
     % \item More variants of activation function in the past decade.
@@ -471,7 +498,7 @@ ImageNet Classification with Deep Convolutional Neural Networks. NIPS, 2012.}.
 \end{itemize}
 \begin{center}
 \includegraphics[width=0.6\textwidth,trim={10cm 0 0 0},clip]{figures/normalization.png}
-\footnote{Wu and He. Group normalization. ECCV 2018.}
+\footnote{\tiny Wu and He. Group normalization. ECCV 2018.}
 \end{center}
 \end{frame}
 
@@ -491,7 +518,7 @@ ImageNet Classification with Deep Convolutional Neural Networks. NIPS, 2012.}.
 
 \begin{itemize}
     \item Recall in gradient boosting, we are iteratively adding a function to the model to expand the capacity.
-    \item Residual connection: Skip connection to prevent gradient vanishing.\footnote{He et al. Deep Residual Learning for Image Recognition. CVPR 2016.}
+    \item Residual connection: Skip connection to prevent gradient vanishing.\footnote{\tiny He et al. Deep Residual Learning for Image Recognition. CVPR 2016.}
     % \item A simple ``addition'' operation on the activation.
 \end{itemize}
 
@@ -508,7 +535,7 @@ ImageNet Classification with Deep Convolutional Neural Networks. NIPS, 2012.}.
     \item One of the most important network design choices in the past decade.
     \item Prevalent in almost all network architectures, including Transformers.
     \pause
-    \item Loss landscape view: Skip connections makes loss smoother -> easier to optimize \footnote{Li et al. Visualizing the Loss Landscape of Neural Nets. NIPS 2018.}.
+    \item Loss landscape view: Skip connections makes loss smoother -> easier to optimize \footnote{\tiny Li et al. Visualizing the Loss Landscape of Neural Nets. NIPS 2018.}.
 \end{itemize}
 \begin{center}
 % \includegraphics[width=0.75\textwidth]{figures/residual_connect.png}
@@ -516,7 +543,7 @@ ImageNet Classification with Deep Convolutional Neural Networks. NIPS, 2012.}.
 \end{center}
 \end{frame}
 
-\begin{frame}{Dropout\footnote{Srivastava et al. A Simple Way to Prevent Neural Networks from Overfitting. JMLR, 2014.}
+\begin{frame}{Dropout\footnote{\tiny Srivastava et al. A Simple Way to Prevent Neural Networks from Overfitting. JMLR, 2014.}
 }
 \begin{itemize}
     \item Want to reduce overfitting in neural networks.
@@ -534,7 +561,7 @@ ImageNet Classification with Deep Convolutional Neural Networks. NIPS, 2012.}.
 
 \end{frame}
 
-\begin{frame}{GELU\footnote{Hendrycks \& Gimpel. Gaussian Error Linear Unit (GELU). CoRR abs/1606.08415, 2016.}}
+\begin{frame}{GELU\footnote{\tiny Hendrycks \& Gimpel. Gaussian Error Linear Unit (GELU). CoRR abs/1606.08415, 2016.}}
 \begin{columns}
 \begin{column}{0.49\textwidth}
 \begin{itemize}
@@ -578,7 +605,7 @@ ImageNet Classification with Deep Convolutional Neural Networks. NIPS, 2012.}.
 \onslide<1->\includegraphics[width=0.9\textwidth]{figures/data_aug.png}
 \end{column}
 \end{columns}
-    \small{Image credit}\footnote{Chen et al. A Simple Framework for Contrastive Learning of Visual Representations. ICML 2020.}
+    \small{Image credit}\footnote{\tiny Chen et al. A Simple Framework for Contrastive Learning of Visual Representations. ICML 2020.}
 \end{frame}
 
 \section{Language and sequential signals}
@@ -601,7 +628,7 @@ ImageNet Classification with Deep Convolutional Neural Networks. NIPS, 2012.}.
     \item<+-> A large matrix of $V \times D$. V = vocab size, D = network embedding size.
 \end{itemize}
 \begin{center}
-\includegraphics[width=0.4\textwidth]{figures/word_embedding.png}\footnote{https://aelang.github.io/word-embeddings.html}
+\includegraphics[width=0.4\textwidth]{figures/word_embedding.png}\footnote{\tiny \url{https://aelang.github.io/word-embeddings.html}}
 \end{center}
 \end{frame}
 
@@ -627,7 +654,7 @@ ImageNet Classification with Deep Convolutional Neural Networks. NIPS, 2012.}.
 \begin{center}
 \includegraphics[width=0.7\textwidth]{figures/rnn.png}
 \end{center}
-\footnote{Image credit: Chris Olah~\url{https://colah.github.io/posts/2015-08-Understanding-LSTMs/}}
+\footnote{\tiny Image credit: Chris Olah~\url{https://colah.github.io/posts/2015-08-Understanding-LSTMs/}}
 \end{frame}
 
 \begin{frame}{Gradient vanishing}
@@ -728,7 +755,7 @@ Bahdanau et al., 2014
 \end{itemize}
 \begin{center}
 \includegraphics[width=0.4\textwidth]{figures/transformer_attention.png}\\
-\footnote{Image credit: \href{https://blog.research.google/2017/08/transformer-novel-neural-network.html}{Google Research Blog}}
+\footnote{\tiny Image credit: \href{https://blog.research.google/2017/08/transformer-novel-neural-network.html}{Google Research Blog}}
 \end{center}
 \end{frame}
 
@@ -767,65 +794,50 @@ Bahdanau et al., 2014
 \end{columns}
 \end{frame}
 
-\begin{frame}{Machine Translation}
-\begin{itemize}
-  \item Achieved superior performance on machine translation.
-  \item Animation \href{https://3.bp.blogspot.com/-aZ3zvPiCoXM/WaiKQO7KRnI/AAAAAAAAB_8/7a1CYjp40nUg4lKpW7covGZJQAySxlg8QCLcBGAs/s1600/transform20fps.gif}{link}
-\end{itemize}
-\begin{center}
-\includegraphics[height=4cm]{figures/en_de.png}
-\quad
-\includegraphics[height=4cm]{figures/en_fr.png}
-\end{center}
-\end{frame}
-
-\begin{frame}{Autoregressive modeling}
-\begin{itemize}
-    \item<+-> Recall the chain rule on joint distribution:
-    \[
-    p(x_{1:t}) = p(x_1, \dots, x_t) = p(x_1) p(x_2 | x_1) \dots p(x_t | x_{t-1}) = p(x_1) \prod_i p(x_i|x_{1:i-1}).
-    \]
-    \item<+-> In Naive Bayes, we treat each variable as independent, but this cannot perform sequence generation.
-    \item<+-> How do we model a conditional distribution $p(x_i|x_{1:i-1})$ using an RNN or a Transformer?
-    \item<+-> RNN is naturally autoregressive: $h_t$ contains all information up to time t.
-    \item<+-> For Transformers, $h_t$ contains information about the future.
-\end{itemize}
-\end{frame}
-
-\begin{frame}{Causal Attention}
-  \begin{itemize}
-    \item For Transformers, we need to ``mask'' the attention so that each token can only attend to tokens prior to itself.
-    \item This is called ``causal attention''.
-  \end{itemize}
-  \begin{center}
-  \includegraphics[width=0.7\textwidth]{figures/attention_graph.png}
-  \end{center}
-    \footnote{Image credit: \href{https://www.wolfram.com/language/12/neural-network-framework/use-transformer-neural-nets.html}{Wolfram.com}}
-\end{frame}
-
-\begin{frame}{Large Language Models}
-\begin{itemize}
-  \item Most LLMs today are large-scale decoder-only autoregressive (causal) Transformers (>1B parameters).
-\end{itemize}
-\begin{center}
-\includegraphics[width=0.7\textwidth]{figures/llm.png}
-\footnote{Image credit: \href{https://medium.com/@thedatabeast/top-free-courses-on-large-language-models-abf2722d15c5}{Medium.com}}
-\end{center}
-\end{frame}
-
-% \begin{frame}{Multi-modal learning}
+% \begin{frame}{Machine Translation}
+% \begin{itemize}
+%   \item Achieved superior performance on machine translation.
+%   \item Animation \href{https://3.bp.blogspot.com/-aZ3zvPiCoXM/WaiKQO7KRnI/AAAAAAAAB_8/7a1CYjp40nUg4lKpW7covGZJQAySxlg8QCLcBGAs/s1600/transform20fps.gif}{link}
+% \end{itemize}
+% \begin{center}
+% \includegraphics[height=4cm]{figures/en_de.png}
+% \quad
+% \includegraphics[height=4cm]{figures/en_fr.png}
+% \end{center}
 % \end{frame}
 
-% \begin{frame}{Visual attention}
+% \begin{frame}{Autoregressive modeling}
+% \begin{itemize}
+%     \item<+-> Recall the chain rule on joint distribution:
+%     \[
+%     p(x_{1:t}) = p(x_1, \dots, x_t) = p(x_1) p(x_2 | x_1) \dots p(x_t | x_{t-1}) = p(x_1) \prod_i p(x_i|x_{1:i-1}).
+%     \]
+%     \item<+-> In Naive Bayes, we treat each variable as independent, but this cannot perform sequence generation.
+%     \item<+-> How do we model a conditional distribution $p(x_i|x_{1:i-1})$ using an RNN or a Transformer?
+%     \item<+-> RNN is naturally autoregressive: $h_t$ contains all information up to time t.
+%     \item<+-> For Transformers, $h_t$ contains information about the future.
+% \end{itemize}
 % \end{frame}
 
-% \begin{frame}{Visual question answering}
+% \begin{frame}{Causal Attention}
+%   \begin{itemize}
+%     \item For Transformers, we need to ``mask'' the attention so that each token can only attend to tokens prior to itself.
+%     \item This is called ``causal attention''.
+%   \end{itemize}
+%   \begin{center}
+%   \includegraphics[width=0.7\textwidth]{figures/attention_graph.png}
+%   \end{center}
+%     \footnote{\tiny Image credit: \href{https://www.wolfram.com/language/12/neural-network-framework/use-transformer-neural-nets.html}{Wolfram.com}}
 % \end{frame}
 
-% \begin{frame}{Sequential attention}
-% \end{frame}
-
-% \begin{frame}{Instance segmentation with recurrent attention}
+% \begin{frame}{Large Language Models}
+% \begin{itemize}
+%   \item Most LLMs today are large-scale decoder-only autoregressive (causal) Transformers (>1B parameters).
+% \end{itemize}
+% \begin{center}
+% \includegraphics[width=0.7\textwidth]{figures/llm.png}
+% \footnote{\tiny Image credit: \href{https://medium.com/@thedatabeast/top-free-courses-on-large-language-models-abf2722d15c5}{Medium.com}}
+% \end{center}
 % \end{frame}
 
 \begin{frame}{Interim Summary}
@@ -972,14 +984,14 @@ Bahdanau et al., 2014
     \[ y = \textrm{ReLU}(z) \qquad \bar{z} = \begin{cases} \bar{y} & \text{if $z > 0$ {\color{red} and $\bar{y} > 0$}} \\ 0 & \text{otherwise} \end{cases} \]
   \item We want to visualize what excites given unit, not what suppresses it.
     \begin{center}
-      \includegraphics[width=0.5 \textwidth]{figures/guided_backprop_results.pdf}
+      \includegraphics[width=0.45 \textwidth]{figures/guided_backprop_results.pdf}
     \end{center}
   \end{itemize}
 \end{frame}
 
 \begin{frame}{Guided Backprop}
 \begin{center}
-  \includegraphics[width=0.8 \textwidth]{figures/guided_backprop_results2.pdf}
+  \includegraphics[width=0.7 \textwidth]{figures/guided_backprop_results2.pdf}
 \end{center}
 \begin{flushright}
 {\tiny Springerberg et al., Striving for simplicity: The all convolutional net, ICLR workshop 2015.}
@@ -1054,7 +1066,7 @@ Bahdanau et al., 2014
 \end{flushright}
 \end{frame}
 
-\begin{frame}{DeepDream\footnote{\href{https://blog.research.google/2015/07/deepdream-code-example-for-visualizing.html?m=1}{Google Research Blog}}}
+\begin{frame}{DeepDream\footnote{\tiny \href{https://blog.research.google/2015/07/deepdream-code-example-for-visualizing.html?m=1}{Google Research Blog}}}
 \begin{itemize}
 \item Start with an image, and run a conv net on it.
 \item Change the image such that units which were already highly activated get activated even more strongly.
