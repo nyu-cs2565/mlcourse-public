@@ -130,17 +130,25 @@
 
 %\setbeameroption{show notes on second screen}
 
-\title[CSCI-GA]{Clustering and Latent Variable Models}
-\author{Mengye Ren}
+\title[CSCI-GA 2565]{Clustering and Latent Variable Models}
+\author[]{Mengye Ren
+\\ \quad\\
+\small (Slides credit to David Rosenberg, He He, et al.)}
 % \author{He He \\
 % Slides based on Lecture
 % \href{https://github.com/davidrosenberg/mlcourse/blob/gh-pages/Lectures/13a.k-means.pdf}{13a} from David Rosenberg's course materials (\url{https://github.com/davidrosenberg/mlcourse})
 % }
-\date{Dec 5, 2023}
-\institute{NYU}
+\date[]{Dec 3, 2024}
+\institute[]{NYU}
 
 \makebeamertitle
 \mode<article>{Just in article version}
+
+\begin{frame}{Lecture Slides}
+\begin{center}
+\includegraphics[width=0.4\textwidth]{figures/qr_12.png}
+\end{center}
+\end{frame}
 
 \section{K-means Clustering}
 
@@ -274,15 +282,25 @@
 \item Let $c_i \in \pc{1, \ldots, k}$ be the cluster assignment of $x_i$.
 
 \item The \textbf{centroid} of $C_{i}$ is defined to be
+\mode<handout>{
 \begin{align}
 \mu_{i}=\argmin_{\mu\in\cx}\sum_{x\in C_{i}}\|x - \mu\|^{2}.
 && \text{mean of $C_i$}
 \end{align}
+}
+\mode<beamer>{
+  \vspace{0.5in}
+}
 
 \item The $k$-means objective is to minimize the distance between each example and its cluster centroid:
+\mode<handout>{
 \begin{align}
 J(c, \mu) = \sum_{i=1}^n \| x_i - \mu_{c_i} \|^2 .
 \end{align}
+}
+\mode<beamer>{
+  \vspace{0.5in}
+}
 \end{itemize}
 \note[item]{Define the centroid as the point that minimizes its distance to all other points in the cluster. In $\reals^d$,  the distance is Euclidean distance. If you solve this optimization problem, the centroid is the cluster mean.}
 \end{frame}
@@ -378,55 +396,57 @@ computed distance squared.
 
 \section{Gaussian Mixture Models}
 
-\begin{frame}{Probabilistic Model for Clustering}
-\onslide<1->{
-\begin{columns}
-\begin{column}{0.55\textwidth}
-\begin{itemize}
-\item Problem setup: 
-\begin{itemize}
-\item There are $k$ clusters (or \textbf{mixture components}).
-\item We have a probability distribution for each cluster.
-\end{itemize}
-}
-
-\onslide<2->{
-\item Generative story of a \textbf{mixture distribution}:
-\begin{enumerate}
-\item Choose a random cluster $z\in\left\{ 1,2,\ldots,k\right\} $. 
-\item Choose a point from the distribution for cluster $z$. 
-\end{enumerate}
-\end{itemize}
-}
-\end{column}
-
-\onslide<3->{
-\begin{column}{0.4\textwidth}
-\begin{simpleblock}
-{Example:}
-\begin{enumerate}
-\item Choose $z\in\left\{ 1,2,3\right\} $ with $p(1)=p(2)=p(3)=\frac{1}{3}$. 
-\item Choose $x\mid z\sim\cn\left(X\mid\mu_{z},\Sigma_{z}\right)$.
-\end{enumerate}
-\end{simpleblock}
-
-\includegraphics[height=0.5\textheight]{figures/mixture-3-gaussians}
-
-\end{column}
-}
-\end{columns}
-\note[item]{Remember that in probabilistic modeling, we want to model the distribution of $p(y\mid x)$ or $p(x, y)$. Here we don't have $y$, so let's model $p(x)$.}
-    \note[item]{So what distribution family should we use to model $x$? Let's think about how $x$ may be generated. It is clear from the figure that there is a two step process. To generate a sample, first, we decide which cluster it comes from, then sample from a distribution of points in that cluster.}
-\end{frame}
+% \begin{frame}{Probabilistic Model for Clustering}
+% \begin{columns}
+% % \onslide<1->{
+% \begin{column}{0.55\textwidth}
+% \begin{itemize}
+% \item Problem setup: 
+% \begin{itemize}
+% \item There are $k$ clusters (or \textbf{mixture components}).
+% \item We have a probability distribution for each cluster.
+% \end{itemize}
+% % \onslide<2->{
+% % \item Generative story of a \textbf{mixture distribution}:
+% % \begin{enumerate}
+% % \item Choose a random cluster $z\in\left\{ 1,2,\ldots,k\right\} $. 
+% % \item Choose a point from the distribution for cluster $z$. 
+% % \end{enumerate}
+% % \end{itemize}
+% % }
+% \end{column}
+% % }
+% % \onslide<2->{
+% \begin{column}{0.4\textwidth}
+% \begin{simpleblock}
+% {Example:}
+% \begin{enumerate}
+% \item Choose $z\in\left\{ 1,2,3\right\} $ with $p(1)=p(2)=p(3)=\frac{1}{3}$. 
+% \item Choose $x\mid z\sim\cn\left(X\mid\mu_{z},\Sigma_{z}\right)$.
+% \end{enumerate}
+% \end{simpleblock}
+% \includegraphics[height=0.5\textheight]{figures/mixture-3-gaussians}
+% \end{column}
+% % }
+% \end{columns}
+% \note[item]{Remember that in probabilistic modeling, we want to model the distribution of $p(y\mid x)$ or $p(x, y)$. Here we don't have $y$, so let's model $p(x)$.}
+%     \note[item]{So what distribution family should we use to model $x$? Let's think about how $x$ may be generated. It is clear from the figure that there is a two step process. To generate a sample, first, we decide which cluster it comes from, then sample from a distribution of points in that cluster.}
+% \end{frame}
 
 \begin{frame}
 {Gaussian mixture model (GMM)}
 \begin{simpleblock}
 {Generative story of GMM with $k$ mixture components:}
+
+\mode<handout>{
 \begin{enumerate}
 \item Choose cluster $z\sim \text{Categorical}(\pi_1, \ldots, \pi_k)$.
 \item Choose $x\mid z \sim \sN(\mu_z, \Sigma_z)$.
 \end{enumerate}
+}
+\mode<beamer>{
+  \vspace{0.7in}
+}
 \end{simpleblock}
 
 \onslide<2->{
@@ -435,11 +455,16 @@ computed distance squared.
 \begin{itemize}
 \item Sum over (marginalize) the \textbf{latent variable} $z$.
 \end{itemize}
+\mode<handout>{
 \begin{align}
 \onslide<.->{p(x) &= \sum_z p(x, z) \\}
         \onslide<.->{&= \sum_z p(x\mid z) p(z) \\}
         \onslide<.->{&= \sum_k \pi_k \sN(\mu_k, \Sigma_k)}
 \end{align}
+}
+\mode<beamer>{
+  \vspace{1.0in}
+}
 \end{simpleblock}
 }
 \note[item]{How do we get the prob density of $x$? We know $p(x\mid z)$ and $p(z)$, which means that we know the joint distribution $p(x,z)$.}
@@ -474,10 +499,10 @@ there?
 \item Assuming all clusters are distinct, there are $k!$ equivalent solutions.
 \end{itemize}
 
-\pause{}
-\begin{itemize}
-\item Not a problem \emph{per se}, but something to be aware of.
-\end{itemize}
+% \pause{}
+% \begin{itemize}
+% \item Not a problem \emph{per se}, but something to be aware of.
+% \end{itemize}
 
     \note[item]{We should be careful when interpret the meaning of a cluster. It is tempting to say that cluster 1 is politics, 2 is sports etc. But we will always need to look at the examples in that cluster instead of just relying on the cluster id, which are interchangable.}
 \end{frame}
@@ -490,10 +515,15 @@ there?
 \begin{itemize}
 \item MLE (also called maximize marginal likelihood).
 \item Log likelihood of data:
+\mode<handout>{
 \begin{align}
 L(\theta) &= \sum_{i=1}^n \log p(x_i; \theta) \\
 &= \sum_{i=1}^n {\color{red}\log \sum_z} p(x, z; \theta) 
 \end{align}
+}
+\mode<beamer>{
+  \vspace{0.8in}
+}
 }
 \onslide<3->{
 \item Cannot push $\log$ into the sum... $z$ and $x$ are coupled.
@@ -571,13 +601,21 @@ n_{z} &= \sum_{i=1}^{n}\ind{z_{i}=z}
 {Learning GMMs: inference}
 \begin{simpleblock}
 {The inference problem: observe $x$, want to know $z$.}
+\mode<handout>{
 \begin{align}
-\onslide<2->{p(z=j \mid x_i) &= p(x, z=j) / p(x) \\}
-\onslide<3->{&= \frac{p(x\mid z=j)p(z=j)}{\sum_k p(x\mid z=k) p(z=k)} \\}
-\onslide<4->{&= \frac{\pi_j \sN(x_i \mid \mu_j, \Sigma_j)}{\sum_k \pi_k \sN(x_i \mid \mu_k, \Sigma_k)}}
+% \onslide<2->{p(z=j \mid x_i) &= p(x, z=j) / p(x) \\}
+% \onslide<3->{&= \frac{p(x\mid z=j)p(z=j)}{\sum_k p(x\mid z=k) p(z=k)} \\}
+% \onslide<4->{&= \frac{\pi_j \sN(x_i \mid \mu_j, \Sigma_j)}{\sum_k \pi_k \sN(x_i \mid \mu_k, \Sigma_k)}}
+p(z=j \mid x_i) &= p(x, z=j) / p(x) \\
+&= \frac{p(x\mid z=j)p(z=j)}{\sum_k p(x\mid z=k) p(z=k)} \\
+&= \frac{\pi_j \sN(x_i \mid \mu_j, \Sigma_j)}{\sum_k \pi_k \sN(x_i \mid \mu_k, \Sigma_k)}
 \end{align}
+}
+\mode<beamer>{
+  \vspace{1.0in}
+}
 \end{simpleblock}
-\onslide<5->{
+\onslide<2->{
 \begin{itemize}
 \item $p(z\mid x)$ is a \emph{soft assignment}.
 \item If we know the parameters $\mu, \Sigma, \pi$, this would be easy to compute.
@@ -931,13 +969,15 @@ is a constant, which implies $q=p$ .
 \section{The ELBO: Family of Lower Bounds on $\log p(x\mid\theta)$}
 \begin{frame}{The Maximum Likelihood Estimator}
 
+\mode<handout>{
 \includegraphics[width=0.85\textwidth]{figures/margLL-withMax.pdf}
-
+}
     \note[item]{To give an overivew of the EM algorithm, let's use this 1-d illustration. The marginal log-likelihood is a complex non-convex function, and we would like to find the parameter  that maximizes the marginal log-likelihood. Because it's hard to directly maximize this function, we will maximize its lower bound instead. Now, there can be many possible lowerbounds, some are useless (example). The key of the EM algorithm is to construct "good" lowerbounds which are easy to optimize and tight, meaning if you optimize the lower bound you also optimize the true function.}
 \end{frame}
 
 \begin{frame}
     {Lower bound of the marginal log-likelihood}
+    \mode<handout>{
     \begin{eqnarray*}
         \log p(x;\theta) & = & \log \sum_{z\in\sZ} p(x,z;\theta) \\
         \pause
@@ -957,6 +997,7 @@ is a constant, which implies $q=p$ .
         \item $q$: chosen to be a family of tractable distributions
         \item Idea: \emph{maximize the ELBO} instead of $\log p(x;\theta)$
     \end{itemize}
+    }
 \end{frame}
 
 \begin{frame}{MLE, EM, and the ELBO}
@@ -1081,7 +1122,9 @@ $\cl(q,\theta)$.
 \begin{frame}{Marginal Log-Likelihood \textbf{IS}\textbf{\textcolor{blue}{\LARGE{}
 }}the Supremum over Lower Bounds}
 
+\mode<handout>{
 \includegraphics[width=0.75\textwidth]{figures/sup-margLL.pdf} 
+}
 \end{frame}
 
 \begin{frame}
@@ -1257,7 +1300,7 @@ q^{*}=\argmin_{q\in\cq}\kl[q(z),p(z\mid x,\theta^{\text{old}})]
 \end{columns}
 \end{frame}
 
-\begin{frame}{Variational Autoencoders (VAE) \footnote{Diederik P Kingma, Max Welling. Auto-Encoding Variational Bayes. ICLR 2014.}}
+\begin{frame}{Variational Autoencoders (VAE) \footnote{\tiny Diederik P Kingma, Max Welling. Auto-Encoding Variational Bayes. ICLR 2014.}}
 \begin{itemize}
   \item<+-> An autoencoder (AE) is a neural network that reconstructs the same input.
   \item<+-> The first half is an encoder, from input to latent. The second half is a decoder.
@@ -1355,8 +1398,8 @@ q^{*}=\argmin_{q\in\cq}\kl[q(z),p(z\mid x,\theta^{\text{old}})]
 
 \begin{frame}{Acknowledgement}
 \begin{itemize}
-    \item<1-> Most content developed by Prof. David Rosenberg (now at Bloomberg).
-    \item<1-> Later adapted by Prof. He He, Prof. Tal Linzen, and others.
+    \item<1-> Most content developed by David Rosenberg (now at Bloomberg).
+    \item<1-> Later adapted by He He, Tal Linzen, and others.
     \item<2-> This is a very challenging grad-level course.
     \item<2-> Congrats, you are almost done.
 \end{itemize}
@@ -1364,10 +1407,10 @@ q^{*}=\argmin_{q\in\cq}\kl[q(z),p(z\mid x,\theta^{\text{old}})]
 
 \begin{frame}{Next Lecture: Project Presentation}
 \begin{itemize}
-    \item Dec 12, in-person presentations.
-    \item 24 groups, 120mins.
+    \item Dec 10, in-person presentations.
+    \item 22 groups, 120mins.
     \item Aim for \textbf{3 mins} per group, hard stop at 4 mins, and 1 min max for Q\&A.
-    \item Send me your slides in PDF with your group number by Dec 11 11:59pm.
+    \item Send your slides in PDF with your group number by Dec 9 11:59pm (via Google form).
 \end{itemize}
 \end{frame}
 
@@ -1454,16 +1497,21 @@ q^{*}=\argmin_{q\in\cq}\kl[q(z),p(z\mid x,\theta^{\text{old}})]
 \end{itemize}
 \end{frame}
 
-\begin{frame}{Other ML Related Advanced Courses in CS}
+\begin{frame}{Other ML Related Advanced Courses in CS/DS}
 \begin{itemize}
-    \item Computer Vision (Prof. Rob Fergus)
-    \item Deep Learning (Prof. Yann LeCun)
-    \item Deep Reinforcement Learning (Prof. Lerrel Pinto)
-    \item Foundations of Deep Learning Theory (Prof. Matus Telgarsky)
-    \item Inference and Representation (Prof. Joan Bruna)
-    \item Learning with Large Language and Vision Models (Prof. Saining Xie)
-    \item Mathematics of Deep Learning (Prof. Joan Bruna)
-    \item Natural Language Processing (Prof. He He)
+  {
+  \small
+    \item Bayesian Machine Learning(Andrew Wilson)
+    \item Computer Vision (Saining Xie)
+    \item Deep Learning (Yann LeCun)
+    \item Deep Reinforcement Learning (Lerrel Pinto)
+    \item Enbodied Learning and Vision (Mengye Ren)
+    \item Foundations of Deep Learning Theory (Matus Telgarsky)
+    \item Inference and Representation (Joan Bruna)
+    \item Learning with Large Language and Vision Models (Saining Xie)
+    \item Mathematics of Deep Learning (Joan Bruna)
+    \item Natural Language Processing (He He)
+  }
 \end{itemize}
 \end{frame}
 
